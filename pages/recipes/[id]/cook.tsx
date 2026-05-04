@@ -1,12 +1,13 @@
 import { GetServerSideProps } from "next";
 import { prisma } from "@/lib/prisma";
 import CookMode from "@/components/CookMode";
-import { RecipeWithRelations } from "@/types";
+// Types
+import type { RecipeWithRelations } from "@/types";
 
 type Props = { recipe: RecipeWithRelations };
 
 export default function PublicCookPage({ recipe }: Props) {
-  return <CookMode recipe={recipe} backHref={`/recipe/${recipe.id}`} />;
+  return <CookMode recipe={recipe} backHref={`/recipes/${recipe.id}`} />;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {

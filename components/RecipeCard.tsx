@@ -81,7 +81,7 @@ export default function RecipeCard({
   return (
     <div className="flex flex-col rounded-xl border border-stone-200 bg-white overflow-hidden gap-0 hover:border-stone-300 transition-colors">
       {coverImageUrl && (
-        <Link href={isOwned ? `/my/recipes/${id}` : `/recipe/${id}`} className="block">
+        <Link href={isOwned ? `/my/recipes/${id}` : `/recipes/${id}`} className="block">
           <img
             src={coverImageUrl}
             alt=""
@@ -91,7 +91,7 @@ export default function RecipeCard({
       )}
       <div className="flex flex-col flex-1 p-5 gap-3">
         <div className="flex-1">
-          <Link href={isOwned ? `/my/recipes/${id}` : `/recipe/${id}`}>
+          <Link href={isOwned ? `/my/recipes/${id}` : `/recipes/${id}`}>
             <h3 className="font-semibold text-stone-900 hover:text-stone-600 transition-colors line-clamp-2">
               {title}
             </h3>

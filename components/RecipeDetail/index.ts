@@ -1,0 +1,1 @@
+export { RecipeDetail } from "./RecipeDetail";

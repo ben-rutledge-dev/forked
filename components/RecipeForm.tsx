@@ -155,7 +155,7 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
         <p className="text-sm text-stone-500">
           Forked from{" "}
           {forkedFrom.isPublic ? (
-            <a href={`/recipe/${forkedFrom.id}`} className="underline hover:text-stone-700">
+            <a href={`/recipes/${forkedFrom.id}`} className="underline hover:text-stone-700">
               {forkedFrom.title}
             </a>
           ) : (
