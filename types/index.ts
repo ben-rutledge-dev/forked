@@ -1,3 +1,19 @@
+export type UserProfile = {
+  id: string;
+  name: string | null;
+  email: string | null;
+  image: string | null;
+  isPublic: boolean;
+  username: string | null;
+  bio: string | null;
+  avatarUrl: string | null;
+  coverImageUrl: string | null;
+  websiteUrl: string | null;
+  twitterHandle: string | null;
+  instagramHandle: string | null;
+  youtubeUrl: string | null;
+};
+
 export type RecipeWithRelations = {
   id: string;
   title: string;
@@ -9,11 +25,11 @@ export type RecipeWithRelations = {
   forkCount: number;
   createdAt: Date;
   updatedAt: Date;
-  author?: { id: string; name: string | null; isPublic: boolean } | null;
+  author?: { id: string; name: string | null; username: string | null; isPublic: boolean } | null;
   forkedFrom?: { id: string; title: string; isPublic: boolean } | null;
   ingredients: Ingredient[];
   steps: Step[];
-  forks?: { id: string; title: string; description: string | null; author?: { name: string | null; isPublic: boolean } | null }[];
+  forks?: { id: string; title: string; description: string | null; author?: { name: string | null; username: string | null; isPublic: boolean } | null }[];
 };
 
 export type Ingredient = {

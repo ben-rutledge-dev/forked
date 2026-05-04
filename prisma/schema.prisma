@@ -49,6 +49,15 @@ model User {
   image         String?
   isPublic      Boolean   @default(false)
   createdAt     DateTime  @default(now())
+  // Profile fields
+  username      String?   @unique
+  bio           String?
+  avatarUrl     String?
+  coverImageUrl String?
+  websiteUrl    String?
+  twitterHandle String?
+  instagramHandle String?
+  youtubeUrl    String?
   accounts      Account[]
   sessions      Session[]
   recipes       Recipe[]

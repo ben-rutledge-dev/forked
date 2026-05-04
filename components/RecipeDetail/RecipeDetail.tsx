@@ -41,6 +41,18 @@ export function RecipeDetail({
 
         <div className="mt-4 flex items-center gap-4 text-sm text-stone-400">
           {metaBadge}
+          {recipe.author && (
+            <span>
+              by{" "}
+              {recipe.author.isPublic && recipe.author.username ? (
+                <Link href={`/u/${recipe.author.username}`} className="underline hover:text-stone-600">
+                  {recipe.author.username}
+                </Link>
+              ) : (
+                <span>{recipe.author.username ?? recipe.author.name ?? "unknown"}</span>
+              )}
+            </span>
+          )}
           {recipe.forkedFrom && (
             <span>
               fork of{" "}

@@ -21,7 +21,7 @@ export default async function RecipePage({ params }: Props) {
   const recipe = await prisma.recipe.findUnique({
     where: { id, isPublic: true },
     include: {
-      author: { select: { id: true, name: true, isPublic: true } },
+      author: { select: { id: true, name: true, username: true, isPublic: true } },
       forkedFrom: { select: { id: true, title: true, isPublic: true } },
       ingredients: { orderBy: { orderIndex: "asc" } },
       steps: { orderBy: { orderIndex: "asc" } },
@@ -31,7 +31,7 @@ export default async function RecipePage({ params }: Props) {
           id: true,
           title: true,
           description: true,
-          author: { select: { name: true, isPublic: true } },
+          author: { select: { name: true, username: true, isPublic: true } },
         },
         orderBy: { createdAt: "desc" },
       },
