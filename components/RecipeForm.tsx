@@ -1,5 +1,7 @@
+"use client";
+
 import { useState, useRef, FormEvent } from "react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { RecipeFormData, IngredientFormData, StepFormData } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";

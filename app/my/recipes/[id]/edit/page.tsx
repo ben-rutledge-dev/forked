@@ -1,0 +1,79 @@
+import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
+import RecipeForm from "@/components/RecipeForm";
+import { DeleteButton } from "./DeleteButton";
+import Link from "next/link";
+import type { Metadata } from "next";
+
+type Props = { params: Promise<{ id: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { id } = await params;
+  const recipe = await prisma.recipe.findUnique({ where: { id }, select: { title: true } });
+  return { title: `Edit — ${recipe?.title ?? "Recipe"}` };
+}
+
+export default async function EditRecipePage({ params }: Props) {
+  const { id } = await params;
+  const session = await auth();
+
+  const recipe = await prisma.recipe.findUnique({
+    where: { id, authorId: session!.user.id },
+    include: {
+      forkedFrom: { select: { id: true, title: true, isPublic: true } },
+      ingredients: { orderBy: { orderIndex: "asc" } },
+      steps: { orderBy: { orderIndex: "asc" } },
+    },
+  });
+
+  if (!recipe) notFound();
+
+  return (
+    <div className="mx-auto max-w-2xl px-4 py-10">
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-2xl font-semibold text-stone-900">Edit recipe</h1>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/my/recipes/${id}/cook`}
+            className="text-sm text-stone-500 hover:text-stone-700"
+          >
+            Cook mode
+          </Link>
+          <DeleteButton recipeId={id} />
+        </div>
+      </div>
+
+      <RecipeForm
+        recipeId={id}
+        forkedFrom={
+          recipe.forkedFrom
+            ? {
+                id: recipe.forkedFrom.id,
+                title: recipe.forkedFrom.title,
+                isPublic: recipe.forkedFrom.isPublic,
+              }
+            : null
+        }
+        initialData={{
+          title: recipe.title,
+          description: recipe.description ?? "",
+          isPublic: recipe.isPublic,
+          coverImageUrl: recipe.coverImageUrl ?? "",
+          ingredients: recipe.ingredients.map((i) => ({
+            id: i.id,
+            name: i.name,
+            quantity: i.quantity ?? "",
+            unit: i.unit ?? "",
+          })),
+          steps: recipe.steps.map((s) => ({
+            id: s.id,
+            instruction: s.instruction,
+            timerSeconds: s.timerSeconds ?? "",
+            imageUrl: s.imageUrl ?? "",
+          })),
+        }}
+      />
+    </div>
+  );
+}

@@ -1,7 +1,9 @@
+"use client";
+
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 import { ForkIcon } from "@/components/ForkIcon";
 import { Button } from "@/components/ui/Button";
 
