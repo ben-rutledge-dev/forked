@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { RecipeDetail } from "@/components/RecipeDetail";
 import { ForkButton } from "./components/ForkButton";
+import { AddToBookButton } from "./components/AddToBookButton";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ id: string }> };
@@ -44,7 +45,12 @@ export default async function RecipePage({ params }: Props) {
     <RecipeDetail
       recipe={JSON.parse(JSON.stringify(recipe))}
       cookHref={`/recipes/${id}/cook`}
-      headerAction={<ForkButton recipeId={id} />}
+      headerAction={
+        <div className="flex items-center gap-2">
+          <AddToBookButton recipeId={id} />
+          <ForkButton recipeId={id} />
+        </div>
+      }
       metaBadge={
         <span>
           forked by {recipe.forkCount} {recipe.forkCount === 1 ? "cook" : "cooks"}

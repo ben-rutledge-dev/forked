@@ -48,6 +48,7 @@ model User {
   emailVerified DateTime?
   image         String?
   isPublic      Boolean   @default(false)
+  isPremium     Boolean   @default(false)
   createdAt     DateTime  @default(now())
   // Profile fields
   showName      Boolean   @default(true)
@@ -62,6 +63,9 @@ model User {
   accounts      Account[]
   sessions      Session[]
   recipes       Recipe[]
+  recipeBookMembers RecipeBookMember[] @relation("BookMember")
+  invitedMembers    RecipeBookMember[] @relation("BookInvitedBy")
+  recipeBookEntries RecipeBookEntry[]
 }
 
 model Recipe {
@@ -80,6 +84,53 @@ model Recipe {
   forks        Recipe[]     @relation("RecipeForks")
   ingredients  Ingredient[]
   steps        Step[]
+  recipeBookEntries RecipeBookEntry[]
+}
+
+enum RecipeBookRole {
+  OWNER
+  COLLABORATOR
+}
+
+model RecipeBook {
+  id            String            @id @default(cuid())
+  title         String
+  description   String?
+  coverImageUrl String?
+  isPublic      Boolean           @default(false)
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  members       RecipeBookMember[]
+  entries       RecipeBookEntry[]
+}
+
+model RecipeBookMember {
+  id             String          @id @default(cuid())
+  recipeBookId   String
+  userId         String
+  role           RecipeBookRole
+  acceptedAt     DateTime?
+  invitedByUserId String
+  createdAt      DateTime        @default(now())
+  recipeBook     RecipeBook      @relation(fields: [recipeBookId], references: [id], onDelete: Cascade)
+  user           User            @relation("BookMember", fields: [userId], references: [id], onDelete: Cascade)
+  invitedBy      User            @relation("BookInvitedBy", fields: [invitedByUserId], references: [id])
+
+  @@unique([recipeBookId, userId])
+}
+
+model RecipeBookEntry {
+  id             String     @id @default(cuid())
+  recipeBookId   String
+  recipeId       String
+  addedByUserId  String
+  orderIndex     Int
+  createdAt      DateTime   @default(now())
+  recipeBook     RecipeBook @relation(fields: [recipeBookId], references: [id], onDelete: Cascade)
+  recipe         Recipe     @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  addedBy        User       @relation(fields: [addedByUserId], references: [id])
+
+  @@unique([recipeBookId, recipeId])
 }
 
 model Ingredient {

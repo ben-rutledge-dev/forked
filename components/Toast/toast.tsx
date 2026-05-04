@@ -1,11 +1,20 @@
 "use client";
 
+import { useEffect } from "react";
+
 type Props = {
   message: string;
   type?: "success" | "error";
+  onDismiss?: () => void;
+  duration?: number;
 };
 
-export function Toast({ message, type = "success" }: Props) {
+export function Toast({ message, type = "success", onDismiss, duration = 4000 }: Props) {
+  useEffect(() => {
+    if (!onDismiss) return;
+    const t = setTimeout(onDismiss, duration);
+    return () => clearTimeout(t);
+  }, [onDismiss, duration]);
   const styles =
     type === "error"
       ? "bg-danger-50 border border-danger-100 text-danger-700"
