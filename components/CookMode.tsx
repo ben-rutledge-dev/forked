@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { RecipeWithRelations } from "@/types";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   recipe: RecipeWithRelations;
@@ -125,12 +126,13 @@ export default function CookMode({ recipe, backHref }: Props) {
         <span className="text-sm text-stone-400">
           {stepIndex + 1} / {steps.length}
         </span>
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           onClick={() => setShowIngredients((v) => !v)}
-          className="text-sm text-stone-600 hover:text-stone-900 transition-colors"
         >
           Ingredients
-        </button>
+        </Button>
       </div>
 
       {showIngredients && (
@@ -168,25 +170,31 @@ export default function CookMode({ recipe, backHref }: Props) {
         {speechSupported && (
           <div className="mt-4 flex items-center gap-3">
             {!isSpeaking ? (
-              <button
+              <Button
+                variant="secondary"
+                size="md"
+                shape="pill"
                 onClick={speakInstruction}
-                className="flex items-center gap-2 rounded-full border border-stone-300 px-4 py-2 text-sm text-stone-600 hover:bg-stone-100 transition-colors"
+                className="flex items-center gap-2"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                   <path d="M10.5 3.75a.75.75 0 0 0-1.264-.546L5.203 7H2.667a.75.75 0 0 0-.75.75v4.5c0 .414.336.75.75.75h2.536l4.033 3.796a.75.75 0 0 0 1.264-.546V3.75ZM13.463 4.6a.75.75 0 0 1 1.06.038 9 9 0 0 1 0 12.723.75.75 0 0 1-1.098-1.022 7.5 7.5 0 0 0 0-10.678.75.75 0 0 1 .038-1.061Zm-1.92 2.31a.75.75 0 0 1 1.06.04 6 6 0 0 1 0 8.497.75.75 0 1 1-1.1-1.02 4.5 4.5 0 0 0 0-6.456.75.75 0 0 1 .04-1.06Z" />
                 </svg>
                 Read aloud
-              </button>
+              </Button>
             ) : (
-              <button
+              <Button
+                variant="secondary"
+                size="md"
+                shape="pill"
                 onClick={stopSpeaking}
-                className="flex items-center gap-2 rounded-full bg-stone-100 border border-stone-300 px-4 py-2 text-sm text-stone-700 hover:bg-stone-200 transition-colors"
+                className="flex items-center gap-2 bg-stone-100 text-stone-700 hover:bg-stone-200"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                   <path d="M5.25 3A2.25 2.25 0 0 0 3 5.25v9.5A2.25 2.25 0 0 0 5.25 17h9.5A2.25 2.25 0 0 0 17 14.75v-9.5A2.25 2.25 0 0 0 14.75 3h-9.5Z" />
                 </svg>
                 Stop
-              </button>
+              </Button>
             )}
           </div>
         )}
@@ -198,28 +206,34 @@ export default function CookMode({ recipe, backHref }: Props) {
             </span>
             <div className="flex gap-2">
               {!timerRunning ? (
-                <button
+                <Button
+                  variant="primary"
+                  size="md"
+                  shape="pill"
                   onClick={startTimer}
                   disabled={timerRemaining === 0}
-                  className="rounded-full bg-primary-500 px-4 py-2 text-sm text-white hover:bg-primary-600 disabled:opacity-40 transition-colors"
                 >
                   {timerRemaining === 0 ? "Done" : "Start timer"}
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="secondary"
+                  size="md"
+                  shape="pill"
                   onClick={stopTimer}
-                  className="rounded-full border border-stone-300 px-4 py-2 text-sm text-stone-700 hover:bg-stone-100 transition-colors"
                 >
                   Pause
-                </button>
+                </Button>
               )}
               {(timerRemaining !== currentStep.timerSeconds || timerRunning) && (
-                <button
+                <Button
+                  variant="secondary"
+                  size="md"
+                  shape="pill"
                   onClick={resetTimer}
-                  className="rounded-full border border-stone-300 px-4 py-2 text-sm text-stone-700 hover:bg-stone-100 transition-colors"
                 >
                   Reset
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -227,13 +241,16 @@ export default function CookMode({ recipe, backHref }: Props) {
       </div>
 
       <div className="flex items-center justify-between gap-4 px-4 pb-8 pt-4">
-        <button
+        <Button
+          variant="secondary"
+          size="xl"
+          shape="square"
           onClick={() => goTo(stepIndex - 1)}
           disabled={stepIndex === 0}
-          className="flex-1 rounded-xl border border-stone-300 py-4 text-stone-600 hover:bg-stone-100 disabled:opacity-30 transition-colors text-lg"
+          className="flex-1"
         >
           ← Back
-        </button>
+        </Button>
         <div className="flex gap-1">
           {steps.map((_, i) => (
             <button
@@ -245,13 +262,16 @@ export default function CookMode({ recipe, backHref }: Props) {
             />
           ))}
         </div>
-        <button
+        <Button
+          variant="secondary"
+          size="xl"
+          shape="square"
           onClick={() => goTo(stepIndex + 1)}
           disabled={stepIndex === steps.length - 1}
-          className="flex-1 rounded-xl border border-stone-300 py-4 text-stone-600 hover:bg-stone-100 disabled:opacity-30 transition-colors text-lg"
+          className="flex-1"
         >
           Next →
-        </button>
+        </Button>
       </div>
     </div>
   );

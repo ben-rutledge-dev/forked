@@ -4,6 +4,7 @@ import { getProviders, signIn } from "next-auth/react";
 import { authOptions } from "@/lib/auth";
 import Head from "next/head";
 import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 
 type Provider = { id: string; name: string };
 
@@ -26,13 +27,16 @@ export default function SignIn({ providers }: Props) {
 
           <div className="bg-white rounded-xl border border-stone-200 p-6 space-y-3">
             {Object.values(providers).map((provider) => (
-              <button
+              <Button
                 key={provider.id}
+                variant="secondary"
+                size="lg"
+                shape="rounded"
                 onClick={() => signIn(provider.id, { callbackUrl: "/my/recipes" })}
-                className="w-full rounded-lg border border-stone-300 px-4 py-3 text-sm font-medium text-stone-700 hover:bg-stone-50 transition-colors"
+                className="w-full"
               >
                 Continue with {provider.name}
-              </button>
+              </Button>
             ))}
           </div>
 

@@ -1,0 +1,32 @@
+@keyframes fork-rotate {
+  0%   { transform: rotate(0deg); }
+  40%  { transform: rotate(240deg); }
+  100% { transform: rotate(240deg); }
+}
+
+@keyframes fork-stab {
+  0%   { transform: translateY(0); }
+  40%  { transform: translateY(0); }
+  55%  { transform: translateY(-8px); }
+  75%  { transform: translateY(10px); animation-timing-function: ease-in; }
+  88%  { transform: translateY(10px); }
+  100% { transform: translateY(0px); }
+}
+
+.outer {
+  display: inline-block;
+  transform-origin: center;
+}
+
+.inner {
+  display: inline-block;
+  transform-origin: center;
+}
+
+.outer.animating {
+  animation: fork-rotate 0.9s ease-in-out forwards;
+}
+
+.outer.animating .inner {
+  animation: fork-stab 0.9s ease-in-out forwards;
+}

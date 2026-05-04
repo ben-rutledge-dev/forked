@@ -1,6 +1,7 @@
 import Layout from "@/components/Layout";
 import Link from "next/link";
 import { useSession, signIn } from "next-auth/react";
+import { Button } from "@/components/ui/Button";
 
 export default function Home() {
   const { data: session } = useSession();
@@ -23,12 +24,15 @@ export default function Home() {
             Browse the pool
           </Link>
           {!session && (
-            <button
+            <Button
+              variant="secondary"
+              size="lg"
+              shape="pill"
               onClick={() => signIn()}
-              className="w-full rounded-full border border-stone-300 px-8 py-3 text-sm font-medium text-stone-700 hover:bg-stone-100 transition-colors sm:w-auto"
+              className="w-full sm:w-auto"
             >
               Sign in to start collecting
-            </button>
+            </Button>
           )}
           {session && (
             <Link

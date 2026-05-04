@@ -1,4 +1,5 @@
 import React from "react";
+import styles from "./ForkIcon.module.css";
 
 type ForkIconProps = {
   animating: boolean;
@@ -8,8 +9,8 @@ type ForkIconProps = {
 
 export const ForkIcon: React.FC<ForkIconProps> = ({ animating, onDone, size = 24 }) => {
   return (
-    <span className={`fork-icon-outer${animating ? " animating" : ""}`}>
-      <span className="fork-icon-inner" onAnimationEnd={onDone}>
+    <span className={`${styles.outer}${animating ? ` ${styles.animating}` : ""}`}>
+      <span className={styles.inner} onAnimationEnd={onDone}>
         <svg
           width={size}
           height={size}

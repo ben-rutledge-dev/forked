@@ -1,6 +1,8 @@
 import { useState, useRef, FormEvent } from "react";
 import { useRouter } from "next/router";
 import { RecipeFormData, IngredientFormData, StepFormData } from "@/types";
+import { Button } from "@/components/ui/Button";
+import { IconButton } from "@/components/ui/IconButton";
 
 type Props = {
   initialData?: Partial<RecipeFormData>;
@@ -199,13 +201,14 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                 alt="Cover"
                 className="w-24 h-16 rounded-lg object-cover border border-stone-200"
               />
-              <button
+              <Button
                 type="button"
+                variant="danger"
+                size="sm"
                 onClick={() => { setCoverImageUrl(""); if (coverInputRef.current) coverInputRef.current.value = ""; }}
-                className="text-sm text-stone-400 hover:text-red-500 transition-colors"
               >
                 Remove
-              </button>
+              </Button>
             </div>
           ) : (
             <label className={`inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-stone-300 px-4 py-2 text-sm text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-colors ${coverUploading ? "opacity-50 pointer-events-none" : ""}`}>
@@ -238,34 +241,33 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-medium text-stone-900">Ingredients</h2>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
-            className="text-sm text-stone-500 hover:text-stone-700"
           >
             + Add
-          </button>
+          </Button>
         </div>
         <div className="space-y-2">
           {ingredients.map((ing, i) => (
             <div key={i} className="flex gap-2 items-center">
               <div className="flex flex-col gap-1 mr-1">
-                <button
+                <IconButton
                   type="button"
                   onClick={() => moveIngredient(i, -1)}
                   disabled={i === 0}
-                  className="text-stone-300 hover:text-stone-500 disabled:opacity-20 leading-none"
                 >
                   ▲
-                </button>
-                <button
+                </IconButton>
+                <IconButton
                   type="button"
                   onClick={() => moveIngredient(i, 1)}
                   disabled={i === ingredients.length - 1}
-                  className="text-stone-300 hover:text-stone-500 disabled:opacity-20 leading-none"
                 >
                   ▼
-                </button>
+                </IconButton>
               </div>
               <input
                 type="text"
@@ -288,13 +290,14 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                 placeholder="Ingredient name"
                 className="flex-1 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
               />
-              <button
+              <IconButton
                 type="button"
+                variant="danger"
                 onClick={() => removeIngredient(i)}
-                className="text-stone-300 hover:text-red-400 transition-colors text-lg leading-none"
+                className="text-lg"
               >
                 ×
-              </button>
+              </IconButton>
             </div>
           ))}
         </div>
@@ -303,35 +306,34 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
       <div>
         <div className="flex items-center justify-between mb-3">
           <h2 className="font-medium text-stone-900">Steps</h2>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setSteps((prev) => [...prev, emptyStep()])}
-            className="text-sm text-stone-500 hover:text-stone-700"
           >
             + Add
-          </button>
+          </Button>
         </div>
         <div className="space-y-3">
           {steps.map((step, i) => (
             <div key={i} className="flex gap-2">
               <div className="flex flex-col items-center gap-1 pt-1 mr-1">
                 <span className="text-xs text-stone-400 font-medium">{i + 1}</span>
-                <button
+                <IconButton
                   type="button"
                   onClick={() => moveStep(i, -1)}
                   disabled={i === 0}
-                  className="text-stone-300 hover:text-stone-500 disabled:opacity-20 leading-none"
                 >
                   ▲
-                </button>
-                <button
+                </IconButton>
+                <IconButton
                   type="button"
                   onClick={() => moveStep(i, 1)}
                   disabled={i === steps.length - 1}
-                  className="text-stone-300 hover:text-stone-500 disabled:opacity-20 leading-none"
                 >
                   ▼
-                </button>
+                </IconButton>
               </div>
               <div className="flex-1 space-y-2">
                 <textarea
@@ -360,13 +362,14 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                         alt={`Step ${i + 1}`}
                         className="w-12 h-8 rounded object-cover border border-stone-200"
                       />
-                      <button
+                      <Button
                         type="button"
+                        variant="danger"
+                        size="sm"
                         onClick={() => setSteps((prev) => prev.map((s, idx) => idx === i ? { ...s, imageUrl: "" } : s))}
-                        className="text-xs text-stone-400 hover:text-red-500 transition-colors"
                       >
                         Remove photo
-                      </button>
+                      </Button>
                     </div>
                   ) : (
                     <label className={`inline-flex items-center gap-1.5 cursor-pointer text-xs text-stone-400 hover:text-stone-600 transition-colors ${stepUploading[i] ? "opacity-50 pointer-events-none" : ""}`}>
@@ -384,33 +387,38 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                   )}
                 </div>
               </div>
-              <button
+              <IconButton
                 type="button"
+                variant="danger"
                 onClick={() => removeStep(i)}
-                className="text-stone-300 hover:text-red-400 transition-colors text-lg leading-none mt-1"
+                className="text-lg mt-1"
               >
                 ×
-              </button>
+              </IconButton>
             </div>
           ))}
         </div>
       </div>
 
       <div className="flex gap-3 pt-2">
-        <button
+        <Button
           type="submit"
+          variant="neutral"
+          size="lg"
+          shape="pill"
           disabled={saving}
-          className="rounded-full bg-stone-900 px-6 py-2.5 text-sm font-medium text-white hover:bg-stone-700 transition-colors disabled:opacity-50"
         >
           {saving ? "Saving…" : recipeId ? "Save changes" : "Create recipe"}
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="secondary"
+          size="lg"
+          shape="pill"
           onClick={() => router.back()}
-          className="rounded-full border border-stone-300 px-6 py-2.5 text-sm text-stone-600 hover:bg-stone-100 transition-colors"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </form>
   );

@@ -3,6 +3,7 @@ import RecipeCard from "@/components/RecipeCard";
 import { GetServerSideProps } from "next";
 import { prisma } from "@/lib/prisma";
 import { useState } from "react";
+import { Button } from "@/components/ui/Button";
 
 type Recipe = {
   id: string;
@@ -62,23 +63,27 @@ export default function Pool({ recipes: initial, total, page: initialPage, query
               placeholder="Search by title or ingredient…"
               className="flex-1 rounded-lg border border-stone-300 px-4 py-2 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
             />
-            <button
+            <Button
               type="submit"
-              className="rounded-lg bg-primary-500 px-5 py-2 text-sm text-white hover:bg-primary-600 transition-colors"
+              variant="primary"
+              size="md"
+              shape="rounded"
             >
               Search
-            </button>
+            </Button>
             {query && (
-              <button
+              <Button
                 type="button"
+                variant="secondary"
+                size="md"
+                shape="rounded"
                 onClick={() => {
                   setQuery("");
                   search("", 1);
                 }}
-                className="rounded-lg border border-stone-300 px-4 py-2 text-sm text-stone-600 hover:bg-stone-100 transition-colors"
               >
                 Clear
-              </button>
+              </Button>
             )}
           </form>
         </div>
@@ -106,23 +111,27 @@ export default function Pool({ recipes: initial, total, page: initialPage, query
 
             {totalPages > 1 && (
               <div className="mt-10 flex items-center justify-center gap-2">
-                <button
+                <Button
+                  variant="secondary"
+                  size="md"
+                  shape="rounded"
                   onClick={() => search(query, page - 1)}
                   disabled={page <= 1}
-                  className="rounded-lg border border-stone-300 px-4 py-2 text-sm text-stone-600 hover:bg-stone-100 disabled:opacity-40 transition-colors"
                 >
                   Previous
-                </button>
+                </Button>
                 <span className="text-sm text-stone-500">
                   Page {page} of {totalPages}
                 </span>
-                <button
+                <Button
+                  variant="secondary"
+                  size="md"
+                  shape="rounded"
                   onClick={() => search(query, page + 1)}
                   disabled={page >= totalPages}
-                  className="rounded-lg border border-stone-300 px-4 py-2 text-sm text-stone-600 hover:bg-stone-100 disabled:opacity-40 transition-colors"
                 >
                   Next
-                </button>
+                </Button>
               </div>
             )}
           </>

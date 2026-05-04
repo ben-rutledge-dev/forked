@@ -8,6 +8,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import Link from "next/link";
 import { RecipeWithRelations } from "@/types";
+import { Button } from "@/components/ui/Button";
 
 type Props = { recipe: RecipeWithRelations };
 
@@ -38,13 +39,14 @@ export default function EditRecipe({ recipe }: Props) {
             >
               Cook mode
             </Link>
-            <button
+            <Button
+              variant="danger"
+              size="sm"
               onClick={handleDelete}
               disabled={deleting}
-              className="text-sm text-red-400 hover:text-red-600 transition-colors disabled:opacity-50"
             >
               {deleting ? "Deleting…" : "Delete"}
-            </button>
+            </Button>
           </div>
         </div>
 

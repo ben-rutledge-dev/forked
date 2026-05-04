@@ -3,10 +3,11 @@ import { GetServerSideProps } from "next";
 import { prisma } from "@/lib/prisma";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import { RecipeWithRelations } from "@/types";
 import { ForkIcon } from "@/components/ForkIcon";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   recipe: RecipeWithRelations;
@@ -17,22 +18,31 @@ export default function RecipePage({ recipe }: Props) {
   const router = useRouter();
   const [forking, setForking] = useState(false);
   const [iconAnimating, setIconAnimating] = useState(false);
+  const pendingForkId = useRef<string | null>(null);
 
   async function handleFork() {
-    setIconAnimating(true);
     if (!session) {
       signIn();
       return;
     }
     setForking(true);
+    setIconAnimating(true);
     try {
       const res = await fetch(`/api/recipes/${recipe.id}/fork`, { method: "POST" });
       if (res.ok) {
         const fork = await res.json();
-        router.push(`/my/recipes/${fork.id}/edit`);
+        pendingForkId.current = fork.id;
       }
     } finally {
       setForking(false);
+    }
+  }
+
+  function handleAnimationDone() {
+    setIconAnimating(false);
+    if (pendingForkId.current) {
+      router.push(`/my/recipes/${pendingForkId.current}/edit`);
+      pendingForkId.current = null;
     }
   }
 
@@ -51,14 +61,17 @@ export default function RecipePage({ recipe }: Props) {
         <div className="mb-8">
           <div className="flex items-start justify-between gap-4">
             <h1 className="text-3xl font-semibold text-stone-900">{recipe.title}</h1>
-            <button
+            <Button
+              variant="primary"
+              size="lg"
+              shape="pill"
               onClick={handleFork}
               disabled={forking}
-              className="shrink-0 flex items-center gap-2 rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors disabled:opacity-50"
+              className="shrink-0 flex items-center gap-2"
             >
               {forking ? "Forking…" : "Fork"}
-              <ForkIcon animating={iconAnimating} onDone={() => setIconAnimating(false)} />
-            </button>
+              <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} />
+            </Button>
           </div>
 
           {recipe.description && (

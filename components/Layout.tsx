@@ -2,6 +2,7 @@ import Head from "next/head";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { ReactNode } from "react";
+import { Button } from "./ui/Button";
 
 type Props = {
   children: ReactNode;
@@ -41,21 +42,20 @@ export default function Layout({ children, title = "Forked" }: Props) {
                   >
                     My Recipes
                   </Link>
-                  <button
-                    onClick={() => signOut()}
-                    className="text-orange-200 hover:text-white transition-colors"
-                  >
+                  <Button variant="nav-link" onClick={() => signOut()}>
                     Sign out
-                  </button>
+                  </Button>
                 </>
               ) : (
-                <button
-                  onClick={() => signIn()}
+                <Button
+                  variant="nav-pill"
+                  size="md"
+                  shape="pill"
                   disabled={status === "loading"}
-                  className="rounded-full bg-black/20 px-4 py-1.5 text-white hover:bg-black/30 transition-colors disabled:opacity-50"
+                  onClick={() => signIn()}
                 >
                   Sign in
-                </button>
+                </Button>
               )}
             </div>
           </nav>

@@ -3,6 +3,7 @@ import { useRef, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { ForkIcon } from "@/components/ForkIcon";
+import { Button } from "@/components/ui/Button";
 
 type Props = {
   id: string;
@@ -126,14 +127,17 @@ export default function RecipeCard({
               </>
             )}
             {!isOwned && (
-              <button
-                onClick={handleFork}
+              <Button
+                variant="primary"
+                size="sm"
+                shape="pill"
                 disabled={forking}
-                className="flex items-center gap-1.5 rounded-full bg-primary-500 px-3 py-1 text-white hover:bg-primary-600 transition-colors disabled:opacity-50"
+                onClick={handleFork}
+                className="flex items-center gap-1.5"
               >
                 {forking ? "Forking…" : "Fork"}
                 <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} size={12} />
-              </button>
+              </Button>
             )}
           </div>
         </div>
