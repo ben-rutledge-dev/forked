@@ -5,7 +5,7 @@ import { useRef, useState } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { ForkIcon } from "@/components/ForkIcon";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/Button";
 
 type Props = {
   id: string;
@@ -19,7 +19,7 @@ type Props = {
   onVisibilityToggle?: (id: string, isPublic: boolean) => void;
 };
 
-export default function RecipeCard({
+export function RecipeCard({
   id,
   title,
   description,

@@ -1,11 +1,13 @@
 "use client";
 
-type Props = {
+type FormBannerProps = {
   type: "error" | "success";
   message: string;
 };
 
-export function FormBanner({ type, message }: Props) {
+export const FormBanner: React.FC<FormBannerProps> = (props) => {
+  const { type, message } = props;
+
   const classes =
     type === "success"
       ? "rounded-lg bg-success-50 px-4 py-3 text-sm text-success-700"

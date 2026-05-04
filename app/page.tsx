@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { auth } from "@/lib/auth";
-import { SignInButton } from "./SignInButton";
+import { SignInButton } from "./components/SignInButton";
 
 export default async function Home() {
   const session = await auth();

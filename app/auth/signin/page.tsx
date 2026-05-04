@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { signIn } from "next-auth/react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/Button";
 
 const PROVIDERS = [{ id: "github", name: "GitHub" }];
 

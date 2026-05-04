@@ -3,14 +3,14 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { RecipeWithRelations } from "@/types";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/Button";
 
 type Props = {
   recipe: RecipeWithRelations;
   backHref: string;
 };
 
-export default function CookMode({ recipe, backHref }: Props) {
+export function CookMode({ recipe, backHref }: Props) {
   const steps = recipe.steps;
   const [stepIndex, setStepIndex] = useState(0);
   const [showIngredients, setShowIngredients] = useState(false);

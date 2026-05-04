@@ -2,9 +2,9 @@
 
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/Button";
 
-export default function Nav() {
+export function Nav() {
   const { data: session, status } = useSession();
 
   return (

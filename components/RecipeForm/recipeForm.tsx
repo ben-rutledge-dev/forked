@@ -3,11 +3,11 @@
 import { useState, useRef, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { RecipeFormData, IngredientFormData, StepFormData } from "@/types";
-import { Button } from "@/components/ui/Button";
-import { IconButton } from "@/components/ui/IconButton";
-import { CornerDeleteButton } from "@/components/ui/CornerDeleteButton";
-import { FormBanner } from "@/components/ui/FormBanner";
-import { Toast } from "@/components/ui/Toast";
+import { Button } from "@/components/Button";
+import { IconButton } from "@/components/IconButton";
+import { CornerDeleteButton } from "@/components/CornerDeleteButton";
+import { FormBanner } from "@/components/FormBanner";
+import { Toast } from "@/components/Toast";
 
 type Props = {
   initialData?: Partial<RecipeFormData>;
@@ -39,7 +39,7 @@ async function uploadImage(file: File): Promise<string> {
   });
 }
 
-export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
+export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
   const router = useRouter();
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");

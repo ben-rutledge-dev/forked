@@ -1,9 +1,9 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import RecipeForm from "@/components/RecipeForm";
-import { DeleteButton } from "./DeleteButton";
-import { Button } from "@/components/ui/Button";
+import { RecipeForm } from "@/components/RecipeForm";
+import { DeleteButton } from "./components/DeleteButton";
+import { Button } from "@/components/Button";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ id: string }> };

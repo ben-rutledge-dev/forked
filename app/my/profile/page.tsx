@@ -1,8 +1,8 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import type { Metadata } from "next";
-import { ProfileForm } from "./ProfileForm";
-import { Button } from "@/components/ui/Button";
+import { ProfileForm } from "./components/ProfileForm";
+import { Button } from "@/components/Button";
 
 export const metadata: Metadata = { title: "Edit Profile" };
 

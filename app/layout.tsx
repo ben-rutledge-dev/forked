@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { auth } from "@/lib/auth";
-import { Providers } from "./providers";
-import Nav from "@/components/Nav";
+import { Providers } from "./components/Providers";
+import { Nav } from "@/components/Nav";
 import "@/styles/globals.css";
 
 export const metadata: Metadata = {

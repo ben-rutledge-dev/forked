@@ -1,1 +1,1 @@
-export { RecipeDetail } from "./RecipeDetail";
+export * from "./recipeDetail";

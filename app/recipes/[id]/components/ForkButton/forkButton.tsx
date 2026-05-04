@@ -3,7 +3,7 @@
 import { useState, useRef } from "react";
 import { useSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button";
+import { Button } from "@/components/Button";
 import { ForkIcon } from "@/components/ForkIcon";
 
 export function ForkButton({ recipeId }: { recipeId: string }) {

@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { PoolClient } from "./PoolClient";
+import { PoolClient } from "./components/PoolClient";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "Recipe Pool" };

@@ -1,8 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import RecipeCard from "@/components/RecipeCard";
-import { Button } from "@/components/ui/Button";
+import { RecipeCard } from "@/components/RecipeCard";
+import { Button } from "@/components/Button";
+import { Pagination } from "@/components/Pagination";
 
 type Recipe = {
   id: string;
@@ -107,31 +108,7 @@ export function PoolClient({
             ))}
           </div>
 
-          {totalPages > 1 && (
-            <div className="mt-10 flex items-center justify-center gap-2">
-              <Button
-                variant="secondary"
-                size="md"
-                shape="rounded"
-                onClick={() => search(query, page - 1)}
-                disabled={page <= 1}
-              >
-                Previous
-              </Button>
-              <span className="text-sm text-stone-500">
-                Page {page} of {totalPages}
-              </span>
-              <Button
-                variant="secondary"
-                size="md"
-                shape="rounded"
-                onClick={() => search(query, page + 1)}
-                disabled={page >= totalPages}
-              >
-                Next
-              </Button>
-            </div>
-          )}
+          <Pagination page={page} totalPages={totalPages} onPageChange={(p) => search(query, p)} />
         </>
       )}
     </div>

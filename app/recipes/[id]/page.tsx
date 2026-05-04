@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { RecipeDetail } from "@/components/RecipeDetail";
-import { ForkButton } from "./ForkButton";
+import { ForkButton } from "./components/ForkButton";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ id: string }> };

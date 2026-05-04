@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
-import RecipeCard from "@/components/RecipeCard";
+import { ProfileRecipesGrid } from "./components/ProfileRecipesGrid";
 
 type Props = { params: Promise<{ username: string }> };
 
@@ -143,20 +143,12 @@ export default async function PublicProfilePage({ params }: Props) {
       {user.recipes.length === 0 ? (
         <p className="text-stone-400 text-sm">No public recipes yet.</p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {user.recipes.map((recipe) => (
-            <RecipeCard
-              key={recipe.id}
-              id={recipe.id}
-              title={recipe.title}
-              description={recipe.description ?? null}
-              coverImageUrl={recipe.coverImageUrl}
-              isPublic={recipe.isPublic}
-              forkCount={0}
-              forkedFromId={recipe.forkedFromId ?? null}
-            />
-          ))}
-        </div>
+        <ProfileRecipesGrid recipes={user.recipes.map((r) => ({
+          ...r,
+          description: r.description ?? null,
+          coverImageUrl: r.coverImageUrl ?? null,
+          forkedFromId: r.forkedFromId ?? null,
+        }))} />
       )}
       </div>
     </div>

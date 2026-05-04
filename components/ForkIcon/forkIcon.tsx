@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./ForkIcon.module.css";
+import styles from "./forkIcon.module.css";
 
 type ForkIconProps = {
   animating: boolean;

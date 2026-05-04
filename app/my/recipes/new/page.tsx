@@ -1,4 +1,4 @@
-import RecipeForm from "@/components/RecipeForm";
+import { RecipeForm } from "@/components/RecipeForm";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = { title: "New Recipe" };

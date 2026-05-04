@@ -3,10 +3,10 @@
 import { useState, useRef, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { UserProfile } from "@/types";
-import { Button } from "@/components/ui/Button";
-import { CornerDeleteButton } from "@/components/ui/CornerDeleteButton";
-import { FormBanner } from "@/components/ui/FormBanner";
-import { Toast } from "@/components/ui/Toast";
+import { Button } from "@/components/Button";
+import { CornerDeleteButton } from "@/components/CornerDeleteButton";
+import { FormBanner } from "@/components/FormBanner";
+import { Toast } from "@/components/Toast";
 
 async function uploadImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {

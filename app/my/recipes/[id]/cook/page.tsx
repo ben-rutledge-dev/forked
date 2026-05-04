@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import CookMode from "@/components/CookMode";
+import { CookMode } from "@/components/CookMode";
 
 type Props = { params: Promise<{ id: string }> };
 

@@ -2,14 +2,14 @@ import Head from "next/head";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "next-auth/react";
 import { ReactNode } from "react";
-import { Button } from "./ui/Button";
+import { Button } from "@/components/Button";
 
 type Props = {
   children: ReactNode;
   title?: string;
 };
 
-export default function Layout({ children, title = "Forked" }: Props) {
+export function Layout({ children, title = "Forked" }: Props) {
   const { data: session, status } = useSession();
 
   return (
