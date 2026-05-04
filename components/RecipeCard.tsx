@@ -114,7 +114,7 @@ export default function RecipeCard({
                   disabled={toggling}
                   className={`rounded px-1.5 py-0.5 transition-colors ${
                     isPublic
-                      ? "bg-green-50 text-green-700 hover:bg-green-100"
+                      ? "bg-success-50 text-success-700 hover:bg-success-100"
                       : "bg-stone-100 text-stone-500 hover:bg-stone-200"
                   }`}
                 >

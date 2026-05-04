@@ -3,7 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import RecipeForm from "@/components/RecipeForm";
 import { DeleteButton } from "./DeleteButton";
-import Link from "next/link";
+import { Button } from "@/components/ui/Button";
 import type { Metadata } from "next";
 
 type Props = { params: Promise<{ id: string }> };
@@ -34,12 +34,7 @@ export default async function EditRecipePage({ params }: Props) {
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-2xl font-semibold text-stone-900">Edit recipe</h1>
         <div className="flex items-center gap-3">
-          <Link
-            href={`/my/recipes/${id}/cook`}
-            className="text-sm text-stone-500 hover:text-stone-700"
-          >
-            Cook mode
-          </Link>
+          <Button href={`/my/recipes/${id}/cook`} variant="primary" size="md" shape="pill">Cook mode</Button>
           <DeleteButton recipeId={id} />
         </div>
       </div>

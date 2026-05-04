@@ -19,6 +19,7 @@ type ButtonProps = {
   disabled?: boolean;
   type?: "button" | "submit" | "reset";
   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+  href?: string;
   className?: string;
   children: React.ReactNode;
 };
@@ -28,9 +29,9 @@ const variantClasses: Record<ButtonVariant, string> = {
   neutral: "bg-stone-900 text-white hover:bg-stone-700 disabled:opacity-50",
   secondary: "border border-stone-300 text-stone-600 hover:bg-stone-100 disabled:opacity-40",
   ghost: "text-stone-500 hover:text-stone-700",
-  danger: "text-red-400 hover:text-red-600 disabled:opacity-50",
+  danger: "text-danger-400 hover:text-danger-600 disabled:opacity-50",
   "nav-pill": "bg-black/20 text-white hover:bg-black/30 disabled:opacity-50",
-  "nav-link": "text-orange-200 hover:text-white",
+  "nav-link": "text-primary-200 hover:text-white",
 };
 
 const sizeClasses: Record<ButtonSize, string> = {
@@ -53,6 +54,7 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   type = "button",
   onClick,
+  href,
   className,
   children,
 }) => {
@@ -65,6 +67,14 @@ export const Button: React.FC<ButtonProps> = ({
   ]
     .filter(Boolean)
     .join(" ");
+
+  if (href) {
+    return (
+      <a href={href} className={classes}>
+        {children}
+      </a>
+    );
+  }
 
   return (
     <button type={type} disabled={disabled} onClick={onClick} className={classes}>

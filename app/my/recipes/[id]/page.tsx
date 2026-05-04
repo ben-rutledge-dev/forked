@@ -44,7 +44,7 @@ export default async function MyRecipePage({ params }: Props) {
       metaBadge={
         <span
           className={`rounded px-2 py-0.5 text-xs ${
-            recipe.isPublic ? "bg-green-50 text-green-700" : "bg-stone-100 text-stone-500"
+            recipe.isPublic ? "bg-success-50 text-success-700" : "bg-stone-100 text-stone-500"
           }`}
         >
           {recipe.isPublic ? "public" : "private"}

@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { RecipeFormData, IngredientFormData, StepFormData } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
+import { CornerDeleteButton } from "@/components/ui/CornerDeleteButton";
 
 type Props = {
   initialData?: Partial<RecipeFormData>;
@@ -151,6 +152,14 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
     });
   }
 
+  function insertStep(afterIndex: number) {
+    setSteps((prev) => {
+      const next = [...prev];
+      next.splice(afterIndex + 1, 0, emptyStep());
+      return next;
+    });
+  }
+
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {forkedFrom && (
@@ -167,7 +176,7 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
       )}
 
       {error && (
-        <p className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>
+        <p className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">{error}</p>
       )}
 
       <div className="space-y-4">
@@ -197,20 +206,16 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
         <div>
           <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
           {coverImageUrl ? (
-            <div className="flex items-start gap-3">
+            <div className="relative inline-block">
               <img
                 src={coverImageUrl}
                 alt="Cover"
                 className="w-24 h-16 rounded-lg object-cover border border-stone-200"
               />
-              <Button
-                type="button"
-                variant="danger"
-                size="sm"
+              <CornerDeleteButton
                 onClick={() => { setCoverImageUrl(""); if (coverInputRef.current) coverInputRef.current.value = ""; }}
-              >
-                Remove
-              </Button>
+                label="Remove cover photo"
+              />
             </div>
           ) : (
             <label className={`inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-stone-300 px-4 py-2 text-sm text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-colors ${coverUploading ? "opacity-50 pointer-events-none" : ""}`}>
@@ -241,20 +246,18 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3">
           <h2 className="font-medium text-stone-900">Ingredients</h2>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
-          >
-            + Add
-          </Button>
+        </div>
+        {/* Column headers */}
+        <div className="flex items-center gap-2 mb-1 pl-15 pr-9">
+          <span className="w-16 text-xs text-stone-400 font-medium">Qty</span>
+          <span className="w-28 text-xs text-stone-400 font-medium">Unit</span>
+          <span className="flex-1 text-xs text-stone-400 font-medium">Ingredient</span>
         </div>
         <div className="space-y-2">
           {ingredients.map((ing, i) => (
-            <div key={i} className="flex gap-2 items-center">
+            <div key={i} className="flex items-center gap-2">
               <div className="flex flex-col gap-1 mr-1">
                 <IconButton
                   type="button"
@@ -275,52 +278,58 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                 type="text"
                 value={ing.quantity}
                 onChange={(e) => updateIngredient(i, "quantity", e.target.value)}
-                placeholder="Qty"
+                placeholder="e.g. 2"
                 className="w-16 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
               />
               <input
                 type="text"
                 value={ing.unit}
                 onChange={(e) => updateIngredient(i, "unit", e.target.value)}
-                placeholder="Unit"
-                className="w-20 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
+                placeholder="e.g. cups"
+                className="w-28 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
               />
               <input
                 type="text"
                 value={ing.name}
                 onChange={(e) => updateIngredient(i, "name", e.target.value)}
-                placeholder="Ingredient name"
+                placeholder="e.g. flour"
                 className="flex-1 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
               />
-              <IconButton
+              {/* Inline delete */}
+              <button
                 type="button"
-                variant="danger"
                 onClick={() => removeIngredient(i)}
-                className="text-lg"
+                aria-label="Remove ingredient"
+                className="flex-none flex items-center justify-center w-7 h-7 rounded-full border border-transparent text-stone-400 hover:bg-danger-50 hover:border-danger-300 hover:text-danger-500 transition-colors"
               >
-                ×
-              </IconButton>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+                  <line x1="2" y1="2" x2="8" y2="8" />
+                  <line x1="8" y1="2" x2="2" y2="8" />
+                </svg>
+              </button>
             </div>
           ))}
         </div>
+        <button
+          type="button"
+          onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
+          className="mt-2 w-full flex items-center gap-2 py-1 text-xs text-stone-400 hover:text-stone-600 transition-colors group"
+        >
+          <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+          <span>+ add ingredient</span>
+          <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+        </button>
       </div>
 
       <div>
-        <div className="flex items-center justify-between mb-3">
+        <div className="mb-3">
           <h2 className="font-medium text-stone-900">Steps</h2>
-          <Button
-            type="button"
-            variant="ghost"
-            size="sm"
-            onClick={() => setSteps((prev) => [...prev, emptyStep()])}
-          >
-            + Add
-          </Button>
         </div>
-        <div className="space-y-3">
+        <div className="space-y-0">
           {steps.map((step, i) => (
-            <div key={i} className="flex gap-2">
-              <div className="flex flex-col items-center gap-1 pt-1 mr-1">
+            <div key={i}>
+              <div className="flex gap-2 py-1.5">
+                <div className="flex flex-col items-center gap-1 pt-1 mr-1">
                 <span className="text-xs text-stone-400 font-medium">{i + 1}</span>
                 <IconButton
                   type="button"
@@ -337,15 +346,28 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                   ▼
                 </IconButton>
               </div>
-              <div className="flex-1 space-y-2">
-                <textarea
-                  value={step.instruction}
-                  onChange={(e) => updateStep(i, "instruction", e.target.value)}
-                  rows={2}
-                  placeholder={`Step ${i + 1} instruction`}
-                  className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 resize-none"
-                />
-                <div className="flex items-center gap-4 flex-wrap">
+              <div className="flex-1 space-y-2 min-w-0">
+                <div className="flex gap-2 items-center">
+                  <textarea
+                    value={step.instruction}
+                    onChange={(e) => updateStep(i, "instruction", e.target.value)}
+                    rows={2}
+                    placeholder={`Step ${i + 1} instruction`}
+                    className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 resize-none"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeStep(i)}
+                    aria-label="Remove step"
+                    className="flex-none flex items-center justify-center w-7 h-7 rounded-full border border-transparent text-stone-400 hover:bg-danger-50 hover:border-danger-300 hover:text-danger-500 transition-colors"
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+                      <line x1="2" y1="2" x2="8" y2="8" />
+                      <line x1="8" y1="2" x2="2" y2="8" />
+                    </svg>
+                  </button>
+                </div>
+                <div className="flex items-center gap-4 flex-wrap pt-3">
                   <div className="flex items-center gap-2">
                     <label className="text-xs text-stone-500">Timer (seconds)</label>
                     <input
@@ -358,20 +380,16 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                     />
                   </div>
                   {step.imageUrl ? (
-                    <div className="flex items-center gap-2">
+                    <div className="relative inline-block">
                       <img
                         src={step.imageUrl}
                         alt={`Step ${i + 1}`}
                         className="w-12 h-8 rounded object-cover border border-stone-200"
                       />
-                      <Button
-                        type="button"
-                        variant="danger"
-                        size="sm"
+                      <CornerDeleteButton
                         onClick={() => setSteps((prev) => prev.map((s, idx) => idx === i ? { ...s, imageUrl: "" } : s))}
-                      >
-                        Remove photo
-                      </Button>
+                        label="Remove step photo"
+                      />
                     </div>
                   ) : (
                     <label className={`inline-flex items-center gap-1.5 cursor-pointer text-xs text-stone-400 hover:text-stone-600 transition-colors ${stepUploading[i] ? "opacity-50 pointer-events-none" : ""}`}>
@@ -389,14 +407,16 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
                   )}
                 </div>
               </div>
-              <IconButton
+              </div>
+              <button
                 type="button"
-                variant="danger"
-                onClick={() => removeStep(i)}
-                className="text-lg mt-1"
+                onClick={() => insertStep(i)}
+                className="w-full flex items-center gap-2 py-1 text-xs text-stone-400 hover:text-stone-600 transition-colors group"
               >
-                ×
-              </IconButton>
+                <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+                <span>+ add step</span>
+                <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+              </button>
             </div>
           ))}
         </div>

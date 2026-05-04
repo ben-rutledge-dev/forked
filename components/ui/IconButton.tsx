@@ -13,7 +13,7 @@ type IconButtonProps = {
 
 const variantClasses: Record<IconButtonVariant, string> = {
   default: "text-stone-300 hover:text-stone-500 disabled:opacity-20 leading-none",
-  danger: "text-stone-300 hover:text-red-400 leading-none",
+  danger: "text-stone-300 hover:text-danger-400 leading-none",
 };
 
 export const IconButton: React.FC<IconButtonProps> = ({

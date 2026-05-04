@@ -19,7 +19,7 @@ export default function Nav() {
         <div className="flex items-center gap-6 text-sm">
           <Link
             href="/pool"
-            className="text-orange-100 hover:text-white transition-colors"
+            className="text-primary-100 hover:text-white transition-colors"
           >
             Pool
           </Link>
@@ -27,7 +27,7 @@ export default function Nav() {
             <>
               <Link
                 href="/my/recipes"
-                className="text-orange-100 hover:text-white transition-colors"
+                className="text-primary-100 hover:text-white transition-colors"
               >
                 My Recipes
               </Link>

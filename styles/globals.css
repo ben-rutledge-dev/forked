@@ -1,11 +1,28 @@
 @import "tailwindcss";
 
 :root {
+  /* Brand / primary */
+  --primary-50:  #fdf3ed;
+  --primary-100: #ffedd5;
+  --primary-200: #fed7aa;
   --primary-400: #e37d37;
   --primary-500: #cc5500;
   --primary-600: #a84400;
   --primary-700: #853600;
-  --primary-50:  #fdf3ed;
+
+  /* Semantic: danger */
+  --danger-50:  #fef2f2;
+  --danger-100: #fee2e2;
+  --danger-300: #fca5a5;
+  --danger-400: #f87171;
+  --danger-500: #ef4444;
+  --danger-600: #dc2626;
+  --danger-700: #b91c1c;
+
+  /* Semantic: success */
+  --success-50:  #f0fdf4;
+  --success-100: #dcfce7;
+  --success-700: #15803d;
 }
 
 body {
@@ -14,22 +31,47 @@ body {
 }
 
 @layer utilities {
-  /* backgrounds */
+  /* Primary backgrounds */
   .bg-primary-50  { background-color: var(--primary-50); }
   .bg-primary-400 { background-color: var(--primary-400); }
   .bg-primary-500 { background-color: var(--primary-500); }
   .bg-primary-600 { background-color: var(--primary-600); }
   .bg-primary-700 { background-color: var(--primary-700); }
-  /* hover backgrounds */
+  /* Primary hover backgrounds */
   .hover\:bg-primary-400:hover { background-color: var(--primary-400); }
   .hover\:bg-primary-500:hover { background-color: var(--primary-500); }
   .hover\:bg-primary-600:hover { background-color: var(--primary-600); }
   .hover\:bg-primary-700:hover { background-color: var(--primary-700); }
-  /* text */
+  /* Primary text */
+  .text-primary-100 { color: var(--primary-100); }
+  .text-primary-200 { color: var(--primary-200); }
   .text-primary-400 { color: var(--primary-400); }
   .text-primary-500 { color: var(--primary-500); }
   .text-primary-600 { color: var(--primary-600); }
-  /* borders */
+  /* Primary borders */
   .border-primary-500 { border-color: var(--primary-500); }
+
+  /* Danger backgrounds */
+  .bg-danger-50  { background-color: var(--danger-50); }
+  .bg-danger-100 { background-color: var(--danger-100); }
+  .hover\:bg-danger-50:hover  { background-color: var(--danger-50); }
+  .hover\:bg-danger-100:hover { background-color: var(--danger-100); }
+  /* Danger text */
+  .text-danger-400 { color: var(--danger-400); }
+  .text-danger-500 { color: var(--danger-500); }
+  .text-danger-700 { color: var(--danger-700); }
+  .hover\:text-danger-400:hover { color: var(--danger-400); }
+  .hover\:text-danger-500:hover { color: var(--danger-500); }
+  .hover\:text-danger-600:hover { color: var(--danger-600); }
+  /* Danger borders */
+  .border-danger-300 { border-color: var(--danger-300); }
+  .hover\:border-danger-300:hover { border-color: var(--danger-300); }
+
+  /* Success backgrounds */
+  .bg-success-50  { background-color: var(--success-50); }
+  .bg-success-100 { background-color: var(--success-100); }
+  .hover\:bg-success-100:hover { background-color: var(--success-100); }
+  /* Success text */
+  .text-success-700 { color: var(--success-700); }
 }
 
