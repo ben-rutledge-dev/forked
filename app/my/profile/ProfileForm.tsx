@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { UserProfile } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { CornerDeleteButton } from "@/components/ui/CornerDeleteButton";
+import { FormBanner } from "@/components/ui/FormBanner";
+import { Toast } from "@/components/ui/Toast";
 
 async function uploadImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -40,10 +42,18 @@ export function ProfileForm({ user }: { user: UserProfile }) {
   const [youtubeUrl, setYoutubeUrl] = useState(user.youtubeUrl ?? "");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
+  const [showName, setShowName] = useState(user.showName);
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
+
+  function normalizeUrl(value: string): string {
+    const v = value.trim();
+    if (!v) return "";
+    return /^https?:\/\//i.test(v) ? v : `https://${v}`;
+  }
 
   async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
@@ -75,6 +85,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
           username: username.trim() || null,
           bio: bio.trim() || null,
           isPublic,
+          showName,
           avatarUrl: avatarUrl || null,
           coverImageUrl: coverImageUrl || null,
           websiteUrl: websiteUrl.trim() || null,
@@ -88,6 +99,8 @@ export function ProfileForm({ user }: { user: UserProfile }) {
         setError(data.error ?? "Something went wrong");
         return;
       }
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
       router.refresh();
     } finally {
       setSaving(false);
@@ -98,9 +111,8 @@ export function ProfileForm({ user }: { user: UserProfile }) {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {error && (
-        <p className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">{error}</p>
-      )}
+      {error && <FormBanner type="error" message={error} />}
+      {saved && <Toast message="Profile saved!" />}
 
       {/* Photos */}
       <div className="space-y-5">
@@ -135,6 +147,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
                 <CornerDeleteButton
                   onClick={() => { setAvatarUrl(""); if (avatarInputRef.current) avatarInputRef.current.value = ""; }}
                   label="Remove profile photo"
+                  positionClassName="-top-1 -right-1"
                 />
               </>
             ) : (
@@ -181,6 +194,19 @@ export function ProfileForm({ user }: { user: UserProfile }) {
             className={inputClass + " resize-none"}
           />
         </div>
+
+        <label className="flex items-start gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showName}
+            onChange={(e) => setShowName(e.target.checked)}
+            className="mt-0.5 rounded border-stone-300"
+          />
+          <div>
+            <span className="text-sm text-stone-700">Show my full name publicly</span>
+            <p className="text-xs text-stone-400 mt-0.5">Display your name on your public profile. Uncheck to show only your username.</p>
+          </div>
+        </label>
       </div>
 
       {/* Social links */}
@@ -188,7 +214,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
         <h2 className="font-medium text-stone-900">Links <span className="text-sm font-normal text-stone-400">— all optional</span></h2>
         <div>
           <label htmlFor="websiteUrl" className="block text-sm font-medium text-stone-700 mb-1">Website</label>
-          <input id="websiteUrl" type="url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} placeholder="https://yoursite.com" className={inputClass} />
+          <input id="websiteUrl" type="url" value={websiteUrl} onChange={(e) => setWebsiteUrl(e.target.value)} onBlur={(e) => setWebsiteUrl(normalizeUrl(e.target.value))} placeholder="https://yoursite.com" className={inputClass} />
         </div>
         <div>
           <label htmlFor="twitter" className="block text-sm font-medium text-stone-700 mb-1">X / Twitter handle</label>
@@ -206,7 +232,7 @@ export function ProfileForm({ user }: { user: UserProfile }) {
         </div>
         <div>
           <label htmlFor="youtube" className="block text-sm font-medium text-stone-700 mb-1">YouTube</label>
-          <input id="youtube" type="url" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} placeholder="https://youtube.com/@yourchannel" className={inputClass} />
+          <input id="youtube" type="url" value={youtubeUrl} onChange={(e) => setYoutubeUrl(e.target.value)} onBlur={(e) => setYoutubeUrl(normalizeUrl(e.target.value))} placeholder="https://youtube.com/@yourchannel" className={inputClass} />
         </div>
       </div>
 

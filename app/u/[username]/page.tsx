@@ -1,6 +1,5 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
-import Link from "next/link";
 import type { Metadata } from "next";
 import RecipeCard from "@/components/RecipeCard";
 
@@ -21,6 +20,7 @@ export default async function PublicProfilePage({ params }: Props) {
     select: {
       id: true,
       name: true,
+      showName: true,
       username: true,
       bio: true,
       avatarUrl: true,
@@ -51,20 +51,24 @@ export default async function PublicProfilePage({ params }: Props) {
 
   if (!user) notFound();
 
-  const displayName = user.name ?? user.username;
+  const displayName = user.showName && user.name ? user.name : user.username;
   const hasLinks = user.websiteUrl || user.twitterHandle || user.instagramHandle || user.youtubeUrl;
+  function displayUrl(url: string) {
+    return url.replace(/^https?:\/\/(www\.)?/, "");
+  }
 
   return (
-    <div className="mx-auto max-w-4xl px-4">
-      {/* Cover */}
+    <div>
+      {/* Cover — full viewport width */}
       {user.coverImageUrl ? (
-        <div className="-mx-4 mb-0">
+        <div className="w-full">
           <img src={user.coverImageUrl} alt="" className="w-full h-48 object-cover" />
         </div>
       ) : (
-        <div className="-mx-4 h-24 bg-primary-50" />
+        <div className="w-full h-24 bg-primary-50" />
       )}
 
+      <div className="mx-auto max-w-4xl px-4">
       {/* Profile header */}
       <div className="flex items-end gap-4 -mt-8 mb-6 px-0">
         <div className="shrink-0 rounded-full border-4 border-white overflow-hidden bg-stone-100 w-20 h-20">
@@ -80,7 +84,9 @@ export default async function PublicProfilePage({ params }: Props) {
         </div>
         <div className="pb-1">
           <h1 className="text-xl font-semibold text-stone-900 leading-tight">{displayName}</h1>
-          {user.username && <p className="text-sm text-stone-400">@{user.username}</p>}
+          {user.showName && user.name && user.username && (
+            <p className="text-sm text-stone-400">@{user.username}</p>
+          )}
         </div>
       </div>
 
@@ -91,26 +97,37 @@ export default async function PublicProfilePage({ params }: Props) {
 
       {/* Links */}
       {hasLinks && (
-        <div className="flex flex-wrap gap-x-4 gap-y-1 mb-6 text-sm text-stone-500">
+        <div className="flex flex-col gap-2 mb-6">
           {user.websiteUrl && (
-            <a href={user.websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1 hover:text-stone-700 transition-colors">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5"><path d="M8 0a8 8 0 1 0 8 8A8 8 0 0 0 8 0ZM1 8a7 7 0 0 1 .78-3.23C3.18 5.7 4.9 7.8 5 8c-.06.42-.06.85 0 1.27-1.09.13-2.17.13-3.26 0A7 7 0 0 1 1 8ZM8 15a7 7 0 0 1-4.63-1.74c.88-.1 1.77-.1 2.65 0 .34.03.69.05 1 .05.31 0 .62-.02.93-.05.88-.1 1.77-.1 2.65 0A7 7 0 0 1 8 15Z"/></svg>
-              {new URL(user.websiteUrl).hostname}
+            <a href={user.websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-stone-800 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0">
+                <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM4.332 8.027a6.012 6.012 0 0 1 1.912-2.706C6.512 5.73 6.974 6 7.5 6A1.5 1.5 0 0 1 9 7.5V8a2 2 0 0 0 4 0 2 2 0 0 1 1.523-1.943A5.977 5.977 0 0 1 16 10c0 .34-.028.675-.083 1H15a2 2 0 0 0-2 2v2.197A5.973 5.973 0 0 1 10 16v-2a2 2 0 0 0-2-2 2 2 0 0 1-2-2 2 2 0 0 0-1.668-1.973Z" clipRule="evenodd" />
+              </svg>
+              {displayUrl(user.websiteUrl)}
             </a>
           )}
           {user.twitterHandle && (
-            <a href={`https://x.com/${user.twitterHandle}`} target="_blank" rel="noopener noreferrer" className="hover:text-stone-700 transition-colors">
-              @{user.twitterHandle}
+            <a href={`https://x.com/${user.twitterHandle}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-stone-800 transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+              </svg>
+              x.com/{user.twitterHandle}
             </a>
           )}
           {user.instagramHandle && (
-            <a href={`https://instagram.com/${user.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="hover:text-stone-700 transition-colors">
-              @{user.instagramHandle}
+            <a href={`https://instagram.com/${user.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-[#E1306C] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z" />
+              </svg>
+              instagram.com/{user.instagramHandle}
             </a>
           )}
           {user.youtubeUrl && (
-            <a href={user.youtubeUrl} target="_blank" rel="noopener noreferrer" className="hover:text-stone-700 transition-colors">
-              YouTube
+            <a href={user.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-[#FF0000] transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4 shrink-0">
+                <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z" />
+              </svg>
+              {displayUrl(user.youtubeUrl)}
             </a>
           )}
         </div>
@@ -141,6 +158,7 @@ export default async function PublicProfilePage({ params }: Props) {
           ))}
         </div>
       )}
+      </div>
     </div>
   );
 }

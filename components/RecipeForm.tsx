@@ -6,6 +6,8 @@ import { RecipeFormData, IngredientFormData, StepFormData } from "@/types";
 import { Button } from "@/components/ui/Button";
 import { IconButton } from "@/components/ui/IconButton";
 import { CornerDeleteButton } from "@/components/ui/CornerDeleteButton";
+import { FormBanner } from "@/components/ui/FormBanner";
+import { Toast } from "@/components/ui/Toast";
 
 type Props = {
   initialData?: Partial<RecipeFormData>;
@@ -53,6 +55,7 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
   const [stepUploading, setStepUploading] = useState<Record<number, boolean>>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(e: FormEvent) {
@@ -86,7 +89,13 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
       }
 
       const recipe = await res.json();
-      router.push(`/my/recipes/${recipe.id}`);
+      if (recipeId) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 4000);
+        router.refresh();
+      } else {
+        router.push(`/my/recipes/${recipe.id}`);
+      }
     } finally {
       setSaving(false);
     }
@@ -175,9 +184,8 @@ export default function RecipeForm({ initialData, recipeId, forkedFrom }: Props)
         </p>
       )}
 
-      {error && (
-        <p className="rounded-lg bg-danger-50 px-4 py-3 text-sm text-danger-700">{error}</p>
-      )}
+      {error && <FormBanner type="error" message={error} />}
+      {saved && <Toast message="Recipe saved!" />}
 
       <div className="space-y-4">
         <div>

@@ -12,7 +12,7 @@ export default function Nav() {
       <nav className="mx-auto flex max-w-4xl items-center justify-between px-4 py-4">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold tracking-tight transition-colors"
+          className="flex items-center gap-2 text-5xl font-semibold tracking-tight transition-colors"
         >
           <svg width="40" height="64" viewBox="-57 0 160 160" fill="none" aria-hidden="true" className="opacity-90">
             <g clipPath="url(#fork-nav)">

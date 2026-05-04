@@ -50,6 +50,7 @@ model User {
   isPublic      Boolean   @default(false)
   createdAt     DateTime  @default(now())
   // Profile fields
+  showName      Boolean   @default(true)
   username      String?   @unique
   bio           String?
   avatarUrl     String?

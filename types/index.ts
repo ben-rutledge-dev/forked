@@ -4,6 +4,7 @@ export type UserProfile = {
   email: string | null;
   image: string | null;
   isPublic: boolean;
+  showName: boolean;
   username: string | null;
   bio: string | null;
   avatarUrl: string | null;

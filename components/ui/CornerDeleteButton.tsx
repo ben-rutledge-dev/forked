@@ -1,15 +1,16 @@
 type Props = {
   onClick: () => void;
   label?: string;
+  positionClassName?: string;
 };
 
-export function CornerDeleteButton({ onClick, label = "Remove" }: Props) {
+export function CornerDeleteButton({ onClick, label = "Remove", positionClassName = "-top-2.5 -right-2.5" }: Props) {
   return (
     <button
       type="button"
       onClick={onClick}
       aria-label={label}
-      className="absolute -top-2.5 -right-2.5 flex items-center justify-center w-5 h-5 rounded-full bg-stone-200 text-stone-500 hover:bg-danger-100 hover:text-danger-500 transition-colors z-10"
+      className={`absolute ${positionClassName} flex items-center justify-center w-5 h-5 rounded-full bg-stone-200 text-stone-500 hover:bg-danger-100 hover:text-danger-500 transition-colors z-10`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"

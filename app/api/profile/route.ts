@@ -30,8 +30,12 @@ export async function PATCH(req: NextRequest) {
       stringData[field] = body[field] === null ? null : String(body[field]);
     }
   }
+  let showName: boolean | undefined;
   if ("isPublic" in body) {
     isPublic = Boolean(body.isPublic);
+  }
+  if ("showName" in body) {
+    showName = Boolean(body.showName);
   }
 
   // Validate username: alphanumeric + underscores only, 3–30 chars
@@ -46,19 +50,26 @@ export async function PATCH(req: NextRequest) {
     stringData.username = clean || null;
   }
 
-  // Basic URL validation for link fields
+  // Normalize and validate URL fields
   const urlFields: StringField[] = ["websiteUrl", "youtubeUrl"];
   for (const field of urlFields) {
     if (stringData[field]) {
+      let val = stringData[field] as string;
+      if (!/^https?:\/\//i.test(val)) val = `https://${val}`;
       try {
-        new URL(stringData[field] as string);
+        new URL(val);
+        stringData[field] = val;
       } catch {
         return Response.json({ error: `Invalid URL for ${field}` }, { status: 422 });
       }
     }
   }
 
-  const data = { ...stringData, ...(isPublic !== undefined ? { isPublic } : {}) };
+  const data = {
+    ...stringData,
+    ...(isPublic !== undefined ? { isPublic } : {}),
+    ...(showName !== undefined ? { showName } : {}),
+  };
 
   try {
     const user = await prisma.user.update({
@@ -70,6 +81,7 @@ export async function PATCH(req: NextRequest) {
         email: true,
         image: true,
         isPublic: true,
+        showName: true,
         username: true,
         bio: true,
         avatarUrl: true,
