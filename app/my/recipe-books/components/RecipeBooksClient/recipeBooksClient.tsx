@@ -4,20 +4,21 @@ import { useState } from "react";
 import Link from "next/link";
 import { RecipeBookCard } from "@/components/RecipeBookCard";
 import { Button } from "@/components/Button";
+import { type Role } from "@/utils/roles";
 
 type Book = {
   id: string;
   title: string;
   coverImageUrl: string | null;
   isPublic: boolean;
-  role: "OWNER" | "COLLABORATOR";
+  role: Role;
   memberCount: number;
   recipeCount: number;
 };
 
 type PendingInvite = {
   id: string;
-  role: "OWNER" | "COLLABORATOR";
+  role: Role;
   recipeBook: { id: string; title: string; coverImageUrl: string | null };
   invitedByUserId: string;
 };
@@ -99,7 +100,7 @@ export function RecipeBooksClient({ initialBooks, initialPending }: Props) {
                 <div>
                   <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
                   <p className="text-xs text-stone-400 mt-0.5">
-                    Invited as <span className="font-medium">{invite.role.toLowerCase()}</span>
+                    Invited as <span className="font-medium">{invite.role}</span>
                   </p>
                 </div>
                 <div className="flex gap-2">

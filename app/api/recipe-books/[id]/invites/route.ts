@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { OWNER, COLLABORATOR, type Role } from "@/utils/roles";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -13,13 +14,13 @@ export async function POST(req: Request, { params }: Params) {
     where: { recipeBookId_userId: { recipeBookId: id, userId: session.user.id } },
     include: { user: { select: { isPremium: true } } },
   });
-  if (!inviter?.acceptedAt || inviter.role !== "OWNER") {
+  if (!inviter?.acceptedAt || inviter.role !== OWNER) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { username, role } = await req.json() as { username: string; role: "COLLABORATOR" | "OWNER" };
+  const { username, role } = await req.json() as { username: string; role: Role };
 
-  if (role === "OWNER" && !inviter.user.isPremium) {
+  if (role === OWNER && !inviter.user.isPremium) {
     return NextResponse.json({ error: "Premium required to invite owners" }, { status: 403 });
   }
 
@@ -35,7 +36,7 @@ export async function POST(req: Request, { params }: Params) {
     data: {
       recipeBookId: id,
       userId: invitee.id,
-      role: role === "OWNER" ? "OWNER" : "COLLABORATOR",
+      role: role === OWNER ? OWNER : COLLABORATOR,
       acceptedAt: null,
       invitedByUserId: session.user.id,
     },

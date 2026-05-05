@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { OWNER } from "@/utils/roles";
 
 type Params = { params: Promise<{ id: string; userId: string }> };
 
@@ -12,7 +13,7 @@ export async function DELETE(_req: Request, { params }: Params) {
   const remover = await prisma.recipeBookMember.findUnique({
     where: { recipeBookId_userId: { recipeBookId: id, userId: session.user.id } },
   });
-  if (!remover?.acceptedAt || remover.role !== "OWNER") {
+  if (!remover?.acceptedAt || remover.role !== OWNER) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -20,7 +21,7 @@ export async function DELETE(_req: Request, { params }: Params) {
     where: { recipeBookId_userId: { recipeBookId: id, userId: targetUserId } },
   });
   if (!target) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (target.role === "OWNER") {
+  if (target.role === OWNER) {
     return NextResponse.json({ error: "Cannot remove another owner" }, { status: 403 });
   }
 

@@ -15,7 +15,7 @@ export type UserProfile = {
   youtubeUrl: string | null;
 };
 
-export type RecipeWithRelations = {
+export type Recipe = {
   id: string;
   title: string;
   description: string | null;
@@ -24,13 +24,6 @@ export type RecipeWithRelations = {
   isPublic: boolean;
   forkedFromId: string | null;
   forkCount: number;
-  createdAt: Date;
-  updatedAt: Date;
-  author?: { id: string; name: string | null; username: string | null; isPublic: boolean } | null;
-  forkedFrom?: { id: string; title: string; isPublic: boolean } | null;
-  ingredients: Ingredient[];
-  steps: Step[];
-  forks?: { id: string; title: string; description: string | null; author?: { name: string | null; username: string | null; isPublic: boolean } | null }[];
 };
 
 export type Ingredient = {
@@ -49,6 +42,16 @@ export type Step = {
   imageUrl: string | null;
   timerSeconds: number | null;
   orderIndex: number;
+};
+
+export type RecipeWithRelations = Recipe & {
+  createdAt: Date;
+  updatedAt: Date;
+  author?: { id: string; name: string | null; username: string | null; isPublic: boolean } | null;
+  forkedFrom?: { id: string; title: string; isPublic: boolean } | null;
+  ingredients: Ingredient[];
+  steps: Step[];
+  forks?: { id: string; title: string; description: string | null; author?: { name: string | null; username: string | null; isPublic: boolean } | null }[];
 };
 
 export type RecipeFormData = {

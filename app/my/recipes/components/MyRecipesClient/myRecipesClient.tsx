@@ -6,30 +6,22 @@ import { RecipeCard } from "@/components/RecipeCard";
 import { RecipeBookCard } from "@/components/RecipeBookCard";
 import { Pagination } from "@/components/Pagination";
 import { Button } from "@/components/Button";
-
-type Recipe = {
-  id: string;
-  title: string;
-  description: string | null;
-  coverImageUrl: string | null;
-  forkCount: number;
-  isPublic: boolean;
-  forkedFromId: string | null;
-};
+import type { Recipe } from "@/types";
+import { type Role } from "@/utils/roles";
 
 type Book = {
   id: string;
   title: string;
   coverImageUrl: string | null;
   isPublic: boolean;
-  role: "OWNER" | "COLLABORATOR";
+  role: Role;
   memberCount: number;
   recipeCount: number;
 };
 
 type PendingInvite = {
   id: string;
-  role: "OWNER" | "COLLABORATOR";
+  role: Role;
   recipeBook: { id: string; title: string; coverImageUrl: string | null };
   invitedByUserId: string;
 };
@@ -170,7 +162,7 @@ export function MyRecipesClient({ initialRecipes, initialBooks, initialPending, 
                   <div key={invite.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-5 py-4">
                     <div>
                       <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
-                      <p className="text-xs text-stone-400 mt-0.5">Invited as <span className="font-medium">{invite.role.toLowerCase()}</span></p>
+                      <p className="text-xs text-stone-400 mt-0.5">Invited as <span className="font-medium">{invite.role}</span></p>
                     </div>
                     <div className="flex gap-2">
                       <Button variant="primary" size="sm" shape="pill" disabled={acting === invite.id} onClick={() => handleAccept(invite)}>Accept</Button>
@@ -189,7 +181,17 @@ export function MyRecipesClient({ initialRecipes, initialBooks, initialPending, 
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {books.map((b) => (
-                <RecipeBookCard key={b.id} id={b.id} title={b.title} coverImageUrl={b.coverImageUrl} isPublic={b.isPublic} role={b.role} memberCount={b.memberCount} recipeCount={b.recipeCount} />
+                <RecipeBookCard
+                  key={b.id}
+                  id={b.id}
+                  title={b.title}
+                  coverImageUrl={b.coverImageUrl}
+                  isPublic={b.isPublic}
+                  role={b.role}
+                  memberCount={b.memberCount}
+                  recipeCount={b.recipeCount}
+                  onRemove={() => setBooks((prev) => prev.filter((x) => x.id !== b.id))}
+                />
               ))}
             </div>
           )}

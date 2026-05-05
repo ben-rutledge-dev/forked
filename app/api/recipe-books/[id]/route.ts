@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { OWNER } from "@/utils/roles";
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -62,7 +63,7 @@ export async function PUT(req: Request, { params }: Params) {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const member = await getMember(id, session.user.id);
-  if (!member?.acceptedAt || member.role !== "OWNER") {
+  if (!member?.acceptedAt || member.role !== OWNER) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -88,7 +89,7 @@ export async function DELETE(_req: Request, { params }: Params) {
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const member = await getMember(id, session.user.id);
-  if (!member?.acceptedAt || member.role !== "OWNER") {
+  if (!member?.acceptedAt || member.role !== OWNER) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
@@ -97,7 +98,7 @@ export async function DELETE(_req: Request, { params }: Params) {
 
   // Count remaining owners
   const remainingOwners = await prisma.recipeBookMember.count({
-    where: { recipeBookId: id, role: "OWNER", acceptedAt: { not: null } },
+    where: { recipeBookId: id, role: OWNER, acceptedAt: { not: null } },
   });
 
   if (remainingOwners === 0) {

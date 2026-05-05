@@ -1,44 +1,15 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Button } from "@/components/Button";
 import { FormBanner } from "@/components/FormBanner";
 import { Toast } from "@/components/Toast";
-import { CornerDeleteButton } from "@/components/CornerDeleteButton";
-
-async function uploadImage(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const dataUrl = e.target?.result as string;
-      const [header, data] = dataUrl.split(",");
-      const ext = header.split("/")[1]?.split(";")[0] ?? "jpg";
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data, ext }),
-      });
-      if (!res.ok) { reject(new Error("Upload failed")); return; }
-      const { url } = await res.json();
-      resolve(url);
-    };
-    reader.onerror = () => reject(new Error("Could not read file"));
-    reader.readAsDataURL(file);
-  });
-}
-
-type Recipe = {
-  id: string;
-  title: string;
-  description: string | null;
-  coverImageUrl: string | null;
-  forkCount: number;
-  isPublic: boolean;
-  authorId: string | null;
-};
+import { ImageUpload } from "@/components/ImageUpload";
+import type { Recipe } from "@/types";
+import { OWNER, COLLABORATOR, type Role } from "@/utils/roles";
 
 type Entry = {
   id: string;
@@ -49,7 +20,7 @@ type Entry = {
 type Member = {
   id: string;
   userId: string;
-  role: "OWNER" | "COLLABORATOR";
+  role: Role;
   acceptedAt: string | null;
   user: { id: string; name: string | null; username: string | null; avatarUrl: string | null };
 };
@@ -62,20 +33,14 @@ type Book = {
   isPublic: boolean;
   entries: Entry[];
   members: Member[];
-  currentUserRole: "OWNER" | "COLLABORATOR" | null;
-};
-
-type UserRecipe = {
-  id: string;
-  title: string;
-  coverImageUrl: string | null;
+  currentUserRole: Role | null;
 };
 
 type Props = {
   book: Book;
   currentUserId: string;
   isPremium: boolean;
-  userRecipes: UserRecipe[];
+  userRecipes: Pick<Recipe, "id" | "title" | "coverImageUrl">[];
 };
 
 export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPremium, userRecipes }: Props) {
@@ -89,7 +54,7 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
 
   // Invite modal state
   const [inviteUsername, setInviteUsername] = useState("");
-  const [inviteRole, setInviteRole] = useState<"COLLABORATOR" | "OWNER">("COLLABORATOR");
+  const [inviteRole, setInviteRole] = useState<Role>(COLLABORATOR);
   const [inviting, setInviting] = useState(false);
   const [inviteError, setInviteError] = useState<string | null>(null);
 
@@ -102,25 +67,9 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
   const [editDescription, setEditDescription] = useState(book.description ?? "");
   const [editIsPublic, setEditIsPublic] = useState(book.isPublic);
   const [editCoverImageUrl, setEditCoverImageUrl] = useState(book.coverImageUrl ?? "");
-  const [coverUploading, setCoverUploading] = useState(false);
-  const coverInputRef = useRef<HTMLInputElement>(null);
   const [saving, setSaving] = useState(false);
 
-  async function handleCoverChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setCoverUploading(true);
-    try {
-      const url = await uploadImage(file);
-      setEditCoverImageUrl(url);
-    } catch {
-      setError("Cover image upload failed");
-    } finally {
-      setCoverUploading(false);
-    }
-  }
-
-  const isOwner = book.currentUserRole === "OWNER";
+  const isOwner = book.currentUserRole === OWNER;
   const isMember = book.currentUserRole !== null;
 
   const acceptedMembers = book.members.filter((m) => m.acceptedAt !== null);
@@ -178,7 +127,7 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
             {
               id: newEntry.id,
               orderIndex: newEntry.orderIndex,
-              recipe: { ...recipe, description: null, forkCount: 0, isPublic: false, authorId: currentUserId },
+              recipe: { ...recipe, description: null, forkCount: 0, isPublic: false, authorId: currentUserId, forkedFromId: null },
             },
           ],
         }));
@@ -205,7 +154,7 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
       setToast(`Invite sent to @${inviteUsername.trim()}`);
       setShowInviteModal(false);
       setInviteUsername("");
-      setInviteRole("COLLABORATOR");
+      setInviteRole(COLLABORATOR);
     } finally {
       setInviting(false);
     }
@@ -310,23 +259,12 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
           </div>
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
-            {editCoverImageUrl ? (
-              <div className="relative inline-block">
-                <img src={editCoverImageUrl} alt="Cover" className="w-24 h-16 rounded-lg object-cover border border-stone-200" />
-                <CornerDeleteButton
-                  onClick={() => { setEditCoverImageUrl(""); if (coverInputRef.current) coverInputRef.current.value = ""; }}
-                  label="Remove cover photo"
-                />
-              </div>
-            ) : (
-              <label className={`inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-stone-300 px-4 py-2 text-sm text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-colors ${coverUploading ? "opacity-50 pointer-events-none" : ""}`}>
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                  <path fillRule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
-                </svg>
-                {coverUploading ? "Uploading…" : "Add cover photo"}
-                <input ref={coverInputRef} type="file" accept="image/*" className="sr-only" onChange={handleCoverChange} />
-              </label>
-            )}
+            <ImageUpload
+              value={editCoverImageUrl}
+              onChange={setEditCoverImageUrl}
+              onError={(msg) => setError(msg)}
+              label="Add cover photo"
+            />
           </div>
           <div className="flex items-center gap-3">
             <button
@@ -341,7 +279,7 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
             <span className="text-sm text-stone-700">{editIsPublic ? "Public" : "Private"}</span>
           </div>
           <div className="flex gap-2">
-            <Button type="submit" variant="primary" size="sm" shape="pill" disabled={saving || coverUploading}>
+            <Button type="submit" variant="primary" size="sm" shape="pill" disabled={saving}>
               {saving ? "Saving…" : "Save"}
             </Button>
             <Button type="button" variant="secondary" size="sm" shape="pill" onClick={() => setShowEditForm(false)}>
@@ -405,7 +343,6 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
         )}
       </div>
 
-      {/* Members section */}
       <div className="mt-10">
         <div className="flex items-center justify-between mb-4">
           <h2 className="text-lg font-semibold text-stone-900">Members</h2>
@@ -434,11 +371,11 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
               </div>
               <div className="flex items-center gap-2">
                 <span className={`rounded px-1.5 py-0.5 text-xs font-medium ${
-                  m.role === "OWNER" ? "bg-primary-50 text-primary-500" : "bg-stone-100 text-stone-500"
+                  m.role === OWNER ? "bg-primary-50 text-primary-500" : "bg-stone-100 text-stone-500"
                 }`}>
-                  {m.role.toLowerCase()}
+                  {m.role}
                 </span>
-                {isOwner && m.role !== "OWNER" && m.userId !== currentUserId && (
+                {isOwner && m.role !== OWNER && m.userId !== currentUserId && (
                   <button
                     onClick={() => handleRemoveMember(m.userId)}
                     className="text-xs text-danger-400 hover:text-danger-600"
@@ -460,7 +397,7 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
                 <div key={m.id} className="flex items-center justify-between rounded-lg border border-stone-100 bg-stone-50 px-4 py-2.5 text-sm">
                   <span className="text-stone-600">@{m.user.username ?? m.user.id}</span>
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-stone-400">{m.role.toLowerCase()}</span>
+                    <span className="text-xs text-stone-400">{m.role}</span>
                     <button
                       onClick={() => handleRemoveMember(m.userId)}
                       className="text-xs text-danger-400 hover:text-danger-600"
@@ -488,7 +425,6 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
         )}
       </div>
 
-      {/* Invite modal */}
       {showInviteModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowInviteModal(false)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl" onClick={(e) => e.stopPropagation()}>
@@ -510,14 +446,14 @@ export function RecipeBookDetailClient({ book: initialBook, currentUserId, isPre
                   <button
                     type="button"
                     role="switch"
-                    aria-checked={inviteRole === "OWNER"}
-                    onClick={() => setInviteRole((r) => r === "COLLABORATOR" ? "OWNER" : "COLLABORATOR")}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${inviteRole === "OWNER" ? "bg-primary-500" : "bg-stone-300"}`}
+                    aria-checked={inviteRole === OWNER}
+                    onClick={() => setInviteRole((r) => r === COLLABORATOR ? OWNER : COLLABORATOR)}
+                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${inviteRole === OWNER ? "bg-primary-500" : "bg-stone-300"}`}
                   >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${inviteRole === "OWNER" ? "translate-x-6" : "translate-x-1"}`} />
+                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${inviteRole === OWNER ? "translate-x-6" : "translate-x-1"}`} />
                   </button>
                   <span className="text-sm text-stone-700">
-                    Invite as {inviteRole === "OWNER" ? "owner" : "collaborator"}
+                    Invite as {inviteRole === OWNER ? "owner" : "collaborator"}
                   </span>
                 </div>
               )}

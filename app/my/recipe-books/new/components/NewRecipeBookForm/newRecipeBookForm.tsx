@@ -4,12 +4,14 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/Button";
 import { FormBanner } from "@/components/FormBanner";
+import { ImageUpload } from "@/components/ImageUpload";
 
 export function NewRecipeBookForm() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isPublic, setIsPublic] = useState(false);
+  const [coverImageUrl, setCoverImageUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,7 +24,7 @@ export function NewRecipeBookForm() {
       const res = await fetch("/api/recipe-books", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ title, description, isPublic }),
+        body: JSON.stringify({ title, description, isPublic, coverImageUrl }),
       });
       if (!res.ok) {
         const data = await res.json();
@@ -62,6 +64,16 @@ export function NewRecipeBookForm() {
           rows={3}
           className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
           placeholder="A short description of this collection…"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo <span className="font-normal text-stone-400">(optional)</span></label>
+        <ImageUpload
+          value={coverImageUrl}
+          onChange={setCoverImageUrl}
+          onError={(msg) => setError(msg)}
+          label="Add cover photo"
         />
       </div>
 

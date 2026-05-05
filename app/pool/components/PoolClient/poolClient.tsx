@@ -4,14 +4,7 @@ import { useState } from "react";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Button } from "@/components/Button";
 import { Pagination } from "@/components/Pagination";
-
-type Recipe = {
-  id: string;
-  title: string;
-  description: string | null;
-  coverImageUrl: string | null;
-  forkCount: number;
-};
+import type { Recipe } from "@/types";
 
 type Props = {
   initialRecipes: Recipe[];

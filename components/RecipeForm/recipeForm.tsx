@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useRef, FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { RecipeFormData, IngredientFormData, StepFormData } from "@/types";
 import { Button } from "@/components/Button";
 import { IconButton } from "@/components/IconButton";
-import { CornerDeleteButton } from "@/components/CornerDeleteButton";
 import { FormBanner } from "@/components/FormBanner";
 import { Toast } from "@/components/Toast";
+import { ImageUpload } from "@/components/ImageUpload";
 
 type Props = {
   initialData?: Partial<RecipeFormData>;
@@ -18,45 +18,21 @@ type Props = {
 const emptyIngredient = (): IngredientFormData => ({ name: "", quantity: "", unit: "" });
 const emptyStep = (): StepFormData => ({ instruction: "", timerSeconds: "", imageUrl: "" });
 
-async function uploadImage(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-      const dataUrl = e.target?.result as string;
-      const [header, data] = dataUrl.split(",");
-      const ext = header.split("/")[1]?.split(";")[0] ?? "jpg";
-      const res = await fetch("/api/upload", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data, ext }),
-      });
-      if (!res.ok) { reject(new Error("Upload failed")); return; }
-      const { url } = await res.json();
-      resolve(url);
-    };
-    reader.onerror = () => reject(new Error("Could not read file"));
-    reader.readAsDataURL(file);
-  });
-}
-
 export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
   const router = useRouter();
   const [title, setTitle] = useState(initialData?.title ?? "");
   const [description, setDescription] = useState(initialData?.description ?? "");
   const [isPublic, setIsPublic] = useState(initialData?.isPublic ?? false);
   const [coverImageUrl, setCoverImageUrl] = useState(initialData?.coverImageUrl ?? "");
-  const [coverUploading, setCoverUploading] = useState(false);
   const [ingredients, setIngredients] = useState<IngredientFormData[]>(
     initialData?.ingredients?.length ? initialData.ingredients : [emptyIngredient()]
   );
   const [steps, setSteps] = useState<StepFormData[]>(
     initialData?.steps?.length ? initialData.steps : [emptyStep()]
   );
-  const [stepUploading, setStepUploading] = useState<Record<number, boolean>>({});
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [saved, setSaved] = useState(false);
-  const coverInputRef = useRef<HTMLInputElement>(null);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -98,34 +74,6 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
       }
     } finally {
       setSaving(false);
-    }
-  }
-
-  async function handleCoverChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setCoverUploading(true);
-    try {
-      const url = await uploadImage(file);
-      setCoverImageUrl(url);
-    } catch {
-      setError("Cover image upload failed");
-    } finally {
-      setCoverUploading(false);
-    }
-  }
-
-  async function handleStepImageChange(i: number, e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setStepUploading((prev) => ({ ...prev, [i]: true }));
-    try {
-      const url = await uploadImage(file);
-      setSteps((prev) => prev.map((s, idx) => (idx === i ? { ...s, imageUrl: url } : s)));
-    } catch {
-      setError(`Step ${i + 1} image upload failed`);
-    } finally {
-      setStepUploading((prev) => ({ ...prev, [i]: false }));
     }
   }
 
@@ -213,33 +161,12 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
 
         <div>
           <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
-          {coverImageUrl ? (
-            <div className="relative inline-block">
-              <img
-                src={coverImageUrl}
-                alt="Cover"
-                className="w-24 h-16 rounded-lg object-cover border border-stone-200"
-              />
-              <CornerDeleteButton
-                onClick={() => { setCoverImageUrl(""); if (coverInputRef.current) coverInputRef.current.value = ""; }}
-                label="Remove cover photo"
-              />
-            </div>
-          ) : (
-            <label className={`inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-stone-300 px-4 py-2 text-sm text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-colors ${coverUploading ? "opacity-50 pointer-events-none" : ""}`}>
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                <path fillRule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
-              </svg>
-              {coverUploading ? "Uploading…" : "Add cover photo"}
-              <input
-                ref={coverInputRef}
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                onChange={handleCoverChange}
-              />
-            </label>
-          )}
+          <ImageUpload
+            value={coverImageUrl}
+            onChange={setCoverImageUrl}
+            onError={(msg) => setError(msg)}
+            label="Add cover photo"
+          />
         </div>
 
         <label className="flex items-center gap-2 text-sm text-stone-700 cursor-pointer">
@@ -387,32 +314,13 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
                       className="w-28 rounded-lg border border-stone-300 px-2 py-1 text-xs focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
                     />
                   </div>
-                  {step.imageUrl ? (
-                    <div className="relative inline-block">
-                      <img
-                        src={step.imageUrl}
-                        alt={`Step ${i + 1}`}
-                        className="w-12 h-8 rounded object-cover border border-stone-200"
-                      />
-                      <CornerDeleteButton
-                        onClick={() => setSteps((prev) => prev.map((s, idx) => idx === i ? { ...s, imageUrl: "" } : s))}
-                        label="Remove step photo"
-                      />
-                    </div>
-                  ) : (
-                    <label className={`inline-flex items-center gap-1.5 cursor-pointer text-xs text-stone-400 hover:text-stone-600 transition-colors ${stepUploading[i] ? "opacity-50 pointer-events-none" : ""}`}>
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" className="w-3.5 h-3.5">
-                        <path d="M12.5 2A1.5 1.5 0 0 1 14 3.5v9a1.5 1.5 0 0 1-1.5 1.5h-9A1.5 1.5 0 0 1 2 12.5v-9A1.5 1.5 0 0 1 3.5 2h9ZM3.5 3a.5.5 0 0 0-.5.5v5.732l2.779-2.13a.5.5 0 0 1 .621.031L8.556 9.07l1.96-1.768a.5.5 0 0 1 .713.037L13 9.22V3.5a.5.5 0 0 0-.5-.5h-9ZM3 12.5a.5.5 0 0 0 .5.5h9a.5.5 0 0 0 .5-.5v-.73l-2.174-2.174-2.013 1.816a.5.5 0 0 1-.705-.044L6.453 9.4 3 11.986V12.5Z" />
-                      </svg>
-                      {stepUploading[i] ? "Uploading…" : "Add photo"}
-                      <input
-                        type="file"
-                        accept="image/*"
-                        className="sr-only"
-                        onChange={(e) => handleStepImageChange(i, e)}
-                      />
-                    </label>
-                  )}
+                  <ImageUpload
+                      value={step.imageUrl ?? ""}
+                      onChange={(url) => updateStep(i, "imageUrl", url)}
+                      onError={(msg) => setError(msg)}
+                      label="Add photo"
+                      previewSize="sm"
+                    />
                 </div>
               </div>
               </div>

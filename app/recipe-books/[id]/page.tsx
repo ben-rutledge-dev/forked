@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { OWNER } from "@/utils/roles";
 
 type Props = { params: Promise<{ id: string }> };
 
@@ -61,7 +62,7 @@ export default async function PublicRecipeBookPage({ params }: Props) {
             ) : (
               m.user.name ?? "Anonymous"
             )}
-            {m.role === "OWNER" && (
+            {m.role === OWNER && (
               <span className="ml-1 text-stone-300">(owner)</span>
             )}
           </span>

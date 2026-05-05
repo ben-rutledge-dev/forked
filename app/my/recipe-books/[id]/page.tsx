@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { notFound, redirect } from "next/navigation";
 import type { Metadata } from "next";
+import { type Role } from "@/utils/roles";
 import { RecipeBookDetailClient } from "./components/RecipeBookDetailClient";
 
 type Props = { params: Promise<{ id: string }> };
@@ -34,7 +35,7 @@ export default async function RecipeBookDetailPage({ params }: Props) {
             recipe: {
               select: {
                 id: true, title: true, description: true, coverImageUrl: true,
-                forkCount: true, isPublic: true, authorId: true,
+                forkCount: true, isPublic: true, authorId: true, forkedFromId: true,
               },
             },
           },
@@ -61,7 +62,7 @@ export default async function RecipeBookDetailPage({ params }: Props) {
     notFound();
   }
 
-  const currentUserRole = member!.role as "OWNER" | "COLLABORATOR";
+  const currentUserRole = member!.role as Role;
 
   const bookData = {
     id: book.id,
@@ -81,12 +82,13 @@ export default async function RecipeBookDetailPage({ params }: Props) {
         forkCount: e.recipe.forkCount,
         isPublic: e.recipe.isPublic,
         authorId: e.recipe.authorId,
+        forkedFromId: e.recipe.forkedFromId,
       },
     })),
     members: book.members.map((m) => ({
       id: m.id,
       userId: m.userId,
-      role: m.role as "OWNER" | "COLLABORATOR",
+      role: m.role as Role,
       acceptedAt: m.acceptedAt?.toISOString() ?? null,
       user: m.user,
     })),

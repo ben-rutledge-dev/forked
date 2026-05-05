@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { MyRecipesClient } from "./components/MyRecipesClient";
 import type { Metadata } from "next";
+import { type Role } from "@/utils/roles";
 
 export const metadata: Metadata = { title: "My Recipes" };
 
@@ -12,7 +13,7 @@ export default async function MyRecipesPage() {
   const [recipes, members] = await Promise.all([
     prisma.recipe.findMany({
       where: { authorId: userId },
-      select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, isPublic: true, forkedFromId: true },
+      select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, isPublic: true, forkedFromId: true, authorId: true },
       orderBy: { updatedAt: "desc" },
     }),
     prisma.recipeBookMember.findMany({
@@ -36,7 +37,7 @@ export default async function MyRecipesPage() {
       title: m.recipeBook.title,
       coverImageUrl: m.recipeBook.coverImageUrl,
       isPublic: m.recipeBook.isPublic,
-      role: m.role as "OWNER" | "COLLABORATOR",
+      role: m.role as Role,
       memberCount: m.recipeBook.members.length,
       recipeCount: m.recipeBook.entries.length,
     }));
@@ -45,7 +46,7 @@ export default async function MyRecipesPage() {
     .filter((m) => m.acceptedAt === null)
     .map((m) => ({
       id: m.id,
-      role: m.role as "OWNER" | "COLLABORATOR",
+      role: m.role as Role,
       recipeBook: { id: m.recipeBook.id, title: m.recipeBook.title, coverImageUrl: m.recipeBook.coverImageUrl },
       invitedByUserId: m.invitedByUserId,
     }));

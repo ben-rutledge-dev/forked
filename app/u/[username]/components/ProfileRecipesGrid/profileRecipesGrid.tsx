@@ -3,16 +3,7 @@
 import { useState } from "react";
 import { RecipeCard } from "@/components/RecipeCard";
 import { Pagination } from "@/components/Pagination";
-
-type Recipe = {
-  id: string;
-  title: string;
-  description: string | null;
-  coverImageUrl: string | null;
-  isPublic: boolean;
-  forkCount: number;
-  forkedFromId: string | null;
-};
+import type { Recipe } from "@/types";
 
 const PAGE_SIZE = 12;
 

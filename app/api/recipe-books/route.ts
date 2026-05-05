@@ -1,6 +1,7 @@
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import { OWNER } from "@/utils/roles";
 
 export async function GET() {
   const session = await auth();
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
       members: {
         create: {
           userId: session.user.id,
-          role: "OWNER",
+          role: OWNER,
           acceptedAt: new Date(),
           invitedByUserId: session.user.id,
         },

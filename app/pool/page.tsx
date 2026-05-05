@@ -28,7 +28,7 @@ export default async function PoolPage({
   const [recipes, total] = await Promise.all([
     prisma.recipe.findMany({
       where,
-      select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true },
+      select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, authorId: true, isPublic: true, forkedFromId: true },
       orderBy: { forkCount: "desc" },
       skip,
       take: PAGE_SIZE,
