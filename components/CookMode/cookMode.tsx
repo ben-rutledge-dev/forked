@@ -110,7 +110,7 @@ export function CookMode({ recipe, backHref }: Props) {
 
   if (steps.length === 0) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-stone-50 px-4">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-stone-50 px-4">
         <p className="text-stone-500">This recipe has no steps yet.</p>
         <Link href={backHref} className="mt-4 text-stone-700 underline">
           Go back
@@ -120,7 +120,7 @@ export function CookMode({ recipe, backHref }: Props) {
   }
 
   return (
-    <div className="flex min-h-screen flex-col bg-stone-50">
+    <div className="fixed inset-0 z-50 flex flex-col bg-stone-50 overflow-y-auto">
       <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-stone-200">
         <Link href={backHref} className="text-sm text-stone-500 hover:text-stone-700 transition-colors">
           ← {recipe.title}
