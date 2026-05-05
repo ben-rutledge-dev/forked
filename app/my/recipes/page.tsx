@@ -1,12 +1,15 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { MyRecipesClient } from "./components/MyRecipesClient";
-import type { Metadata } from "next";
-import { type Role } from "@/utils/roles";
+import type { Metadata } from 'next';
+// Components
+import { MyRecipesClient } from './components/MyRecipesClient';
+// Lib
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+// Utils
+import { type Role } from '@/utils/roles';
 
-export const metadata: Metadata = { title: "My Recipes" };
+export const metadata: Metadata = { title: 'My Recipes' };
 
-export default async function MyRecipesPage() {
+const MyRecipesPage = async () => {
   const session = await auth();
   const userId = session!.user.id;
 
@@ -14,7 +17,7 @@ export default async function MyRecipesPage() {
     prisma.recipe.findMany({
       where: { authorId: userId },
       select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, isPublic: true, forkedFromId: true, authorId: true },
-      orderBy: { updatedAt: "desc" },
+      orderBy: { updatedAt: 'desc' },
     }),
     prisma.recipeBookMember.findMany({
       where: { userId },
@@ -26,13 +29,13 @@ export default async function MyRecipesPage() {
           },
         },
       },
-      orderBy: { createdAt: "asc" },
+      orderBy: { createdAt: 'asc' },
     }),
   ]);
 
   const books = members
-    .filter((m) => m.acceptedAt !== null)
-    .map((m) => ({
+    .filter(m => m.acceptedAt !== null)
+    .map(m => ({
       id: m.recipeBook.id,
       title: m.recipeBook.title,
       coverImageUrl: m.recipeBook.coverImageUrl,
@@ -43,8 +46,8 @@ export default async function MyRecipesPage() {
     }));
 
   const pending = members
-    .filter((m) => m.acceptedAt === null)
-    .map((m) => ({
+    .filter(m => m.acceptedAt === null)
+    .map(m => ({
       id: m.id,
       role: m.role as Role,
       recipeBook: { id: m.recipeBook.id, title: m.recipeBook.title, coverImageUrl: m.recipeBook.coverImageUrl },
@@ -53,7 +56,7 @@ export default async function MyRecipesPage() {
 
   return (
     <MyRecipesClient
-      initialRecipes={recipes.map((r) => ({
+      initialRecipes={recipes.map(r => ({
         ...r,
         description: r.description ?? null,
         coverImageUrl: r.coverImageUrl ?? null,
@@ -63,4 +66,6 @@ export default async function MyRecipesPage() {
       initialPending={pending}
     />
   );
-}
+};
+
+export default MyRecipesPage;

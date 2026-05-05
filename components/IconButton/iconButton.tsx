@@ -1,36 +1,36 @@
-import React from "react";
+import React from 'react';
 
-type IconButtonVariant = "default" | "danger";
+type IconButtonVariant = 'default' | 'danger';
 
 type IconButtonProps = {
-  variant?: IconButtonVariant;
-  disabled?: boolean;
-  type?: "button" | "submit" | "reset";
-  onClick?: React.MouseEventHandler<HTMLButtonElement>;
-  className?: string;
-  children: React.ReactNode;
+  variant?: IconButtonVariant
+  disabled?: boolean
+  type?: 'button' | 'submit' | 'reset'
+  onClick?: React.MouseEventHandler<HTMLButtonElement>
+  className?: string
+  children: React.ReactNode
 };
 
 const variantClasses: Record<IconButtonVariant, string> = {
-  default: "text-stone-300 hover:text-stone-500 disabled:opacity-20 leading-none",
-  danger: "text-stone-300 hover:text-danger-400 leading-none",
+  default: 'text-stone-300 hover:text-stone-500 disabled:opacity-20 leading-none',
+  danger: 'text-stone-300 hover:text-danger-400 leading-none',
 };
 
 export const IconButton: React.FC<IconButtonProps> = ({
-  variant = "default",
+  variant = 'default',
   disabled,
-  type = "button",
+  type = 'button',
   onClick,
   className,
   children,
 }) => {
   const classes = [
-    "transition-colors",
+    'transition-colors',
     variantClasses[variant],
-    className ?? "",
+    className ?? '',
   ]
     .filter(Boolean)
-    .join(" ");
+    .join(' ');
 
   return (
     <button type={type} disabled={disabled} onClick={onClick} className={classes}>

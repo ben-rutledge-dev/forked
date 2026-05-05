@@ -1,1 +1,1 @@
-export * from "./forkIcon";
+export * from './forkIcon';

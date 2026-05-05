@@ -1,21 +1,23 @@
-import type { Metadata } from "next";
-import { auth } from "@/lib/auth";
-import { Providers } from "./components/Providers";
-import { Nav } from "@/components/Nav";
-import "@/styles/globals.css";
+import type { Metadata } from 'next';
+// Components
+import { Providers } from './components/Providers';
+import { Nav } from '@/components/Nav';
+// Lib
+import { auth } from '@/lib/auth';
+import '@/styles/globals.css';
 
 export const metadata: Metadata = {
   title: {
-    default: "Forked",
-    template: "%s — Forked",
+    default: 'Forked',
+    template: '%s — Forked',
   },
 };
 
-export default async function RootLayout({
+const RootLayout = async ({
   children,
 }: {
-  children: React.ReactNode;
-}) {
+  children: React.ReactNode
+}) => {
   const session = await auth();
 
   return (
@@ -25,10 +27,16 @@ export default async function RootLayout({
           <Nav />
           <main>{children}</main>
           <footer className="mt-16 border-t border-stone-100 py-8 text-center text-xs text-stone-400">
-            © {new Date().getFullYear()} Forked
+            ©
+            {' '}
+            {new Date().getFullYear()}
+            {' '}
+            Forked
           </footer>
         </Providers>
       </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

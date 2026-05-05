@@ -1,20 +1,22 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import { RecipeForm } from "@/components/RecipeForm";
-import { DeleteButton } from "./components/DeleteButton";
-import { Button } from "@/components/Button";
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+// Components
+import { DeleteButton } from './components/DeleteButton';
+import { Button } from '@/components/Button';
+import { RecipeForm } from '@/components/RecipeForm';
+// Lib
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
 type Props = { params: Promise<{ id: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
   const { id } = await params;
   const recipe = await prisma.recipe.findUnique({ where: { id }, select: { title: true } });
-  return { title: `Edit — ${recipe?.title ?? "Recipe"}` };
-}
+  return { title: `Edit — ${recipe?.title ?? 'Recipe'}` };
+};
 
-export default async function EditRecipePage({ params }: Props) {
+const EditRecipePage = async ({ params }: Props) => {
   const { id } = await params;
   const session = await auth();
 
@@ -22,8 +24,8 @@ export default async function EditRecipePage({ params }: Props) {
     where: { id, authorId: session!.user.id },
     include: {
       forkedFrom: { select: { id: true, title: true, isPublic: true } },
-      ingredients: { orderBy: { orderIndex: "asc" } },
-      steps: { orderBy: { orderIndex: "asc" } },
+      ingredients: { orderBy: { orderIndex: 'asc' } },
+      steps: { orderBy: { orderIndex: 'asc' } },
     },
   });
 
@@ -52,23 +54,25 @@ export default async function EditRecipePage({ params }: Props) {
         }
         initialData={{
           title: recipe.title,
-          description: recipe.description ?? "",
+          description: recipe.description ?? '',
           isPublic: recipe.isPublic,
-          coverImageUrl: recipe.coverImageUrl ?? "",
-          ingredients: recipe.ingredients.map((i) => ({
+          coverImageUrl: recipe.coverImageUrl ?? '',
+          ingredients: recipe.ingredients.map(i => ({
             id: i.id,
             name: i.name,
-            quantity: i.quantity ?? "",
-            unit: i.unit ?? "",
+            quantity: i.quantity ?? '',
+            unit: i.unit ?? '',
           })),
-          steps: recipe.steps.map((s) => ({
+          steps: recipe.steps.map(s => ({
             id: s.id,
             instruction: s.instruction,
-            timerSeconds: s.timerSeconds ?? "",
-            imageUrl: s.imageUrl ?? "",
+            timerSeconds: s.timerSeconds ?? '',
+            imageUrl: s.imageUrl ?? '',
           })),
         }}
       />
     </div>
   );
-}
+};
+
+export default EditRecipePage;

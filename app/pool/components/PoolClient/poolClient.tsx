@@ -1,33 +1,35 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { RecipeCard } from "@/components/RecipeCard";
-import { Button } from "@/components/Button";
-import { Pagination } from "@/components/Pagination";
-import type { Recipe } from "@/types";
+import { useState } from 'react';
+// Components
+import { Button } from '@/components/Button';
+import { Pagination } from '@/components/Pagination';
+import { RecipeCard } from '@/components/RecipeCard';
+// Types
+import type { Recipe } from '@/types';
 
 type Props = {
-  initialRecipes: Recipe[];
-  initialTotal: number;
-  initialPage: number;
-  initialQuery: string;
+  initialRecipes: Recipe[]
+  initialTotal: number
+  initialPage: number
+  initialQuery: string
 };
 
 const PAGE_SIZE = 24;
 
-export function PoolClient({
+export const PoolClient = ({
   initialRecipes,
   initialTotal,
   initialPage,
   initialQuery,
-}: Props) {
+}: Props) => {
   const [recipes, setRecipes] = useState(initialRecipes);
   const [query, setQuery] = useState(initialQuery);
   const [page, setPage] = useState(initialPage);
   const [total, setTotal] = useState(initialTotal);
   const [loading, setLoading] = useState(false);
 
-  async function search(q: string, p: number) {
+  const search = async (q: string, p: number) => {
     setLoading(true);
     const params = new URLSearchParams({ q, page: String(p) });
     const res = await fetch(`/api/pool?${params}`);
@@ -38,7 +40,7 @@ export function PoolClient({
       setPage(p);
     }
     setLoading(false);
-  }
+  };
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
@@ -56,7 +58,7 @@ export function PoolClient({
           <input
             type="text"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={e => setQuery(e.target.value)}
             placeholder="Search by title or ingredient…"
             className="flex-1 rounded-lg border border-stone-300 px-4 py-2 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
           />
@@ -70,8 +72,8 @@ export function PoolClient({
               size="md"
               shape="rounded"
               onClick={() => {
-                setQuery("");
-                search("", 1);
+                setQuery('');
+                search('', 1);
               }}
             >
               Clear
@@ -80,30 +82,34 @@ export function PoolClient({
         </form>
       </div>
 
-      {loading ? (
-        <div className="text-center py-20 text-stone-400">Loading…</div>
-      ) : recipes.length === 0 ? (
-        <div className="text-center py-20 text-stone-400">
-          {query ? `No recipes found for "${query}"` : "No public recipes yet."}
-        </div>
-      ) : (
-        <>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {recipes.map((r) => (
-              <RecipeCard
-                key={r.id}
-                id={r.id}
-                title={r.title}
-                description={r.description}
-                coverImageUrl={r.coverImageUrl}
-                forkCount={r.forkCount}
-              />
-            ))}
-          </div>
+      {loading
+        ? (
+            <div className="text-center py-20 text-stone-400">Loading…</div>
+          )
+        : recipes.length === 0
+          ? (
+              <div className="text-center py-20 text-stone-400">
+                {query ? `No recipes found for "${query}"` : 'No public recipes yet.'}
+              </div>
+            )
+          : (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {recipes.map(r => (
+                    <RecipeCard
+                      key={r.id}
+                      id={r.id}
+                      title={r.title}
+                      description={r.description}
+                      coverImageUrl={r.coverImageUrl}
+                      forkCount={r.forkCount}
+                    />
+                  ))}
+                </div>
 
-          <Pagination page={page} totalPages={totalPages} onPageChange={(p) => search(query, p)} />
-        </>
-      )}
+                <Pagination page={page} totalPages={totalPages} onPageChange={p => search(query, p)} />
+              </>
+            )}
     </div>
   );
-}
+};

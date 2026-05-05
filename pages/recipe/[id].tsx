@@ -1,26 +1,30 @@
-import { Layout } from "@/components/Layout";
-import { GetServerSideProps } from "next";
-import { prisma } from "@/lib/prisma";
-import { useSession, signIn } from "next-auth/react";
-import { useRouter } from "next/router";
-import { useRef, useState } from "react";
-import Link from "next/link";
-import { RecipeWithRelations } from "@/types";
-import { ForkIcon } from "@/components/ForkIcon";
-import { Button } from "@/components/Button";
+import { GetServerSideProps } from 'next';
+import { signIn, useSession } from 'next-auth/react';
+import Image from 'next/image';
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { useRef, useState } from 'react';
+// Components
+import { Button } from '@/components/Button';
+import { ForkIcon } from '@/components/ForkIcon';
+import { Layout } from '@/components/Layout';
+// Types
+import { RecipeWithRelations } from '@/types';
+// Lib
+import { prisma } from '@/lib/prisma';
 
 type Props = {
-  recipe: RecipeWithRelations;
+  recipe: RecipeWithRelations
 };
 
-export default function RecipePage({ recipe }: Props) {
+const RecipePage = ({ recipe }: Props) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [forking, setForking] = useState(false);
   const [iconAnimating, setIconAnimating] = useState(false);
   const pendingForkId = useRef<string | null>(null);
 
-  async function handleFork() {
+  const handleFork = async () => {
     if (!session) {
       signIn();
       return;
@@ -28,30 +32,31 @@ export default function RecipePage({ recipe }: Props) {
     setForking(true);
     setIconAnimating(true);
     try {
-      const res = await fetch(`/api/recipes/${recipe.id}/fork`, { method: "POST" });
+      const res = await fetch(`/api/recipes/${recipe.id}/fork`, { method: 'POST' });
       if (res.ok) {
         const fork = await res.json();
         pendingForkId.current = fork.id;
       }
-    } finally {
+    }
+    finally {
       setForking(false);
     }
-  }
+  };
 
-  function handleAnimationDone() {
+  const handleAnimationDone = () => {
     setIconAnimating(false);
     if (pendingForkId.current) {
       router.push(`/my/recipes/${pendingForkId.current}/edit`);
       pendingForkId.current = null;
     }
-  }
+  };
 
   return (
     <Layout title={recipe.title}>
       <div className="mx-auto max-w-2xl px-4 py-10">
         {recipe.coverImageUrl && (
           <div className="mb-8 -mx-4 sm:mx-0">
-            <img
+            <Image
               src={recipe.coverImageUrl}
               alt=""
               className="w-full h-64 object-cover sm:rounded-xl"
@@ -69,7 +74,7 @@ export default function RecipePage({ recipe }: Props) {
               disabled={forking}
               className="shrink-0 flex items-center gap-2"
             >
-              {forking ? "Forking…" : "Fork"}
+              {forking ? 'Forking…' : 'Fork'}
               <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} />
             </Button>
           </div>
@@ -80,18 +85,25 @@ export default function RecipePage({ recipe }: Props) {
 
           <div className="mt-4 flex items-center gap-4 text-sm text-stone-400">
             <span>
-              forked by {recipe.forkCount} {recipe.forkCount === 1 ? "cook" : "cooks"}
+              forked by
+              {' '}
+              {recipe.forkCount}
+              {' '}
+              {recipe.forkCount === 1 ? 'cook' : 'cooks'}
             </span>
             {recipe.forkedFrom && (
               <span>
-                fork of{" "}
-                {recipe.forkedFrom.isPublic ? (
-                  <Link href={`/recipe/${recipe.forkedFrom.id}`} className="underline hover:text-stone-600">
-                    {recipe.forkedFrom.title}
-                  </Link>
-                ) : (
-                  recipe.forkedFrom.title
-                )}
+                fork of
+                {' '}
+                {recipe.forkedFrom.isPublic
+                  ? (
+                      <Link href={`/recipe/${recipe.forkedFrom.id}`} className="underline hover:text-stone-600">
+                        {recipe.forkedFrom.title}
+                      </Link>
+                    )
+                  : (
+                      recipe.forkedFrom.title
+                    )}
               </span>
             )}
             <Link
@@ -107,11 +119,13 @@ export default function RecipePage({ recipe }: Props) {
           <section className="mb-8">
             <h2 className="font-medium text-stone-900 mb-3">Ingredients</h2>
             <ul className="space-y-2">
-              {recipe.ingredients.map((ing) => (
+              {recipe.ingredients.map(ing => (
                 <li key={ing.id} className="flex gap-2 text-stone-700">
                   {(ing.quantity || ing.unit) && (
                     <span className="text-stone-400 min-w-[5rem] text-right">
-                      {ing.quantity} {ing.unit}
+                      {ing.quantity}
+                      {' '}
+                      {ing.unit}
                     </span>
                   )}
                   <span>{ing.name}</span>
@@ -134,7 +148,13 @@ export default function RecipePage({ recipe }: Props) {
                     <p className="text-stone-700 leading-relaxed">{step.instruction}</p>
                     {step.timerSeconds && (
                       <p className="mt-1 text-sm text-stone-400">
-                        Timer: {Math.floor(step.timerSeconds / 60)}m {step.timerSeconds % 60}s
+                        Timer:
+                        {' '}
+                        {Math.floor(step.timerSeconds / 60)}
+                        m
+                        {' '}
+                        {step.timerSeconds % 60}
+                        s
                       </p>
                     )}
                   </div>
@@ -148,7 +168,7 @@ export default function RecipePage({ recipe }: Props) {
           <section className="border-t border-stone-200 pt-8">
             <h2 className="font-medium text-stone-900 mb-4">Public forks</h2>
             <ul className="space-y-3">
-              {recipe.forks!.map((fork) => (
+              {recipe.forks!.map(fork => (
                 <li key={fork.id}>
                   <Link
                     href={`/recipe/${fork.id}`}
@@ -167,7 +187,7 @@ export default function RecipePage({ recipe }: Props) {
       </div>
     </Layout>
   );
-}
+};
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const id = params?.id as string;
@@ -177,8 +197,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     include: {
       author: { select: { id: true, name: true, isPublic: true } },
       forkedFrom: { select: { id: true, title: true, isPublic: true } },
-      ingredients: { orderBy: { orderIndex: "asc" } },
-      steps: { orderBy: { orderIndex: "asc" } },
+      ingredients: { orderBy: { orderIndex: 'asc' } },
+      steps: { orderBy: { orderIndex: 'asc' } },
       forks: {
         where: { isPublic: true },
         select: {
@@ -187,7 +207,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
           description: true,
           author: { select: { name: true, isPublic: true } },
         },
-        orderBy: { createdAt: "desc" },
+        orderBy: { createdAt: 'desc' },
       },
     },
   });
@@ -200,3 +220,5 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     },
   };
 };
+
+export default RecipePage;

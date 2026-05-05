@@ -1,27 +1,29 @@
-import { ReactNode } from "react";
-import Link from "next/link";
-import { RecipeWithRelations } from "@/types";
+import Image from 'next/image';
+import Link from 'next/link';
+import { ReactNode } from 'react';
+// Types
+import { RecipeWithRelations } from '@/types';
 
 type Props = {
-  recipe: RecipeWithRelations;
-  cookHref: string;
-  cookVariant?: "primary" | "secondary";
-  headerAction?: ReactNode;
-  metaBadge?: ReactNode;
+  recipe: RecipeWithRelations
+  cookHref: string
+  cookVariant?: 'primary' | 'secondary'
+  headerAction?: ReactNode
+  metaBadge?: ReactNode
 };
 
-export function RecipeDetail({
+export const RecipeDetail = ({
   recipe,
   cookHref,
-  cookVariant = "secondary",
+  cookVariant = 'secondary',
   headerAction,
   metaBadge,
-}: Props) {
+}: Props) => {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       {recipe.coverImageUrl && (
         <div className="mb-8 -mx-4 sm:mx-0">
-          <img
+          <Image
             src={recipe.coverImageUrl}
             alt=""
             className="w-full h-64 object-cover sm:rounded-xl"
@@ -43,37 +45,43 @@ export function RecipeDetail({
           {metaBadge}
           {recipe.author && (
             <span>
-              by{" "}
-              {recipe.author.isPublic && recipe.author.username ? (
-                <Link href={`/u/${recipe.author.username}`} className="underline hover:text-stone-600">
-                  {recipe.author.username}
-                </Link>
-              ) : (
-                <span>{recipe.author.username ?? recipe.author.name ?? "unknown"}</span>
-              )}
+              by
+              {' '}
+              {recipe.author.isPublic && recipe.author.username
+                ? (
+                    <Link href={`/u/${recipe.author.username}`} className="underline hover:text-stone-600">
+                      {recipe.author.username}
+                    </Link>
+                  )
+                : (
+                    <span>{recipe.author.username ?? recipe.author.name ?? 'unknown'}</span>
+                  )}
             </span>
           )}
           {recipe.forkedFrom && (
             <span>
-              fork of{" "}
-              {recipe.forkedFrom.isPublic ? (
-                <Link
-                  href={`/recipes/${recipe.forkedFrom.id}`}
-                  className="underline hover:text-stone-600"
-                >
-                  {recipe.forkedFrom.title}
-                </Link>
-              ) : (
-                recipe.forkedFrom.title
-              )}
+              fork of
+              {' '}
+              {recipe.forkedFrom.isPublic
+                ? (
+                    <Link
+                      href={`/recipes/${recipe.forkedFrom.id}`}
+                      className="underline hover:text-stone-600"
+                    >
+                      {recipe.forkedFrom.title}
+                    </Link>
+                  )
+                : (
+                    recipe.forkedFrom.title
+                  )}
             </span>
           )}
           <Link
             href={cookHref}
             className={`ml-auto rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-              cookVariant === "primary"
-                ? "bg-primary-500 text-white hover:bg-primary-600"
-                : "border border-stone-300 text-stone-600 hover:bg-stone-100"
+              cookVariant === 'primary'
+                ? 'bg-primary-500 text-white hover:bg-primary-600'
+                : 'border border-stone-300 text-stone-600 hover:bg-stone-100'
             }`}
           >
             Cook mode
@@ -85,11 +93,13 @@ export function RecipeDetail({
         <section className="mb-8">
           <h2 className="font-medium text-stone-900 mb-3">Ingredients</h2>
           <ul className="space-y-2">
-            {recipe.ingredients.map((ing) => (
+            {recipe.ingredients.map(ing => (
               <li key={ing.id} className="flex gap-2 text-stone-700">
                 {(ing.quantity || ing.unit) && (
                   <span className="text-stone-400 min-w-[5rem] text-right">
-                    {ing.quantity} {ing.unit}
+                    {ing.quantity}
+                    {' '}
+                    {ing.unit}
                   </span>
                 )}
                 <span>{ing.name}</span>
@@ -112,7 +122,13 @@ export function RecipeDetail({
                   <p className="text-stone-700 leading-relaxed">{step.instruction}</p>
                   {step.timerSeconds && (
                     <p className="mt-1 text-sm text-stone-400">
-                      Timer: {Math.floor(step.timerSeconds / 60)}m {step.timerSeconds % 60}s
+                      Timer:
+                      {' '}
+                      {Math.floor(step.timerSeconds / 60)}
+                      m
+                      {' '}
+                      {step.timerSeconds % 60}
+                      s
                     </p>
                   )}
                 </div>
@@ -126,7 +142,7 @@ export function RecipeDetail({
         <section className="border-t border-stone-200 pt-8">
           <h2 className="font-medium text-stone-900 mb-4">Public forks</h2>
           <ul className="space-y-3">
-            {recipe.forks!.map((fork) => (
+            {recipe.forks!.map(fork => (
               <li key={fork.id}>
                 <Link
                   href={`/recipes/${fork.id}`}
@@ -144,4 +160,4 @@ export function RecipeDetail({
       )}
     </div>
   );
-}
+};

@@ -1,14 +1,15 @@
-"use client";
+'use client';
 
-import { Button } from "@/components/Button";
+// Components
+import { Button } from '@/components/Button';
 
 type Props = {
-  page: number;
-  totalPages: number;
-  onPageChange: (page: number) => void;
+  page: number
+  totalPages: number
+  onPageChange: (page: number) => void
 };
 
-export function Pagination({ page, totalPages, onPageChange }: Props) {
+export const Pagination = ({ page, totalPages, onPageChange }: Props) => {
   if (totalPages <= 1) return null;
 
   return (
@@ -23,7 +24,13 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
         ← Previous
       </Button>
       <span className="text-sm text-stone-500">
-        Page {page} of {totalPages}
+        Page
+        {' '}
+        {page}
+        {' '}
+        of
+        {' '}
+        {totalPages}
       </span>
       <Button
         variant="secondary"
@@ -36,4 +43,4 @@ export function Pagination({ page, totalPages, onPageChange }: Props) {
       </Button>
     </div>
   );
-}
+};

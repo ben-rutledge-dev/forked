@@ -1,8 +1,10 @@
-import Link from "next/link";
-import { auth } from "@/lib/auth";
-import { SignInButton } from "./components/SignInButton";
+import Link from 'next/link';
+// Components
+import { SignInButton } from './components/SignInButton';
+// Lib
+import { auth } from '@/lib/auth';
 
-export default async function Home() {
+const Home = async () => {
   const session = await auth();
 
   return (
@@ -22,17 +24,21 @@ export default async function Home() {
         >
           Browse the pool
         </Link>
-        {session ? (
-          <Link
-            href="/my/recipes"
-            className="w-full rounded-full border border-stone-300 px-8 py-3 text-sm font-medium text-stone-700 hover:bg-stone-100 transition-colors sm:w-auto"
-          >
-            My recipes
-          </Link>
-        ) : (
-          <SignInButton />
-        )}
+        {session
+          ? (
+              <Link
+                href="/my/recipes"
+                className="w-full rounded-full border border-stone-300 px-8 py-3 text-sm font-medium text-stone-700 hover:bg-stone-100 transition-colors sm:w-auto"
+              >
+                My recipes
+              </Link>
+            )
+          : (
+              <SignInButton />
+            )}
       </div>
     </div>
   );
-}
+};
+
+export default Home;

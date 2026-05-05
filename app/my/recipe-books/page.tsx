@@ -1,5 +1,7 @@
-import { redirect } from "next/navigation";
+import { redirect } from 'next/navigation';
 
-export default function RecipeBooksPage() {
-  redirect("/my/recipes");
-}
+const RecipeBooksPage = () => {
+  redirect('/my/recipes');
+};
+
+export default RecipeBooksPage;

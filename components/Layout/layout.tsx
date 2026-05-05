@@ -1,21 +1,22 @@
-import Head from "next/head";
-import Link from "next/link";
-import { useSession, signIn, signOut } from "next-auth/react";
-import { ReactNode } from "react";
-import { Button } from "@/components/Button";
+import { signIn, signOut, useSession } from 'next-auth/react';
+import Head from 'next/head';
+import Link from 'next/link';
+import { ReactNode } from 'react';
+// Components
+import { Button } from '@/components/Button';
 
 type Props = {
-  children: ReactNode;
-  title?: string;
+  children: ReactNode
+  title?: string
 };
 
-export function Layout({ children, title = "Forked" }: Props) {
+export const Layout = ({ children, title = 'Forked' }: Props) => {
   const { data: session, status } = useSession();
 
   return (
     <>
       <Head>
-        <title>{title === "Forked" ? "Forked" : `${title} — Forked`}</title>
+        <title>{title === 'Forked' ? 'Forked' : `${title} — Forked`}</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className="min-h-screen text-stone-900">
@@ -34,29 +35,31 @@ export function Layout({ children, title = "Forked" }: Props) {
               >
                 Pool
               </Link>
-              {session ? (
-                <>
-                  <Link
-                    href="/my/recipes"
-                    className="text-orange-100 hover:text-white transition-colors"
-                  >
-                    My Recipes
-                  </Link>
-                  <Button variant="nav-link" onClick={() => signOut()}>
-                    Sign out
-                  </Button>
-                </>
-              ) : (
-                <Button
-                  variant="nav-pill"
-                  size="md"
-                  shape="pill"
-                  disabled={status === "loading"}
-                  onClick={() => signIn()}
-                >
-                  Sign in
-                </Button>
-              )}
+              {session
+                ? (
+                    <>
+                      <Link
+                        href="/my/recipes"
+                        className="text-orange-100 hover:text-white transition-colors"
+                      >
+                        My Recipes
+                      </Link>
+                      <Button variant="nav-link" onClick={() => signOut()}>
+                        Sign out
+                      </Button>
+                    </>
+                  )
+                : (
+                    <Button
+                      variant="nav-pill"
+                      size="md"
+                      shape="pill"
+                      disabled={status === 'loading'}
+                      onClick={() => signIn()}
+                    >
+                      Sign in
+                    </Button>
+                  )}
             </div>
           </nav>
         </header>
@@ -64,4 +67,4 @@ export function Layout({ children, title = "Forked" }: Props) {
       </div>
     </>
   );
-}
+};

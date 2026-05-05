@@ -1,1 +1,1 @@
-export * from "./addToBookButton";
+export * from './addToBookButton';

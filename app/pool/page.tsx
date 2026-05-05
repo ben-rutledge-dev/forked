@@ -1,17 +1,19 @@
-import { prisma } from "@/lib/prisma";
-import { PoolClient } from "./components/PoolClient";
-import type { Metadata } from "next";
+import type { Metadata } from 'next';
+// Components
+import { PoolClient } from './components/PoolClient';
+// Lib
+import { prisma } from '@/lib/prisma';
 
-export const metadata: Metadata = { title: "Recipe Pool" };
+export const metadata: Metadata = { title: 'Recipe Pool' };
 
 const PAGE_SIZE = 24;
 
-export default async function PoolPage({
+const PoolPage = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; page?: string }>;
-}) {
-  const { q = "", page: pageStr = "1" } = await searchParams;
+  searchParams: Promise<{ q?: string, page?: string }>
+}) => {
+  const { q = '', page: pageStr = '1' } = await searchParams;
   const page = Math.max(1, Number(pageStr));
   const skip = (page - 1) * PAGE_SIZE;
 
@@ -29,7 +31,7 @@ export default async function PoolPage({
     prisma.recipe.findMany({
       where,
       select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, authorId: true, isPublic: true, forkedFromId: true },
-      orderBy: { forkCount: "desc" },
+      orderBy: { forkCount: 'desc' },
       skip,
       take: PAGE_SIZE,
     }),
@@ -44,4 +46,6 @@ export default async function PoolPage({
       initialQuery={q}
     />
   );
-}
+};
+
+export default PoolPage;

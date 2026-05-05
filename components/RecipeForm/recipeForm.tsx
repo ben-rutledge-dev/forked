@@ -1,53 +1,55 @@
-"use client";
+'use client';
 
-import { useState, FormEvent } from "react";
-import { useRouter } from "next/navigation";
-import { RecipeFormData, IngredientFormData, StepFormData } from "@/types";
-import { Button } from "@/components/Button";
-import { IconButton } from "@/components/IconButton";
-import { FormBanner } from "@/components/FormBanner";
-import { Toast } from "@/components/Toast";
-import { ImageUpload } from "@/components/ImageUpload";
+import { useRouter } from 'next/navigation';
+import { FormEvent, useState } from 'react';
+// Components
+import { Button } from '@/components/Button';
+import { FormBanner } from '@/components/FormBanner';
+import { IconButton } from '@/components/IconButton';
+import { ImageUpload } from '@/components/ImageUpload';
+import { Toast } from '@/components/Toast';
+// Types
+import { IngredientFormData, RecipeFormData, StepFormData } from '@/types';
 
 type Props = {
-  initialData?: Partial<RecipeFormData>;
-  recipeId?: string;
-  forkedFrom?: { id: string; title: string; isPublic: boolean } | null;
+  initialData?: Partial<RecipeFormData>
+  recipeId?: string
+  forkedFrom?: { id: string, title: string, isPublic: boolean } | null
 };
 
-const emptyIngredient = (): IngredientFormData => ({ name: "", quantity: "", unit: "" });
-const emptyStep = (): StepFormData => ({ instruction: "", timerSeconds: "", imageUrl: "" });
+const emptyIngredient = (): IngredientFormData => ({ name: '', quantity: '', unit: '' });
+const emptyStep = (): StepFormData => ({ instruction: '', timerSeconds: '', imageUrl: '' });
 
-export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
+export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
   const router = useRouter();
-  const [title, setTitle] = useState(initialData?.title ?? "");
-  const [description, setDescription] = useState(initialData?.description ?? "");
+  const [title, setTitle] = useState(initialData?.title ?? '');
+  const [description, setDescription] = useState(initialData?.description ?? '');
   const [isPublic, setIsPublic] = useState(initialData?.isPublic ?? false);
-  const [coverImageUrl, setCoverImageUrl] = useState(initialData?.coverImageUrl ?? "");
+  const [coverImageUrl, setCoverImageUrl] = useState(initialData?.coverImageUrl ?? '');
   const [ingredients, setIngredients] = useState<IngredientFormData[]>(
-    initialData?.ingredients?.length ? initialData.ingredients : [emptyIngredient()]
+    initialData?.ingredients?.length ? initialData.ingredients : [emptyIngredient()],
   );
   const [steps, setSteps] = useState<StepFormData[]>(
-    initialData?.steps?.length ? initialData.steps : [emptyStep()]
+    initialData?.steps?.length ? initialData.steps : [emptyStep()],
   );
   const [saving, setSaving] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
 
-  async function handleSubmit(e: FormEvent) {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setError("");
+    setError('');
     setSaving(true);
 
-    const validIngredients = ingredients.filter((i) => i.name.trim());
-    const validSteps = steps.filter((s) => s.instruction.trim());
+    const validIngredients = ingredients.filter(i => i.name.trim());
+    const validSteps = steps.filter(s => s.instruction.trim());
 
     try {
-      const url = recipeId ? `/api/recipes/${recipeId}` : "/api/recipes";
-      const method = recipeId ? "PUT" : "POST";
+      const url = recipeId ? `/api/recipes/${recipeId}` : '/api/recipes';
+      const method = recipeId ? 'PUT' : 'POST';
       const res = await fetch(url, {
         method,
-        headers: { "Content-Type": "application/json" },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title,
           description,
@@ -60,7 +62,7 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
 
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error ?? "Something went wrong");
+        setError(data.error ?? 'Something went wrong');
         return;
       }
 
@@ -69,66 +71,71 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
         setSaved(true);
         setTimeout(() => setSaved(false), 4000);
         router.refresh();
-      } else {
+      }
+      else {
         router.push(`/my/recipes/${recipe.id}`);
       }
-    } finally {
+    }
+    finally {
       setSaving(false);
     }
-  }
+  };
 
-  function updateIngredient(i: number, field: keyof IngredientFormData, value: string) {
-    setIngredients((prev) => prev.map((ing, idx) => (idx === i ? { ...ing, [field]: value } : ing)));
-  }
+  const updateIngredient = (i: number, field: keyof IngredientFormData, value: string) => {
+    setIngredients(prev => prev.map((ing, idx) => (idx === i ? { ...ing, [field]: value } : ing)));
+  };
 
-  function removeIngredient(i: number) {
-    setIngredients((prev) => prev.filter((_, idx) => idx !== i));
-  }
+  const removeIngredient = (i: number) => {
+    setIngredients(prev => prev.filter((_, idx) => idx !== i));
+  };
 
-  function moveIngredient(i: number, dir: -1 | 1) {
+  const moveIngredient = (i: number, dir: -1 | 1) => {
     setIngredients((prev) => {
       const next = [...prev];
       [next[i], next[i + dir]] = [next[i + dir], next[i]];
       return next;
     });
-  }
+  };
 
-  function updateStep(i: number, field: keyof StepFormData, value: string) {
-    setSteps((prev) => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
-  }
+  const updateStep = (i: number, field: keyof StepFormData, value: string) => {
+    setSteps(prev => prev.map((s, idx) => (idx === i ? { ...s, [field]: value } : s)));
+  };
 
-  function removeStep(i: number) {
-    setSteps((prev) => prev.filter((_, idx) => idx !== i));
-  }
+  const removeStep = (i: number) => {
+    setSteps(prev => prev.filter((_, idx) => idx !== i));
+  };
 
-  function moveStep(i: number, dir: -1 | 1) {
+  const moveStep = (i: number, dir: -1 | 1) => {
     setSteps((prev) => {
       const next = [...prev];
       [next[i], next[i + dir]] = [next[i + dir], next[i]];
       return next;
     });
-  }
+  };
 
-  function insertStep(afterIndex: number) {
+  const insertStep = (afterIndex: number) => {
     setSteps((prev) => {
       const next = [...prev];
       next.splice(afterIndex + 1, 0, emptyStep());
       return next;
     });
-  }
+  };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {forkedFrom && (
         <p className="text-sm text-stone-500">
-          Forked from{" "}
-          {forkedFrom.isPublic ? (
-            <a href={`/recipes/${forkedFrom.id}`} className="underline hover:text-stone-700">
-              {forkedFrom.title}
-            </a>
-          ) : (
-            <span>{forkedFrom.title}</span>
-          )}
+          Forked from
+          {' '}
+          {forkedFrom.isPublic
+            ? (
+                <a href={`/recipes/${forkedFrom.id}`} className="underline hover:text-stone-700">
+                  {forkedFrom.title}
+                </a>
+              )
+            : (
+                <span>{forkedFrom.title}</span>
+              )}
         </p>
       )}
 
@@ -141,7 +148,7 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
           <input
             type="text"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={e => setTitle(e.target.value)}
             required
             placeholder="Grandma's tomato sauce"
             className="w-full rounded-lg border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
@@ -152,7 +159,7 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
           <label className="block text-sm font-medium text-stone-700 mb-1">Description</label>
           <textarea
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={e => setDescription(e.target.value)}
             rows={2}
             placeholder="A short description (optional)"
             className="w-full rounded-lg border border-stone-300 px-3 py-2 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 resize-none"
@@ -164,7 +171,7 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
           <ImageUpload
             value={coverImageUrl}
             onChange={setCoverImageUrl}
-            onError={(msg) => setError(msg)}
+            onError={msg => setError(msg)}
             label="Add cover photo"
           />
         </div>
@@ -173,7 +180,7 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
           <input
             type="checkbox"
             checked={isPublic}
-            onChange={(e) => setIsPublic(e.target.checked)}
+            onChange={e => setIsPublic(e.target.checked)}
             className="rounded border-stone-300"
           />
           Make this recipe public
@@ -212,21 +219,21 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
               <input
                 type="text"
                 value={ing.quantity}
-                onChange={(e) => updateIngredient(i, "quantity", e.target.value)}
+                onChange={e => updateIngredient(i, 'quantity', e.target.value)}
                 placeholder="e.g. 2"
                 className="w-16 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
               />
               <input
                 type="text"
                 value={ing.unit}
-                onChange={(e) => updateIngredient(i, "unit", e.target.value)}
+                onChange={e => updateIngredient(i, 'unit', e.target.value)}
                 placeholder="e.g. cups"
                 className="w-28 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
               />
               <input
                 type="text"
                 value={ing.name}
-                onChange={(e) => updateIngredient(i, "name", e.target.value)}
+                onChange={e => updateIngredient(i, 'name', e.target.value)}
                 placeholder="e.g. flour"
                 className="flex-1 rounded-lg border border-stone-300 px-2 py-1.5 text-sm focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
               />
@@ -247,7 +254,7 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
         </div>
         <button
           type="button"
-          onClick={() => setIngredients((prev) => [...prev, emptyIngredient()])}
+          onClick={() => setIngredients(prev => [...prev, emptyIngredient()])}
           className="mt-2 w-full flex items-center gap-2 py-1 text-xs text-stone-400 hover:text-stone-600 transition-colors group"
         >
           <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
@@ -265,64 +272,64 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
             <div key={i}>
               <div className="flex gap-2 py-1.5">
                 <div className="flex flex-col items-center gap-1 pt-1 mr-1">
-                <span className="text-xs text-stone-400 font-medium">{i + 1}</span>
-                <IconButton
-                  type="button"
-                  onClick={() => moveStep(i, -1)}
-                  disabled={i === 0}
-                >
-                  ▲
-                </IconButton>
-                <IconButton
-                  type="button"
-                  onClick={() => moveStep(i, 1)}
-                  disabled={i === steps.length - 1}
-                >
-                  ▼
-                </IconButton>
-              </div>
-              <div className="flex-1 space-y-2 min-w-0">
-                <div className="flex gap-2 items-center">
-                  <textarea
-                    value={step.instruction}
-                    onChange={(e) => updateStep(i, "instruction", e.target.value)}
-                    rows={2}
-                    placeholder={`Step ${i + 1} instruction`}
-                    className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 resize-none"
-                  />
-                  <button
+                  <span className="text-xs text-stone-400 font-medium">{i + 1}</span>
+                  <IconButton
                     type="button"
-                    onClick={() => removeStep(i)}
-                    aria-label="Remove step"
-                    className="flex-none flex items-center justify-center w-7 h-7 rounded-full border border-transparent text-stone-400 hover:bg-danger-50 hover:border-danger-300 hover:text-danger-500 transition-colors"
+                    onClick={() => moveStep(i, -1)}
+                    disabled={i === 0}
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
-                      <line x1="2" y1="2" x2="8" y2="8" />
-                      <line x1="8" y1="2" x2="2" y2="8" />
-                    </svg>
-                  </button>
+                    ▲
+                  </IconButton>
+                  <IconButton
+                    type="button"
+                    onClick={() => moveStep(i, 1)}
+                    disabled={i === steps.length - 1}
+                  >
+                    ▼
+                  </IconButton>
                 </div>
-                <div className="flex items-center gap-4 flex-wrap pt-3">
-                  <div className="flex items-center gap-2">
-                    <label className="text-xs text-stone-500">Timer (seconds)</label>
-                    <input
-                      type="number"
-                      min="0"
-                      value={step.timerSeconds}
-                      onChange={(e) => updateStep(i, "timerSeconds", e.target.value)}
-                      placeholder="optional"
-                      className="w-28 rounded-lg border border-stone-300 px-2 py-1 text-xs focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
+                <div className="flex-1 space-y-2 min-w-0">
+                  <div className="flex gap-2 items-center">
+                    <textarea
+                      value={step.instruction}
+                      onChange={e => updateStep(i, 'instruction', e.target.value)}
+                      rows={2}
+                      placeholder={`Step ${i + 1} instruction`}
+                      className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 resize-none"
                     />
+                    <button
+                      type="button"
+                      onClick={() => removeStep(i)}
+                      aria-label="Remove step"
+                      className="flex-none flex items-center justify-center w-7 h-7 rounded-full border border-transparent text-stone-400 hover:bg-danger-50 hover:border-danger-300 hover:text-danger-500 transition-colors"
+                    >
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10" className="w-2.5 h-2.5" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round">
+                        <line x1="2" y1="2" x2="8" y2="8" />
+                        <line x1="8" y1="2" x2="2" y2="8" />
+                      </svg>
+                    </button>
                   </div>
-                  <ImageUpload
-                      value={step.imageUrl ?? ""}
-                      onChange={(url) => updateStep(i, "imageUrl", url)}
-                      onError={(msg) => setError(msg)}
+                  <div className="flex items-center gap-4 flex-wrap pt-3">
+                    <div className="flex items-center gap-2">
+                      <label className="text-xs text-stone-500">Timer (seconds)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        value={step.timerSeconds}
+                        onChange={e => updateStep(i, 'timerSeconds', e.target.value)}
+                        placeholder="optional"
+                        className="w-28 rounded-lg border border-stone-300 px-2 py-1 text-xs focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
+                      />
+                    </div>
+                    <ImageUpload
+                      value={step.imageUrl ?? ''}
+                      onChange={url => updateStep(i, 'imageUrl', url)}
+                      onError={msg => setError(msg)}
                       label="Add photo"
                       previewSize="sm"
                     />
+                  </div>
                 </div>
-              </div>
               </div>
               <button
                 type="button"
@@ -346,7 +353,7 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
           shape="pill"
           disabled={saving}
         >
-          {saving ? "Saving…" : recipeId ? "Save changes" : "Create recipe"}
+          {saving ? 'Saving…' : recipeId ? 'Save changes' : 'Create recipe'}
         </Button>
         <Button
           type="button"
@@ -360,4 +367,4 @@ export function RecipeForm({ initialData, recipeId, forkedFrom }: Props) {
       </div>
     </form>
   );
-}
+};

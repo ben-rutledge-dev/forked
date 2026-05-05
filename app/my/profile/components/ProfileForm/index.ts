@@ -1,1 +1,1 @@
-export * from "./profileForm";
+export * from './profileForm';

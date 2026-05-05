@@ -1,22 +1,25 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { notFound, redirect } from "next/navigation";
-import type { Metadata } from "next";
-import { type Role } from "@/utils/roles";
-import { RecipeBookDetailClient } from "./components/RecipeBookDetailClient";
+import type { Metadata } from 'next';
+import { notFound, redirect } from 'next/navigation';
+// Components
+import { RecipeBookDetailClient } from './components/RecipeBookDetailClient';
+// Lib
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+// Utils
+import { type Role } from '@/utils/roles';
 
 type Props = { params: Promise<{ id: string }> };
 
-export async function generateMetadata({ params }: Props): Promise<Metadata> {
+export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
   const { id } = await params;
   const book = await prisma.recipeBook.findUnique({ where: { id }, select: { title: true } });
-  return { title: book?.title ?? "Recipe Book" };
-}
+  return { title: book?.title ?? 'Recipe Book' };
+};
 
-export default async function RecipeBookDetailPage({ params }: Props) {
+const RecipeBookDetailPage = async ({ params }: Props) => {
   const { id } = await params;
   const session = await auth();
-  if (!session?.user?.id) redirect("/auth/signin");
+  if (!session?.user?.id) redirect('/auth/signin');
 
   const userId = session.user.id;
 
@@ -28,7 +31,7 @@ export default async function RecipeBookDetailPage({ params }: Props) {
           include: {
             user: { select: { id: true, name: true, username: true, avatarUrl: true } },
           },
-          orderBy: { createdAt: "asc" },
+          orderBy: { createdAt: 'asc' },
         },
         entries: {
           include: {
@@ -39,7 +42,7 @@ export default async function RecipeBookDetailPage({ params }: Props) {
               },
             },
           },
-          orderBy: { orderIndex: "asc" },
+          orderBy: { orderIndex: 'asc' },
         },
       },
     }),
@@ -47,18 +50,18 @@ export default async function RecipeBookDetailPage({ params }: Props) {
     prisma.recipe.findMany({
       where: { authorId: userId },
       select: { id: true, title: true, coverImageUrl: true },
-      orderBy: { updatedAt: "desc" },
+      orderBy: { updatedAt: 'desc' },
     }),
   ]);
 
   if (!book) notFound();
 
-  const member = book.members.find((m) => m.userId === userId);
+  const member = book.members.find(m => m.userId === userId);
   const isAccepted = member?.acceptedAt !== null && member !== undefined;
 
   if (!isAccepted) {
     // If there's a pending invite, redirect to list page where they can accept
-    if (member) redirect("/my/recipe-books");
+    if (member) redirect('/my/recipe-books');
     notFound();
   }
 
@@ -71,7 +74,7 @@ export default async function RecipeBookDetailPage({ params }: Props) {
     coverImageUrl: book.coverImageUrl,
     isPublic: book.isPublic,
     currentUserRole,
-    entries: book.entries.map((e) => ({
+    entries: book.entries.map(e => ({
       id: e.id,
       orderIndex: e.orderIndex,
       recipe: {
@@ -85,7 +88,7 @@ export default async function RecipeBookDetailPage({ params }: Props) {
         forkedFromId: e.recipe.forkedFromId,
       },
     })),
-    members: book.members.map((m) => ({
+    members: book.members.map(m => ({
       id: m.id,
       userId: m.userId,
       role: m.role as Role,
@@ -99,7 +102,9 @@ export default async function RecipeBookDetailPage({ params }: Props) {
       book={bookData}
       currentUserId={userId}
       isPremium={user?.isPremium ?? false}
-      userRecipes={userRecipes.map((r) => ({ id: r.id, title: r.title, coverImageUrl: r.coverImageUrl }))}
+      userRecipes={userRecipes.map(r => ({ id: r.id, title: r.title, coverImageUrl: r.coverImageUrl }))}
     />
   );
-}
+};
+
+export default RecipeBookDetailPage;

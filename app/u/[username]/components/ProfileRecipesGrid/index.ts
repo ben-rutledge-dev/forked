@@ -1,1 +1,1 @@
-export * from "./profileRecipesGrid";
+export * from './profileRecipesGrid';

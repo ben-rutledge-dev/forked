@@ -1,11 +1,13 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { OWNER } from "@/utils/roles";
+import { NextResponse } from 'next/server';
+// Lib
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+// Utils
+import { OWNER } from '@/utils/roles';
 
-export async function GET() {
+export const GET = async () => {
   const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const userId = session.user.id;
 
@@ -19,12 +21,12 @@ export async function GET() {
         },
       },
     },
-    orderBy: { createdAt: "asc" },
+    orderBy: { createdAt: 'asc' },
   });
 
   const accepted = members
-    .filter((m) => m.acceptedAt !== null)
-    .map((m) => ({
+    .filter(m => m.acceptedAt !== null)
+    .map(m => ({
       ...m.recipeBook,
       role: m.role,
       memberCount: m.recipeBook.members.length,
@@ -32,8 +34,8 @@ export async function GET() {
     }));
 
   const pending = members
-    .filter((m) => m.acceptedAt === null)
-    .map((m) => ({
+    .filter(m => m.acceptedAt === null)
+    .map(m => ({
       id: m.id,
       role: m.role,
       createdAt: m.createdAt,
@@ -46,14 +48,14 @@ export async function GET() {
     }));
 
   return NextResponse.json({ books: accepted, pending });
-}
+};
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const { title, description, isPublic, coverImageUrl } = await req.json();
-  if (!title?.trim()) return NextResponse.json({ error: "Title is required" }, { status: 400 });
+  if (!title?.trim()) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
 
   const book = await prisma.recipeBook.create({
     data: {
@@ -73,4 +75,4 @@ export async function POST(req: Request) {
   });
 
   return NextResponse.json(book, { status: 201 });
-}
+};

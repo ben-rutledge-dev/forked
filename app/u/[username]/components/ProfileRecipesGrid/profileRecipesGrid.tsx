@@ -1,13 +1,15 @@
-"use client";
+'use client';
 
-import { useState } from "react";
-import { RecipeCard } from "@/components/RecipeCard";
-import { Pagination } from "@/components/Pagination";
-import type { Recipe } from "@/types";
+import { useState } from 'react';
+// Components
+import { Pagination } from '@/components/Pagination';
+import { RecipeCard } from '@/components/RecipeCard';
+// Types
+import type { Recipe } from '@/types';
 
 const PAGE_SIZE = 12;
 
-export function ProfileRecipesGrid({ recipes }: { recipes: Recipe[] }) {
+export const ProfileRecipesGrid = ({ recipes }: { recipes: Recipe[] }) => {
   const [page, setPage] = useState(1);
   const totalPages = Math.ceil(recipes.length / PAGE_SIZE);
   const visible = recipes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -19,7 +21,7 @@ export function ProfileRecipesGrid({ recipes }: { recipes: Recipe[] }) {
   return (
     <>
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {visible.map((recipe) => (
+        {visible.map(recipe => (
           <RecipeCard
             key={recipe.id}
             id={recipe.id}
@@ -35,4 +37,4 @@ export function ProfileRecipesGrid({ recipes }: { recipes: Recipe[] }) {
       <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
     </>
   );
-}
+};

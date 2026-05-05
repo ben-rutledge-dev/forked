@@ -1,1 +1,1 @@
-export * from "./recipeBookDetailClient";
+export * from './recipeBookDetailClient';

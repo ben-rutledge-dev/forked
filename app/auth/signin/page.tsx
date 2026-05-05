@@ -1,12 +1,13 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { signIn } from "next-auth/react";
-import { Button } from "@/components/Button";
+import { signIn } from 'next-auth/react';
+import Link from 'next/link';
+// Components
+import { Button } from '@/components/Button';
 
-const PROVIDERS = [{ id: "github", name: "GitHub" }];
+const PROVIDERS = [{ id: 'github', name: 'GitHub' }];
 
-export default function SignInPage() {
+const SignInPage = () => {
   return (
     <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-stone-50 px-4">
       <div className="w-full max-w-sm">
@@ -18,16 +19,18 @@ export default function SignInPage() {
         </div>
 
         <div className="bg-white rounded-xl border border-stone-200 p-6 space-y-3">
-          {PROVIDERS.map((provider) => (
+          {PROVIDERS.map(provider => (
             <Button
               key={provider.id}
               variant="secondary"
               size="lg"
               shape="rounded"
-              onClick={() => signIn(provider.id, { callbackUrl: "/my/recipes" })}
+              onClick={() => signIn(provider.id, { callbackUrl: '/my/recipes' })}
               className="w-full"
             >
-              Continue with {provider.name}
+              Continue with
+              {' '}
+              {provider.name}
             </Button>
           ))}
         </div>
@@ -38,4 +41,6 @@ export default function SignInPage() {
       </div>
     </div>
   );
-}
+};
+
+export default SignInPage;

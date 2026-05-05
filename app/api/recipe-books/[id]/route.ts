@@ -1,17 +1,19 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
-import { OWNER } from "@/utils/roles";
+import { NextResponse } from 'next/server';
+// Lib
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
+// Utils
+import { OWNER } from '@/utils/roles';
 
 type Params = { params: Promise<{ id: string }> };
 
-async function getMember(bookId: string, userId: string) {
+const getMember = async (bookId: string, userId: string) => {
   return prisma.recipeBookMember.findUnique({
     where: { recipeBookId_userId: { recipeBookId: bookId, userId } },
   });
-}
+};
 
-export async function GET(_req: Request, { params }: Params) {
+export const GET = async (_req: Request, { params }: Params) => {
   const { id } = await params;
   const session = await auth();
 
@@ -20,7 +22,7 @@ export async function GET(_req: Request, { params }: Params) {
     include: {
       members: {
         include: { user: { select: { id: true, name: true, username: true, avatarUrl: true } } },
-        orderBy: { createdAt: "asc" },
+        orderBy: { createdAt: 'asc' },
       },
       entries: {
         include: {
@@ -31,44 +33,44 @@ export async function GET(_req: Request, { params }: Params) {
             },
           },
         },
-        orderBy: { orderIndex: "asc" },
+        orderBy: { orderIndex: 'asc' },
       },
     },
   });
 
-  if (!book) return NextResponse.json({ error: "Not found" }, { status: 404 });
+  if (!book) return NextResponse.json({ error: 'Not found' }, { status: 404 });
 
   const member = session?.user?.id
-    ? book.members.find((m) => m.userId === session.user!.id)
+    ? book.members.find(m => m.userId === session.user!.id)
     : null;
 
   const isAcceptedMember = member?.acceptedAt !== null && member !== null;
 
   if (!book.isPublic && !isAcceptedMember) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   // For public view, filter out private recipes
-  const filteredEntries = book.entries.map((e) => ({
+  const filteredEntries = book.entries.map(e => ({
     ...e,
     recipe: isAcceptedMember || e.recipe.isPublic ? e.recipe : null,
-  })).filter((e) => e.recipe !== null);
+  })).filter(e => e.recipe !== null);
 
   return NextResponse.json({ ...book, entries: filteredEntries, currentUserRole: member?.role ?? null });
-}
+};
 
-export async function PUT(req: Request, { params }: Params) {
+export const PUT = async (req: Request, { params }: Params) => {
   const { id } = await params;
   const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await getMember(id, session.user.id);
   if (!member?.acceptedAt || member.role !== OWNER) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   const { title, description, isPublic, coverImageUrl } = await req.json();
-  if (!title?.trim()) return NextResponse.json({ error: "Title is required" }, { status: 400 });
+  if (!title?.trim()) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
 
   const updated = await prisma.recipeBook.update({
     where: { id },
@@ -81,16 +83,16 @@ export async function PUT(req: Request, { params }: Params) {
   });
 
   return NextResponse.json(updated);
-}
+};
 
-export async function DELETE(_req: Request, { params }: Params) {
+export const DELETE = async (_req: Request, { params }: Params) => {
   const { id } = await params;
   const session = await auth();
-  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await getMember(id, session.user.id);
   if (!member?.acceptedAt || member.role !== OWNER) {
-    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   // Remove current user's membership
@@ -109,4 +111,4 @@ export async function DELETE(_req: Request, { params }: Params) {
   }
 
   return new Response(null, { status: 204 });
-}
+};

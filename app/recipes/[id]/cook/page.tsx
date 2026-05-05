@@ -1,17 +1,19 @@
-import { prisma } from "@/lib/prisma";
-import { notFound } from "next/navigation";
-import { CookMode } from "@/components/CookMode";
+import { notFound } from 'next/navigation';
+// Components
+import { CookMode } from '@/components/CookMode';
+// Lib
+import { prisma } from '@/lib/prisma';
 
 type Props = { params: Promise<{ id: string }> };
 
-export default async function PublicCookPage({ params }: Props) {
+const PublicCookPage = async ({ params }: Props) => {
   const { id } = await params;
 
   const recipe = await prisma.recipe.findUnique({
     where: { id, isPublic: true },
     include: {
-      ingredients: { orderBy: { orderIndex: "asc" } },
-      steps: { orderBy: { orderIndex: "asc" } },
+      ingredients: { orderBy: { orderIndex: 'asc' } },
+      steps: { orderBy: { orderIndex: 'asc' } },
     },
   });
 
@@ -23,4 +25,6 @@ export default async function PublicCookPage({ params }: Props) {
       backHref={`/recipes/${id}`}
     />
   );
-}
+};
+
+export default PublicCookPage;

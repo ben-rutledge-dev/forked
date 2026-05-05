@@ -1,9 +1,10 @@
-"use client";
+'use client';
 
-import { signIn } from "next-auth/react";
-import { Button } from "@/components/Button";
+import { signIn } from 'next-auth/react';
+// Components
+import { Button } from '@/components/Button';
 
-export function SignInButton() {
+export const SignInButton = () => {
   return (
     <Button
       variant="secondary"
@@ -15,4 +16,4 @@ export function SignInButton() {
       Sign in to start collecting
     </Button>
   );
-}
+};

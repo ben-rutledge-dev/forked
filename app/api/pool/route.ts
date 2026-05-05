@@ -1,12 +1,13 @@
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+// Lib
+import { prisma } from '@/lib/prisma';
 
 const PAGE_SIZE = 24;
 
-export async function GET(req: Request) {
+export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
-  const q = searchParams.get("q") ?? "";
-  const page = Math.max(1, Number(searchParams.get("page") ?? 1));
+  const q = searchParams.get('q') ?? '';
+  const page = Math.max(1, Number(searchParams.get('page') ?? 1));
   const skip = (page - 1) * PAGE_SIZE;
 
   const where = q
@@ -23,7 +24,7 @@ export async function GET(req: Request) {
     prisma.recipe.findMany({
       where,
       select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, authorId: true, isPublic: true, forkedFromId: true },
-      orderBy: { forkCount: "desc" },
+      orderBy: { forkCount: 'desc' },
       skip,
       take: PAGE_SIZE,
     }),
@@ -31,4 +32,4 @@ export async function GET(req: Request) {
   ]);
 
   return NextResponse.json({ recipes, total });
-}
+};

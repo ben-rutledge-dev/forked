@@ -1,1 +1,1 @@
-export * from "./cornerDeleteButton";
+export * from './cornerDeleteButton';

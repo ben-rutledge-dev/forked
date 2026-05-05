@@ -1,10 +1,10 @@
 type Props = {
-  onClick: () => void;
-  label?: string;
-  positionClassName?: string;
+  onClick: () => void
+  label?: string
+  positionClassName?: string
 };
 
-export function CornerDeleteButton({ onClick, label = "Remove", positionClassName = "-top-2.5 -right-2.5" }: Props) {
+export const CornerDeleteButton = ({ onClick, label = 'Remove', positionClassName = '-top-2.5 -right-2.5' }: Props) => {
   return (
     <button
       type="button"
@@ -26,4 +26,4 @@ export function CornerDeleteButton({ onClick, label = "Remove", positionClassNam
       </svg>
     </button>
   );
-}
+};

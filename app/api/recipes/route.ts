@@ -1,17 +1,18 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { NextResponse } from 'next/server';
+// Lib
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
-export async function POST(req: Request) {
+export const POST = async (req: Request) => {
   const session = await auth();
   if (!session?.user?.id) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   const { title, description, isPublic, coverImageUrl, ingredients, steps } = await req.json();
 
   if (!title?.trim()) {
-    return NextResponse.json({ error: "Title is required" }, { status: 400 });
+    return NextResponse.json({ error: 'Title is required' }, { status: 400 });
   }
 
   const recipe = await prisma.recipe.create({
@@ -23,26 +24,26 @@ export async function POST(req: Request) {
       isPublic: Boolean(isPublic),
       ingredients: {
         create: (ingredients ?? []).map(
-          (ing: { name: string; quantity: string; unit: string }, i: number) => ({
+          (ing: { name: string, quantity: string, unit: string }, i: number) => ({
             name: ing.name,
             quantity: ing.quantity || null,
             unit: ing.unit || null,
             orderIndex: i,
-          })
+          }),
         ),
       },
       steps: {
         create: (steps ?? []).map(
-          (step: { instruction: string; timerSeconds: number | string; imageUrl?: string }, i: number) => ({
+          (step: { instruction: string, timerSeconds: number | string, imageUrl?: string }, i: number) => ({
             instruction: step.instruction,
             timerSeconds: step.timerSeconds ? Number(step.timerSeconds) : null,
             imageUrl: step.imageUrl || null,
             orderIndex: i,
-          })
+          }),
         ),
       },
     },
   });
 
   return NextResponse.json(recipe, { status: 201 });
-}
+};

@@ -1,19 +1,20 @@
-"use client";
+'use client';
 
-import { useState, useRef } from "react";
-import { useSession, signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { Button } from "@/components/Button";
-import { ForkIcon } from "@/components/ForkIcon";
+import { signIn, useSession } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
+import { useRef, useState } from 'react';
+// Components
+import { Button } from '@/components/Button';
+import { ForkIcon } from '@/components/ForkIcon';
 
-export function ForkButton({ recipeId }: { recipeId: string }) {
+export const ForkButton = ({ recipeId }: { recipeId: string }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const [forking, setForking] = useState(false);
   const [iconAnimating, setIconAnimating] = useState(false);
   const pendingForkId = useRef<string | null>(null);
 
-  async function handleFork() {
+  const handleFork = async () => {
     if (!session) {
       signIn();
       return;
@@ -21,23 +22,24 @@ export function ForkButton({ recipeId }: { recipeId: string }) {
     setForking(true);
     setIconAnimating(true);
     try {
-      const res = await fetch(`/api/recipes/${recipeId}/fork`, { method: "POST" });
+      const res = await fetch(`/api/recipes/${recipeId}/fork`, { method: 'POST' });
       if (res.ok) {
         const fork = await res.json();
         pendingForkId.current = fork.id;
       }
-    } finally {
+    }
+    finally {
       setForking(false);
     }
-  }
+  };
 
-  function handleAnimationDone() {
+  const handleAnimationDone = () => {
     setIconAnimating(false);
     if (pendingForkId.current) {
       router.push(`/my/recipes/${pendingForkId.current}/edit`);
       pendingForkId.current = null;
     }
-  }
+  };
 
   return (
     <Button
@@ -48,8 +50,8 @@ export function ForkButton({ recipeId }: { recipeId: string }) {
       disabled={forking}
       className="shrink-0 flex items-center gap-2"
     >
-      {forking ? "Forking…" : "Fork"}
+      {forking ? 'Forking…' : 'Fork'}
       <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} />
     </Button>
   );
-}
+};

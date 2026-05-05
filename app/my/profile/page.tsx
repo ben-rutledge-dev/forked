@@ -1,12 +1,14 @@
-import { auth } from "@/lib/auth";
-import { prisma } from "@/lib/prisma";
-import type { Metadata } from "next";
-import { ProfileForm } from "./components/ProfileForm";
-import { Button } from "@/components/Button";
+import type { Metadata } from 'next';
+// Components
+import { ProfileForm } from './components/ProfileForm';
+import { Button } from '@/components/Button';
+// Lib
+import { auth } from '@/lib/auth';
+import { prisma } from '@/lib/prisma';
 
-export const metadata: Metadata = { title: "Edit Profile" };
+export const metadata: Metadata = { title: 'Edit Profile' };
 
-export default async function ProfilePage() {
+const ProfilePage = async () => {
   const session = await auth();
 
   const user = await prisma.user.findUnique({
@@ -42,4 +44,6 @@ export default async function ProfilePage() {
       <ProfileForm user={user!} />
     </div>
   );
-}
+};
+
+export default ProfilePage;

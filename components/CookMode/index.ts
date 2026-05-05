@@ -1,1 +1,1 @@
-export * from "./cookMode";
+export * from './cookMode';
