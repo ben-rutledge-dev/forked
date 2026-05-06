@@ -5,7 +5,10 @@ import Link from 'next/link';
 // Components
 import { Button } from '@/components/Button';
 
-const PROVIDERS = [{ id: 'github', name: 'GitHub' }];
+const PROVIDERS = [
+  { id: 'github', name: 'GitHub' },
+  { id: 'google', name: 'Google' },
+];
 
 const SignInPage = () => {
   return (
