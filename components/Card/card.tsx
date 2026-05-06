@@ -205,10 +205,10 @@ export const Card = ({ href, coverImageUrl, CoverPlaceholderIcon, actions, child
       role="link"
       tabIndex={0}
     >
-      <div className="pointer-events-none">
+      <div className="pointer-events-none relative h-36">
         {coverImageUrl
           ? (
-              <Image src={coverImageUrl} alt="" className="w-full h-36 object-cover" />
+              <Image src={coverImageUrl} alt="" fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
             )
           : (
               <div className="w-full h-36 bg-stone-100 flex items-center justify-center">

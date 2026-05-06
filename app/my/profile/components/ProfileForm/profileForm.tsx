@@ -140,8 +140,8 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
           <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
           {coverImageUrl
             ? (
-                <div className="relative inline-block">
-                  <Image src={coverImageUrl} alt="Cover" className="w-full h-32 rounded-xl object-cover border border-stone-200" />
+                <div className="relative block h-32 rounded-xl overflow-hidden border border-stone-200">
+                  <Image src={coverImageUrl} alt="Cover" fill className="object-cover" sizes="100vw" />
                   <CornerDeleteButton
                     onClick={() => {
                       setCoverImageUrl('');
@@ -168,7 +168,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
             {avatarUrl
               ? (
                   <>
-                    <Image src={avatarUrl} alt="Avatar" className="w-16 h-16 rounded-full object-cover border border-stone-200" />
+                    <Image src={avatarUrl} alt="Avatar" width={64} height={64} className="w-16 h-16 rounded-full object-cover border border-stone-200" />
                     <CornerDeleteButton
                       onClick={() => {
                         setAvatarUrl('');

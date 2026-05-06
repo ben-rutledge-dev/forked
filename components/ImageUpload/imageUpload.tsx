@@ -64,7 +64,7 @@ export const ImageUpload = ({ value, onChange, onError, label = 'Add photo', pre
   if (value) {
     return (
       <div className="relative inline-block">
-        <Image src={value} alt="" className={previewCls} />
+        <Image src={value} alt="" width={previewSize === 'sm' ? 48 : 96} height={previewSize === 'sm' ? 32 : 64} className={previewCls} />
         <CornerDeleteButton
           onClick={() => {
             onChange('');

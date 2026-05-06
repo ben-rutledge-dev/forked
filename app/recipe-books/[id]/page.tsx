@@ -47,8 +47,8 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       {book.coverImageUrl && (
-        <div className="w-full h-48 rounded-xl overflow-hidden mb-6">
-          <Image src={book.coverImageUrl} alt="" className="w-full h-full object-cover" />
+        <div className="w-full h-48 rounded-xl overflow-hidden mb-6 relative">
+          <Image src={book.coverImageUrl} alt="" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 896px" />
         </div>
       )}
 
@@ -88,7 +88,9 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
                     className="flex flex-col rounded-xl border border-stone-200 bg-white overflow-hidden hover:border-stone-300 transition-colors"
                   >
                     {entry.recipe.coverImageUrl && (
-                      <Image src={entry.recipe.coverImageUrl} alt="" className="w-full h-36 object-cover" />
+                      <div className="relative h-36">
+                        <Image src={entry.recipe.coverImageUrl} alt="" fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
+                      </div>
                     )}
                     <div className="p-5">
                       <h3 className="font-semibold text-stone-900 line-clamp-2">{entry.recipe.title}</h3>

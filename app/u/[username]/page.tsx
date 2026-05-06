@@ -65,8 +65,8 @@ const PublicProfilePage = async ({ params }: Props) => {
       {/* Cover — full viewport width */}
       {user.coverImageUrl
         ? (
-            <div className="w-full">
-              <Image src={user.coverImageUrl} alt="" className="w-full h-48 object-cover" />
+            <div className="w-full relative h-48">
+              <Image src={user.coverImageUrl} alt="" fill className="object-cover" sizes="100vw" />
             </div>
           )
         : (
@@ -76,10 +76,10 @@ const PublicProfilePage = async ({ params }: Props) => {
       <div className="mx-auto max-w-4xl px-4">
         {/* Profile header */}
         <div className="flex items-end gap-4 -mt-8 mb-6 px-0">
-          <div className="shrink-0 rounded-full border-4 border-white overflow-hidden bg-stone-100 w-20 h-20">
+          <div className="shrink-0 rounded-full border-4 border-white overflow-hidden bg-stone-100 w-20 h-20 relative">
             {user.avatarUrl
               ? (
-                  <Image src={user.avatarUrl} alt={displayName ?? ''} className="w-full h-full object-cover" />
+                  <Image src={user.avatarUrl} alt={displayName ?? ''} fill className="object-cover" sizes="80px" />
                 )
               : (
                   <div className="w-full h-full flex items-center justify-center text-stone-400">

@@ -220,8 +220,8 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
 
       {/* Header */}
       {book.coverImageUrl && (
-        <div className="w-full h-48 rounded-xl overflow-hidden mb-6">
-          <Image src={book.coverImageUrl} alt="" className="w-full h-full object-cover" />
+        <div className="w-full h-48 rounded-xl overflow-hidden mb-6 relative">
+          <Image src={book.coverImageUrl} alt="" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 896px" />
         </div>
       )}
 
@@ -374,7 +374,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
               <div className="flex items-center gap-3">
                 {m.user.avatarUrl
                   ? (
-                      <Image src={m.user.avatarUrl} alt="" className="w-8 h-8 rounded-full object-cover" />
+                      <Image src={m.user.avatarUrl} alt="" width={32} height={32} className="w-8 h-8 rounded-full object-cover" />
                     )
                   : (
                       <div className="w-8 h-8 rounded-full bg-stone-200 flex items-center justify-center text-stone-500 text-xs font-medium">
@@ -533,7 +533,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
                       >
                         {r.coverImageUrl
                           ? (
-                              <Image src={r.coverImageUrl} alt="" className="w-10 h-10 rounded-lg object-cover shrink-0" />
+                              <Image src={r.coverImageUrl} alt="" width={40} height={40} className="w-10 h-10 rounded-lg object-cover shrink-0" />
                             )
                           : (
                               <div className="w-10 h-10 rounded-lg bg-stone-100 shrink-0" />
