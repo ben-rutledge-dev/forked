@@ -180,11 +180,13 @@ export const CookMode = ({ recipe, backHref }: Props) => {
 
       <div className="flex-1 flex flex-col justify-center px-6 py-8 max-w-2xl mx-auto w-full">
         {currentStep.imageUrl && (
-          <div className="mb-6">
+          <div className="mb-6 relative h-64">
             <Image
               src={currentStep.imageUrl}
               alt=""
-              className="w-full max-h-64 object-cover rounded-xl"
+              fill
+              className="object-cover rounded-xl"
+              sizes="(max-width: 672px) 100vw, 672px"
             />
           </div>
         )}

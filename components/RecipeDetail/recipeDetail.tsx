@@ -22,11 +22,13 @@ export const RecipeDetail = ({
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       {recipe.coverImageUrl && (
-        <div className="mb-8 -mx-4 sm:mx-0">
+        <div className="mb-8 -mx-4 sm:mx-0 relative h-64">
           <Image
             src={recipe.coverImageUrl}
             alt=""
-            className="w-full h-64 object-cover sm:rounded-xl"
+            fill
+            className="object-cover sm:rounded-xl"
+            sizes="(max-width: 672px) 100vw, 672px"
           />
         </div>
       )}
