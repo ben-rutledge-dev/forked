@@ -2,11 +2,15 @@
 
 import { signIn, signOut, useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
 
 export const Nav = () => {
   const { data: session, status } = useSession();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const closeMenu = () => setMenuOpen(false);
 
   return (
     <header className="bg-primary-500 text-white">
@@ -14,6 +18,7 @@ export const Nav = () => {
         <Link
           href="/"
           className="flex items-center gap-2 text-5xl font-semibold tracking-tight transition-colors"
+          onClick={closeMenu}
         >
           <svg width="40" height="64" viewBox="-57 0 160 160" fill="none" aria-hidden="true" className="opacity-90">
             <g clipPath="url(#fork-nav)">
@@ -27,7 +32,9 @@ export const Nav = () => {
           </svg>
           Forked
         </Link>
-        <div className="flex items-center gap-6 text-sm">
+
+        {/* Desktop nav */}
+        <div className="hidden md:flex items-center gap-6 text-sm">
           <Link
             href="/pool"
             className="text-primary-100 hover:text-white transition-colors"
@@ -66,7 +73,71 @@ export const Nav = () => {
                 </Button>
               )}
         </div>
+
+        {/* Mobile hamburger */}
+        <button
+          className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-lg hover:bg-black/20 transition-colors"
+          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          onClick={() => setMenuOpen(open => !open)}
+        >
+          <span className={`block w-5 h-0.5 bg-white transition-all duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-white transition-all duration-200 ${menuOpen ? 'opacity-0' : ''}`} />
+          <span className={`block w-5 h-0.5 bg-white transition-all duration-200 ${menuOpen ? '-translate-y-2 -rotate-45' : ''}`} />
+        </button>
       </nav>
+
+      {/* Mobile menu */}
+      {menuOpen && (
+        <div className="md:hidden border-t border-white/20 bg-primary-600">
+          <div className="mx-auto max-w-4xl flex flex-col px-4 py-3 gap-1 text-sm">
+            <Link
+              href="/pool"
+              className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
+              onClick={closeMenu}
+            >
+              Pool
+            </Link>
+            {session
+              ? (
+                  <>
+                    <Link
+                      href="/my/recipes"
+                      className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
+                      onClick={closeMenu}
+                    >
+                      My Recipes
+                    </Link>
+                    <Link
+                      href="/my/profile"
+                      className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
+                      onClick={closeMenu}
+                    >
+                      Profile
+                    </Link>
+                    <button
+                      className="px-2 py-2.5 text-left text-primary-200 hover:text-white transition-colors"
+                      onClick={() => { signOut(); closeMenu(); }}
+                    >
+                      Sign out
+                    </button>
+                  </>
+                )
+              : (
+                  <div className="px-2 py-2.5">
+                    <Button
+                      variant="nav-pill"
+                      size="md"
+                      shape="pill"
+                      disabled={status === 'loading'}
+                      onClick={() => { signIn(); closeMenu(); }}
+                    >
+                      Sign in
+                    </Button>
+                  </div>
+                )}
+          </div>
+        </div>
+      )}
     </header>
   );
 };
