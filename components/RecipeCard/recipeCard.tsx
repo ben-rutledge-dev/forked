@@ -7,6 +7,8 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { Card, CardAction } from '@/components/Card';
 import { ForkIcon } from '@/components/ForkIcon';
+// Hooks
+import { useConfirm } from '@/hooks/useConfirm';
 
 type BookOption = { id: string, title: string };
 
@@ -37,6 +39,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
 }: RecipeCardProps) => {
   const { data: session } = useSession();
   const router = useRouter();
+  const { confirm } = useConfirm();
   const [forking, setForking] = useState(false);
   const [iconAnimating, setIconAnimating] = useState(false);
   const pendingForkId = useRef<string | null>(null);
@@ -100,7 +103,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   };
 
   const handleDelete = async () => {
-    if (!confirm('Delete this recipe? This cannot be undone.')) return;
+    if (!await confirm('Delete this recipe? This cannot be undone.', { confirmLabel: 'Delete' })) return;
     setDeleting(true);
     try {
       const res = await fetch(`/api/recipes/${id}`, { method: 'DELETE' });

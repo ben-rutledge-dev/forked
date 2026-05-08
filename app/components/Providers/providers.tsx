@@ -2,6 +2,10 @@
 
 import type { Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
+// Components
+import { Modal } from '@/components/Modal';
+// Store
+import { GlobalProvider } from '@/store/GlobalContext';
 
 export const Providers = ({
   session,
@@ -10,5 +14,12 @@ export const Providers = ({
   session: Session | null
   children: React.ReactNode
 }) => {
-  return <SessionProvider session={session}>{children}</SessionProvider>;
+  return (
+    <GlobalProvider>
+      <SessionProvider session={session}>
+        {children}
+        <Modal />
+      </SessionProvider>
+    </GlobalProvider>
+  );
 };

@@ -3,6 +3,8 @@
 import { useState } from 'react';
 // Components
 import { Card, CardAction } from '@/components/Card';
+// Hooks
+import { useConfirm } from '@/hooks/useConfirm';
 // Utils
 import { OWNER, type Role } from '@/utils/roles';
 
@@ -30,11 +32,12 @@ export const RecipeBookCard = ({
   onRemove,
 }: Props) => {
   const [removing, setRemoving] = useState(false);
+  const { confirm } = useConfirm();
   const target = href ?? `/my/recipe-books/${id}`;
 
   const handleRemove = async () => {
     const label = role === OWNER ? 'Remove this book from your collection?' : 'Leave this recipe book?';
-    if (!confirm(label)) return;
+    if (!await confirm(label, { confirmLabel: role === OWNER ? 'Remove' : 'Leave' })) return;
     setRemoving(true);
     try {
       const res = await fetch(`/api/recipe-books/${id}`, { method: 'DELETE' });

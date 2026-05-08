@@ -9,6 +9,8 @@ import { FormBanner } from '@/components/FormBanner';
 import { ImageUpload } from '@/components/ImageUpload';
 import { RecipeCard } from '@/components/RecipeCard';
 import { Toast } from '@/components/Toast';
+// Hooks
+import { useConfirm } from '@/hooks/useConfirm';
 // Types
 import type { Recipe } from '@/types';
 // Utils
@@ -74,6 +76,8 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
 
   const isOwner = book.currentUserRole === OWNER;
   const isMember = book.currentUserRole !== null;
+
+  const { confirm } = useConfirm();
 
   const acceptedMembers = book.members.filter(m => m.acceptedAt !== null);
   const pendingMembers = book.members.filter(m => m.acceptedAt === null);
@@ -169,7 +173,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
   };
 
   const handleRemoveMember = async (userId: string) => {
-    if (!confirm('Remove this collaborator?')) return;
+    if (!await confirm('Remove this collaborator?', { confirmLabel: 'Remove' })) return;
     const res = await fetch(`/api/recipe-books/${book.id}/members/${userId}`, { method: 'DELETE' });
     if (res.ok) {
       setBook(b => ({ ...b, members: b.members.filter(m => m.userId !== userId) }));
@@ -201,13 +205,13 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
   };
 
   const handleLeave = async () => {
-    if (!confirm('Leave this recipe book?')) return;
+    if (!await confirm('Leave this recipe book?', { confirmLabel: 'Leave' })) return;
     const res = await fetch(`/api/recipe-books/${book.id}`, { method: 'DELETE' });
     if (res.ok) router.push('/my/recipe-books');
   };
 
   const handleRemoveFromCollection = async () => {
-    if (!confirm('Remove this book from your collection? If you are the last owner, the book will be permanently deleted.')) return;
+    if (!await confirm('Remove this book from your collection? If you are the last owner, the book will be permanently deleted.', { confirmLabel: 'Remove' })) return;
     const res = await fetch(`/api/recipe-books/${book.id}`, { method: 'DELETE' });
     if (res.ok) router.push('/my/recipe-books');
   };

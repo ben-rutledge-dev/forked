@@ -151,6 +151,7 @@ export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, 
                       forkCount={r.forkCount}
                       isPublic={r.isPublic}
                       isOwned
+                      onDelete={() => setRecipes(prev => prev.filter(x => x.id !== r.id))}
                       forkedFromId={r.forkedFromId}
                       onVisibilityToggle={handleVisibilityToggle}
                     />
