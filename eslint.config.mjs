@@ -34,8 +34,9 @@ const eslintConfig = defineConfig([
         internalPattern: ['^@/.+'],
         groups: [
           ['value-builtin', 'value-external', 'type-external'],
-          { group: 'components', commentAbove: 'Components' },
+          { group: 'data', commentAbove: 'Data' },
           { group: 'hooks', commentAbove: 'Hooks' },
+          { group: 'components', commentAbove: 'Components' },
           { group: 'types', commentAbove: 'Types' },
           { group: 'lib', commentAbove: 'Lib' },
           { group: 'app', commentAbove: 'App' },
@@ -45,12 +46,13 @@ const eslintConfig = defineConfig([
           'unknown',
         ],
         customGroups: [
-          { groupName: 'components', anyOf: [{ elementNamePattern: '^@/components' }, { elementNamePattern: '^\\.\/components' }] },
+          { groupName: 'data', elementNamePattern: '^@/data' },
           { groupName: 'hooks', elementNamePattern: '^@/hooks' },
+          { groupName: 'components', anyOf: [{ elementNamePattern: '^@/components' }, { elementNamePattern: '^\\.\/components' }] },
           { groupName: 'types', elementNamePattern: '^@/types' },
           { groupName: 'lib', elementNamePattern: '^@/lib' },
           { groupName: 'app', elementNamePattern: '^@/app' },
-          { groupName: 'utils', elementNamePattern: '^@/utils' },
+          { groupName: 'utils', anyOf: [{ elementNamePattern: '^@/utils' }, { elementNamePattern: '^\\.\/utils' }] },
         ],
       }],
       'prefer-arrow/prefer-arrow-functions': ['error', {

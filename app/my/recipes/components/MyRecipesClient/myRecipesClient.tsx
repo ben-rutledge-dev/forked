@@ -4,10 +4,10 @@ import Link from 'next/link';
 import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
-import { PageHeading, SectionLabel } from '@/components/Typography';
 import { Pagination } from '@/components/Pagination';
 import { RecipeBookCard } from '@/components/RecipeBookCard';
 import { RecipeCard } from '@/components/RecipeCard';
+import { PageHeading, SectionLabel } from '@/components/Typography';
 // Types
 import type { Recipe } from '@/types';
 // Utils

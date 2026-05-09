@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-// Components
-import { Button } from '@/components/Button';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
+// Components
+import { Button } from '@/components/Button';
 
 export const DeleteButton = ({ recipeId }: { recipeId: string }) => {
   const router = useRouter();

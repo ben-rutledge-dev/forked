@@ -7,8 +7,8 @@ import { FormEvent, useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { CornerDeleteButton } from '@/components/CornerDeleteButton';
 import { FormBanner } from '@/components/FormBanner';
-import { SectionHeading } from '@/components/Typography';
 import { Toast } from '@/components/Toast';
+import { SectionHeading } from '@/components/Typography';
 // Types
 import { UserProfile } from '@/types';
 

@@ -1,10 +1,10 @@
 import { useCallback } from 'react';
+// Hooks
+import { useModal } from '@/hooks/useModal';
 // Components
 import { AlertConfirm } from '@/components/AlertConfirm';
 // Types
 import type { AlertConfirmProps } from '@/components/AlertConfirm';
-// Hooks
-import { useModal } from '@/hooks/useModal';
 
 type Text = AlertConfirmProps['text'];
 type ComponentProps = Omit<AlertConfirmProps, 'text' | 'onConfirm'>;

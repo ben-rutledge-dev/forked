@@ -7,8 +7,8 @@ import { Button } from '@/components/Button';
 import { FormBanner } from '@/components/FormBanner';
 import { IconButton } from '@/components/IconButton';
 import { ImageUpload } from '@/components/ImageUpload';
-import { SectionHeading } from '@/components/Typography';
 import { Toast } from '@/components/Toast';
+import { SectionHeading } from '@/components/Typography';
 // Types
 import { IngredientFormData, RecipeFormData, StepFormData } from '@/types';
 

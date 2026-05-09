@@ -3,9 +3,9 @@
 import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
-import { PageHeading } from '@/components/Typography';
 import { Pagination } from '@/components/Pagination';
 import { RecipeCard } from '@/components/RecipeCard';
+import { PageHeading } from '@/components/Typography';
 // Types
 import type { Recipe } from '@/types';
 
