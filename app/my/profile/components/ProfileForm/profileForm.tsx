@@ -200,6 +200,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
         <div>
           <label htmlFor="username" className="block text-sm font-medium text-stone-700 mb-1">
             Username
+            {' '}
             <span className="text-stone-400 font-normal">(required to have a public profile)</span>
           </label>
           <div className="flex items-center">
@@ -246,6 +247,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
       <div className="space-y-4">
         <SectionHeading>
           Links
+          {' '}
           <span className="text-sm font-normal text-stone-400">— all optional</span>
         </SectionHeading>
         <div>
