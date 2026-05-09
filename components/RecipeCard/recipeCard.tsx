@@ -121,17 +121,6 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   );
 
   const cardActions: CardAction[] = [
-    ...(onRemoveFromBook
-      ? [{
-          title: 'Remove from Recipe Book',
-          Icon: (
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-            </svg>
-          ),
-          onClick: onRemoveFromBook,
-        }]
-      : []),
     ...(isOwned
       ? [{
           title: 'Edit recipe',
@@ -148,7 +137,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           onClick: () => router.push(`/my/recipes/${id}/edit`),
         }]
       : []),
-    ...(session
+    ...(session && (onRemoveFromBook || isOwned)
       ? [{
           title: 'More actions',
           Icon: (
@@ -159,22 +148,31 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
             </svg>
           ),
           menuItems: [
-            {
-              label: 'Add to Recipe Book',
-              subMenu: {
-                title: 'Add to Recipe Book',
-                emptyLabel: 'No recipe books yet.',
-                items: books
-                  ? books.map(b => ({
-                      label: b.title,
-                      onClick: () => handleAddToBook(b.id),
-                      disabled: addingToBook === b.id,
-                    }))
-                  : null,
-                onOpen: handleOpenAddToBook,
-              },
-            },
-            ...(isOwned
+            ...(onRemoveFromBook
+              ? [{
+                  label: 'Remove from Recipe Book',
+                  onClick: async () => {
+                    if (await confirm('Remove this recipe from the book?', { confirmLabel: 'Remove' })) {
+                      onRemoveFromBook();
+                    }
+                  },
+                }]
+              : [{
+                  label: 'Add to Recipe Book',
+                  subMenu: {
+                    title: 'Add to Recipe Book',
+                    emptyLabel: 'No recipe books yet.',
+                    items: books
+                      ? books.map(b => ({
+                          label: b.title,
+                          onClick: () => handleAddToBook(b.id),
+                          disabled: addingToBook === b.id,
+                        }))
+                      : null,
+                    onOpen: handleOpenAddToBook,
+                  },
+                }]),
+            ...(isOwned && !onRemoveFromBook
               ? [{
                   label: deleting ? 'Deleting…' : 'Move to trash',
                   onClick: handleDelete,

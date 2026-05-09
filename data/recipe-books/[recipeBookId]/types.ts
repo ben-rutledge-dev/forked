@@ -1,4 +1,5 @@
-import type { RecipeBook } from 'data/recipe-books/types';
+// Data
+import type { RecipeBook } from '@/data/recipe-books/types';
 
 export type BookMemberUser = {
   id: string
