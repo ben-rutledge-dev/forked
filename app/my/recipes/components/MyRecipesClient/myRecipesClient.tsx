@@ -174,8 +174,7 @@ export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, 
                     <div>
                       <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
                       <p className="text-xs text-stone-400 mt-0.5">
-                        Invited as
-                        <span className="font-medium">{invite.role}</span>
+                        {`Invited as `}<span className="font-medium">{invite.role}</span>
                       </p>
                     </div>
                     <div className="flex gap-2">

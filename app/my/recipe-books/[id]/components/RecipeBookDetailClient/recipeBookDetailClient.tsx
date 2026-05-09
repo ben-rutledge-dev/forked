@@ -6,6 +6,7 @@ import { useState } from 'react';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 // Components
+import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { FormBanner } from '@/components/FormBanner';
 import { ImageUpload } from '@/components/ImageUpload';
@@ -15,7 +16,9 @@ import { PageHeading } from '@/components/Typography';
 // Types
 import type { Recipe } from '@/types';
 // Utils
-import { COLLABORATOR, OWNER, type Role } from '@/utils/roles';
+import { COLLABORATOR, OWNER } from '@/utils/roles';
+// Types
+import type { Role } from '@/utils/roles';
 
 type Entry = {
   id: string
@@ -238,13 +241,14 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0">
-          <span
-            className={`rounded-full px-2.5 py-0.5 text-xs font-medium ${
-              book.isPublic ? 'bg-success-50 text-success-700' : 'bg-stone-100 text-stone-500'
-            }`}
-          >
-            {book.isPublic ? 'Public' : 'Private'}
-          </span>
+          <Badge variant={book.isPublic ? 'success' : 'neutral'} className="text-xs font-medium">
+            {book.isPublic ? 'public' : 'private'}
+          </Badge>
+          {book.currentUserRole && (
+            <Badge variant={isOwner ? 'primary' : 'neutral'} className="text-xs font-medium">
+              {book.currentUserRole}
+            </Badge>
+          )}
           {isOwner && (
             <Button variant="secondary" size="sm" shape="pill" onClick={() => setShowEditForm(v => !v)}>
               Edit
@@ -397,12 +401,9 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
                 </div>
               </div>
               <div className="flex items-center gap-2">
-                <span className={`rounded px-1.5 py-0.5 text-xs font-medium ${
-                  m.role === OWNER ? 'bg-primary-50 text-primary-500' : 'bg-stone-100 text-stone-500'
-                }`}
-                >
+                <Badge variant={m.role === OWNER ? 'primary' : 'neutral'} className="text-xs font-medium">
                   {m.role}
-                </span>
+                </Badge>
                 {isOwner && m.role !== OWNER && m.userId !== currentUserId && (
                   <button
                     onClick={() => handleRemoveMember(m.userId)}
@@ -459,7 +460,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
       </div>
 
       {showInviteModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowInviteModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setShowInviteModal(false)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold text-stone-900 mb-4">Invite collaborator</h2>
             {inviteError && <FormBanner type="error" message={inviteError} />}
@@ -486,9 +487,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
                     <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${inviteRole === OWNER ? 'translate-x-6' : 'translate-x-1'}`} />
                   </button>
                   <span className="text-sm text-stone-700">
-                    Invite as
-                    {' '}
-                    {inviteRole === OWNER ? 'owner' : 'collaborator'}
+                    {`Invite as ${inviteRole === OWNER ? 'owner' : 'collaborator'}`}
                   </span>
                 </div>
               )}
@@ -513,7 +512,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
 
       {/* Add recipe modal */}
       {showAddModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowAddModal(false)}>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setShowAddModal(false)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold text-stone-900 mb-4">Add a recipe</h2>
             <input

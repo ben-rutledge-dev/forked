@@ -4,6 +4,7 @@ import { useState } from 'react';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 // Components
+import { Badge } from '@/components/Badge';
 import { Card, CardAction } from '@/components/Card';
 // Utils
 import { OWNER, type Role } from '@/utils/roles';
@@ -95,13 +96,11 @@ export const RecipeBookCard = ({
           {memberCount === 1 ? 'member' : 'members'}
         </span>
         <div className="flex items-center gap-1.5">
-          <span className={`rounded px-1.5 py-0.5 ${isPublic ? 'bg-success-50 text-success-700' : 'bg-stone-100 text-stone-500'}`}>
+          <Badge variant={isPublic ? 'success' : 'neutral'}>
             {isPublic ? 'public' : 'private'}
-          </span>
+          </Badge>
           {role && (
-            <span className="rounded px-1.5 py-0.5 bg-primary-50 text-primary-500">
-              {role}
-            </span>
+            <Badge variant="primary">{role}</Badge>
           )}
         </div>
       </div>

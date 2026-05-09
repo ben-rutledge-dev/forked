@@ -6,6 +6,7 @@ import { useRef, useState } from 'react';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 // Components
+import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Card, CardAction } from '@/components/Card';
 import { ForkIcon } from '@/components/ForkIcon';
@@ -206,9 +207,9 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
         </span>
         {isOwned
           ? (
-              <span className={`rounded px-1.5 py-0.5 ${isPublic ? 'bg-success-50 text-success-700' : 'bg-stone-100 text-stone-500'}`}>
+              <Badge variant={isPublic ? 'success' : 'neutral'}>
                 {isPublic ? 'public' : 'private'}
-              </span>
+              </Badge>
             )
           : (
               <Button variant="primary" size="sm" shape="pill" disabled={forking} onClick={handleFork} className="flex items-center gap-1.5">

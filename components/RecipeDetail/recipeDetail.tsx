@@ -22,7 +22,7 @@ export const RecipeDetail = ({
   metaBadge,
 }: Props) => {
   return (
-    <div className="mx-auto max-w-2xl px-4 py-6 sm:py-10">
+    <div className="mx-auto max-w-2xl px-4 pb-6 sm:py-10">
       {recipe.coverImageUrl && (
         <div className="mb-8 -mx-4 sm:mx-0 relative h-64">
           <Image
@@ -45,7 +45,7 @@ export const RecipeDetail = ({
           <p className="mt-3 text-stone-600 leading-relaxed">{recipe.description}</p>
         )}
 
-        <div className="mt-4 flex items-center gap-4 text-sm text-stone-400">
+        <div className="mt-4 flex flex-col gap-2 text-sm text-stone-400 sm:flex-row sm:items-center sm:gap-4">
           {metaBadge}
           {recipe.author && (
             <span>
@@ -82,7 +82,7 @@ export const RecipeDetail = ({
           )}
           <Link
             href={cookHref}
-            className={`ml-auto rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
+            className={`sm:ml-auto self-start rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
               cookVariant === 'primary'
                 ? 'bg-primary-500 text-white hover:bg-primary-600'
                 : 'border border-stone-300 text-stone-600 hover:bg-stone-100'

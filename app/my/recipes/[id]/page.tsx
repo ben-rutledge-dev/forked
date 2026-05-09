@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 // Components
+import { Badge } from '@/components/Badge';
 import { RecipeDetail } from '@/components/RecipeDetail';
 // Lib
 import { auth } from '@/lib/auth';
@@ -44,13 +45,9 @@ const MyRecipePage = async ({ params }: Props) => {
         </Link>
       )}
       metaBadge={(
-        <span
-          className={`rounded px-2 py-0.5 text-xs ${
-            recipe.isPublic ? 'bg-success-50 text-success-700' : 'bg-stone-100 text-stone-500'
-          }`}
-        >
+        <Badge variant={recipe.isPublic ? 'success' : 'neutral'} className="text-xs">
           {recipe.isPublic ? 'public' : 'private'}
-        </span>
+        </Badge>
       )}
     />
   );
