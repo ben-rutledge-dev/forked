@@ -10,7 +10,7 @@ export const CornerDeleteButton = ({ onClick, label = 'Remove', positionClassNam
       type="button"
       onClick={onClick}
       aria-label={label}
-      className={`absolute ${positionClassName} flex items-center justify-center w-5 h-5 rounded-full bg-stone-200 text-stone-500 hover:bg-danger-100 hover:text-danger-500 transition-colors z-10`}
+      className={`absolute ${positionClassName} flex items-center justify-center w-5 h-5 rounded-full bg-stone-200 text-stone-500 hover:bg-danger-100 hover:text-danger-500 transition-colors z-10 cursor-pointer`}
     >
       <svg
         xmlns="http://www.w3.org/2000/svg"
