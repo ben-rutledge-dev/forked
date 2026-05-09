@@ -163,7 +163,7 @@ const Actions = ({ actions }: ActionsProps) => {
   return (
     <div
       ref={actionsRef}
-      className="absolute top-2 right-2 z-10 flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity"
+      className={`absolute top-2 right-2 z-10 flex items-center gap-1 transition-opacity ${openActionIndex !== null ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
       onClick={e => e.stopPropagation()}
     >
       {actions.map((action, i) => (
