@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --hostname 0.0.0.0",
+    "dev": "node_modules/.bin/concurrently \"next dev --hostname 0.0.0.0\" \"node tunnel.mjs\"",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
@@ -25,11 +25,13 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@ngrok/ngrok": "^1.7.0",
     "@stylistic/eslint-plugin": "^5.10.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "concurrently": "^9.2.1",
     "dotenv": "^17.4.2",
     "eslint": "^9",
     "eslint-config-next": "16.2.4",
