@@ -3,6 +3,9 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+// Data
+import { queryKeys } from '@/data/queryKeys';
+import { useQueryClient } from '@/data/shared/hooks';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 // Components
@@ -82,6 +85,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
   const isMember = book.currentUserRole !== null;
 
   const { confirm } = useConfirm();
+  const queryClient = useQueryClient();
 
   const acceptedMembers = book.members.filter(m => m.acceptedAt !== null);
   const pendingMembers = book.members.filter(m => m.acceptedAt === null);
@@ -166,6 +170,12 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
         setInviteError(data.error ?? 'Failed');
         return;
       }
+      // Re-fetch book to pick up new pending member with user relation
+      const bookRes = await fetch(`/api/recipe-books/${book.id}`);
+      if (bookRes.ok) {
+        const updated = await bookRes.json();
+        setBook(updated);
+      }
       setToast(`Invite sent to @${inviteUsername.trim()}`);
       setShowInviteModal(false);
       setInviteUsername('');
@@ -211,13 +221,19 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
   const handleLeave = async () => {
     if (!await confirm('Leave this recipe book?', { confirmLabel: 'Leave' })) return;
     const res = await fetch(`/api/recipe-books/${book.id}`, { method: 'DELETE' });
-    if (res.ok) router.push('/my/recipe-books');
+    if (res.ok) {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.recipeBooks.mine() });
+      router.push('/my/recipe-books');
+    }
   };
 
   const handleRemoveFromCollection = async () => {
     if (!await confirm('Remove this book from your collection? If you are the last owner, the book will be permanently deleted.', { confirmLabel: 'Remove' })) return;
     const res = await fetch(`/api/recipe-books/${book.id}`, { method: 'DELETE' });
-    if (res.ok) router.push('/my/recipe-books');
+    if (res.ok) {
+      await queryClient.invalidateQueries({ queryKey: queryKeys.recipeBooks.mine() });
+      router.push('/my/recipe-books');
+    }
   };
 
   const sortedEntries = [...book.entries].sort((a, b) => a.orderIndex - b.orderIndex);

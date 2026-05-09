@@ -91,7 +91,7 @@ export const DELETE = async (_req: Request, { params }: Params) => {
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
   const member = await getMember(id, session.user.id);
-  if (!member?.acceptedAt || member.role !== OWNER) {
+  if (!member?.acceptedAt) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 

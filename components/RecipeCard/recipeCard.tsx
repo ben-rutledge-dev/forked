@@ -3,6 +3,8 @@
 import { signIn, useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
+// Data
+import { useDeleteRecipe } from '@/data/recipes/[recipeId]';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 // Components
@@ -24,7 +26,6 @@ type RecipeCardProps = {
   forkedFromId?: string | null
   onVisibilityToggle?: (id: string, isPublic: boolean) => void
   onRemoveFromBook?: () => void
-  onDelete?: (id: string) => void
 };
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({
@@ -36,7 +37,6 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   isPublic,
   isOwned,
   onRemoveFromBook,
-  onDelete,
 }: RecipeCardProps) => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -46,9 +46,9 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   const pendingForkId = useRef<string | null>(null);
 
   const [addingToBook, setAddingToBook] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
 
   const [books, setBooks] = useState<BookOption[] | null>(null);
+  const { mutate: deleteRecipe, isPending: deleting } = useDeleteRecipe({ recipeId: id });
 
   const handleFork = async () => {
     if (!session) {
@@ -105,14 +105,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
 
   const handleDelete = async () => {
     if (!await confirm('Delete this recipe? This cannot be undone.', { confirmLabel: 'Delete' })) return;
-    setDeleting(true);
-    try {
-      const res = await fetch(`/api/recipes/${id}`, { method: 'DELETE' });
-      if (res.ok) onDelete?.(id);
-    }
-    finally {
-      setDeleting(false);
-    }
+    deleteRecipe();
   };
 
   const href = isOwned ? `/my/recipes/${id}` : `/recipes/${id}`;

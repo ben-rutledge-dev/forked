@@ -141,8 +141,10 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
           <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
           {coverImageUrl
             ? (
-                <div className="relative block h-32 rounded-xl overflow-hidden border border-stone-200">
-                  <Image src={coverImageUrl} alt="Cover" fill className="object-cover" sizes="100vw" />
+                <div className="relative block h-32">
+                  <div className="absolute inset-0 rounded-xl overflow-hidden border border-stone-200">
+                    <Image src={coverImageUrl} alt="Cover" fill className="object-cover" sizes="100vw" />
+                  </div>
                   <CornerDeleteButton
                     onClick={() => {
                       setCoverImageUrl('');

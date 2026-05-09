@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+// Data
+import { useDeleteRecipeBook } from '@/data/recipe-books/[recipeBookId]';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 // Components
@@ -18,7 +19,6 @@ type Props = {
   isPublic: boolean
   role?: Role
   href?: string
-  onRemove?: () => void
 };
 
 export const RecipeBookCard = ({
@@ -30,23 +30,15 @@ export const RecipeBookCard = ({
   isPublic,
   role,
   href,
-  onRemove,
 }: Props) => {
-  const [removing, setRemoving] = useState(false);
   const { confirm } = useConfirm();
+  const { mutate: deleteBook, isPending: removing } = useDeleteRecipeBook({ recipeBookId: id });
   const target = href ?? `/my/recipe-books/${id}`;
 
   const handleRemove = async () => {
     const label = role === OWNER ? 'Remove this book from your collection?' : 'Leave this recipe book?';
     if (!await confirm(label, { confirmLabel: role === OWNER ? 'Remove' : 'Leave' })) return;
-    setRemoving(true);
-    try {
-      const res = await fetch(`/api/recipe-books/${id}`, { method: 'DELETE' });
-      if (res.ok) onRemove?.();
-    }
-    finally {
-      setRemoving(false);
-    }
+    deleteBook();
   };
 
   const PlaceholderIcon = (
@@ -60,23 +52,24 @@ export const RecipeBookCard = ({
     </svg>
   );
 
-  const cardActions: CardAction[] | undefined = onRemove
-    ? [{
-        title: 'More actions',
-        Icon: (
-          <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-            <circle cx="5" cy="12" r="1.5" />
-            <circle cx="12" cy="12" r="1.5" />
-            <circle cx="19" cy="12" r="1.5" />
-          </svg>
-        ),
-        menuItems: [{
-          label: removing ? 'Removing…' : role === OWNER ? 'Remove from collection' : 'Leave book',
-          onClick: handleRemove,
-          disabled: removing,
-        }],
-      }]
-    : undefined;
+  let removeLabel = role === OWNER ? 'Remove from collection' : 'Leave book';
+  if (removing) removeLabel = 'Removing…';
+
+  const cardActions: CardAction[] = [{
+    title: 'More actions',
+    Icon: (
+      <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
+        <circle cx="5" cy="12" r="1.5" />
+        <circle cx="12" cy="12" r="1.5" />
+        <circle cx="19" cy="12" r="1.5" />
+      </svg>
+    ),
+    menuItems: [{
+      label: removeLabel,
+      onClick: handleRemove,
+      disabled: removing,
+    }],
+  }];
 
   return (
     <Card href={target} coverImageUrl={coverImageUrl} CoverPlaceholderIcon={PlaceholderIcon} actions={cardActions}>

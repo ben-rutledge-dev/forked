@@ -2,6 +2,12 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
+// Data
+import { useRecipeBooks } from '@/data/recipe-books';
+import { usePostAcceptInvite } from '@/data/recipe-books/[recipeBookId]/invites/accept';
+import { usePostDeclineInvite } from '@/data/recipe-books/[recipeBookId]/invites/decline';
+import type { BookWithStats, PendingInvite } from '@/data/recipe-books/types';
+import { useMyRecipes } from '@/data/recipes';
 // Components
 import { Button } from '@/components/Button';
 import { Pagination } from '@/components/Pagination';
@@ -10,29 +16,10 @@ import { RecipeCard } from '@/components/RecipeCard';
 import { PageHeading, SectionLabel } from '@/components/Typography';
 // Types
 import type { Recipe } from '@/types';
-// Utils
-import { type Role } from '@/utils/roles';
-
-type Book = {
-  id: string
-  title: string
-  coverImageUrl: string | null
-  isPublic: boolean
-  role: Role
-  memberCount: number
-  recipeCount: number
-};
-
-type PendingInvite = {
-  id: string
-  role: Role
-  recipeBook: { id: string, title: string, coverImageUrl: string | null }
-  invitedByUserId: string
-};
 
 type Props = {
   initialRecipes: Recipe[]
-  initialBooks: Book[]
+  initialBooks: BookWithStats[]
   initialPending: PendingInvite[]
   defaultTab?: 'recipes' | 'books'
 };
@@ -41,43 +28,11 @@ const PAGE_SIZE = 12;
 
 export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, defaultTab = 'recipes' }: Props) => {
   const [tab, setTab] = useState<'recipes' | 'books'>(defaultTab);
-  const [recipes, setRecipes] = useState(initialRecipes);
   const [page, setPage] = useState(1);
-  const [books, setBooks] = useState(initialBooks);
-  const [pending, setPending] = useState(initialPending);
-  const [acting, setActing] = useState<string | null>(null);
 
-  const handleVisibilityToggle = (id: string, isPublic: boolean) => {
-    setRecipes(prev => prev.map(r => (r.id === id ? { ...r, isPublic } : r)));
-  };
-
-  const handleAccept = async (invite: PendingInvite) => {
-    setActing(invite.id);
-    try {
-      const res = await fetch(`/api/recipe-books/${invite.recipeBook.id}/invites/accept`, { method: 'POST' });
-      if (res.ok) {
-        setPending(p => p.filter(i => i.id !== invite.id));
-        setBooks(b => [
-          ...b,
-          { id: invite.recipeBook.id, title: invite.recipeBook.title, coverImageUrl: invite.recipeBook.coverImageUrl, isPublic: false, role: invite.role, memberCount: 1, recipeCount: 0 },
-        ]);
-      }
-    }
-    finally {
-      setActing(null);
-    }
-  };
-
-  const handleDecline = async (invite: PendingInvite) => {
-    setActing(invite.id);
-    try {
-      const res = await fetch(`/api/recipe-books/${invite.recipeBook.id}/invites/decline`, { method: 'POST' });
-      if (res.ok) setPending(p => p.filter(i => i.id !== invite.id));
-    }
-    finally {
-      setActing(null);
-    }
-  };
+  const { data: recipes = initialRecipes } = useMyRecipes({ initialData: initialRecipes });
+  const { data: booksData = { books: initialBooks, pending: initialPending } } = useRecipeBooks({ initialData: { books: initialBooks, pending: initialPending } });
+  const { books, pending } = booksData;
 
   const totalPages = Math.ceil(recipes.length / PAGE_SIZE);
   const visible = recipes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
@@ -152,9 +107,7 @@ export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, 
                       forkCount={r.forkCount}
                       isPublic={r.isPublic}
                       isOwned
-                      onDelete={() => setRecipes(prev => prev.filter(x => x.id !== r.id))}
                       forkedFromId={r.forkedFromId}
-                      onVisibilityToggle={handleVisibilityToggle}
                     />
                   ))}
                 </div>
@@ -170,18 +123,7 @@ export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, 
               <SectionLabel className="mb-3">Pending invites</SectionLabel>
               <div className="space-y-3">
                 {pending.map(invite => (
-                  <div key={invite.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-5 py-4">
-                    <div>
-                      <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
-                      <p className="text-xs text-stone-400 mt-0.5">
-                        {`Invited as `}<span className="font-medium">{invite.role}</span>
-                      </p>
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="primary" size="sm" shape="pill" disabled={acting === invite.id} onClick={() => handleAccept(invite)}>Accept</Button>
-                      <Button variant="secondary" size="sm" shape="pill" disabled={acting === invite.id} onClick={() => handleDecline(invite)}>Decline</Button>
-                    </div>
-                  </div>
+                  <InviteRow key={invite.id} invite={invite} />
                 ))}
               </div>
             </section>
@@ -205,13 +147,38 @@ export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, 
                       role={b.role}
                       memberCount={b.memberCount}
                       recipeCount={b.recipeCount}
-                      onRemove={() => setBooks(prev => prev.filter(x => x.id !== b.id))}
                     />
                   ))}
                 </div>
               )}
         </>
       )}
+    </div>
+  );
+};
+
+type InviteRowProps = {
+  invite: PendingInvite
+};
+
+const InviteRow = ({ invite }: InviteRowProps) => {
+  const { mutate: accept, isPending: accepting } = usePostAcceptInvite({ recipeBookId: invite.recipeBook.id });
+  const { mutate: decline, isPending: declining } = usePostDeclineInvite({ recipeBookId: invite.recipeBook.id });
+  const isPending = accepting || declining;
+
+  return (
+    <div className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-5 py-4">
+      <div>
+        <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
+        <p className="text-xs text-stone-400 mt-0.5">
+          {'Invited as '}
+          <span className="font-medium">{invite.role}</span>
+        </p>
+      </div>
+      <div className="flex gap-2">
+        <Button variant="primary" size="sm" shape="pill" disabled={isPending} onClick={() => accept()}>Accept</Button>
+        <Button variant="secondary" size="sm" shape="pill" disabled={isPending} onClick={() => decline()}>Decline</Button>
+      </div>
     </div>
   );
 };

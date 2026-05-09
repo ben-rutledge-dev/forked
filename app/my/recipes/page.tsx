@@ -1,4 +1,6 @@
 import type { Metadata } from 'next';
+// Data
+import type { BookWithStats, PendingInvite } from '@/data/recipe-books/types';
 // Components
 import { MyRecipesClient } from './components/MyRecipesClient';
 // Lib
@@ -33,23 +35,27 @@ const MyRecipesPage = async () => {
     }),
   ]);
 
-  const books = members
+  const books: BookWithStats[] = members
     .filter(m => m.acceptedAt !== null)
     .map(m => ({
       id: m.recipeBook.id,
       title: m.recipeBook.title,
+      description: m.recipeBook.description,
       coverImageUrl: m.recipeBook.coverImageUrl,
       isPublic: m.recipeBook.isPublic,
+      createdAt: m.recipeBook.createdAt.toISOString(),
+      updatedAt: m.recipeBook.updatedAt.toISOString(),
       role: m.role as Role,
       memberCount: m.recipeBook.members.length,
       recipeCount: m.recipeBook.entries.length,
     }));
 
-  const pending = members
+  const pending: PendingInvite[] = members
     .filter(m => m.acceptedAt === null)
     .map(m => ({
       id: m.id,
       role: m.role as Role,
+      createdAt: m.createdAt.toISOString(),
       recipeBook: { id: m.recipeBook.id, title: m.recipeBook.title, coverImageUrl: m.recipeBook.coverImageUrl },
       invitedByUserId: m.invitedByUserId,
     }));

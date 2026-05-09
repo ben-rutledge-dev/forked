@@ -3,6 +3,19 @@ import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
+export const GET = async () => {
+  const session = await auth();
+  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+
+  const recipes = await prisma.recipe.findMany({
+    where: { authorId: session.user.id },
+    select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, isPublic: true, forkedFromId: true, authorId: true },
+    orderBy: { updatedAt: 'desc' },
+  });
+
+  return NextResponse.json(recipes);
+};
+
 export const POST = async (req: Request) => {
   const session = await auth();
   if (!session?.user?.id) {
