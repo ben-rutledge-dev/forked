@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 // Components
 import { Providers } from './components/Providers';
 import { Nav } from '@/components/Nav';
@@ -13,6 +13,11 @@ export const metadata: Metadata = {
   },
 };
 
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
+
 const RootLayout = async ({
   children,
 }: {
@@ -21,7 +26,7 @@ const RootLayout = async ({
   const session = await auth();
 
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className="antialiased min-h-screen text-stone-900">
         <Providers session={session}>
           <Nav />
