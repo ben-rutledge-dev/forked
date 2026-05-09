@@ -44,14 +44,14 @@ export const ForkButton = ({ recipeId }: { recipeId: string }) => {
   return (
     <Button
       variant="primary"
-      size="lg"
+      size="md"
       shape="pill"
       onClick={handleFork}
       disabled={forking}
       className="shrink-0 flex items-center gap-2"
     >
       {forking ? 'Forking…' : 'Fork'}
-      <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} />
+      <ForkIcon size={16} animating={iconAnimating} onDone={handleAnimationDone} />
     </Button>
   );
 };
