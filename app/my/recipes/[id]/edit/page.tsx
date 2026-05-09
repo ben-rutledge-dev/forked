@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { DeleteButton } from './components/DeleteButton';
 import { Button } from '@/components/Button';
 import { RecipeForm } from '@/components/RecipeForm';
+import { PageHeading } from '@/components/Typography';
 // Lib
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -34,7 +35,7 @@ const EditRecipePage = async ({ params }: Props) => {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-semibold text-stone-900">Edit recipe</h1>
+        <PageHeading>Edit recipe</PageHeading>
         <div className="flex items-center gap-3">
           <Button href={`/my/recipes/${id}/cook`} variant="primary" size="md" shape="pill">Cook mode</Button>
           <DeleteButton recipeId={id} />

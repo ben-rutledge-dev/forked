@@ -8,6 +8,7 @@ import { Button } from '@/components/Button';
 import { FormBanner } from '@/components/FormBanner';
 import { ImageUpload } from '@/components/ImageUpload';
 import { RecipeCard } from '@/components/RecipeCard';
+import { PageHeading } from '@/components/Typography';
 import { Toast } from '@/components/Toast';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
@@ -231,7 +232,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
 
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
-          <h1 className="text-2xl font-semibold text-stone-900">{book.title}</h1>
+          <PageHeading>{book.title}</PageHeading>
           {book.description && (
             <p className="mt-1 text-stone-500 text-sm">{book.description}</p>
           )}

@@ -7,6 +7,7 @@ import { FormEvent, useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { CornerDeleteButton } from '@/components/CornerDeleteButton';
 import { FormBanner } from '@/components/FormBanner';
+import { SectionHeading } from '@/components/Typography';
 import { Toast } from '@/components/Toast';
 // Types
 import { UserProfile } from '@/types';
@@ -243,10 +244,10 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
 
       {/* Social links */}
       <div className="space-y-4">
-        <h2 className="font-medium text-stone-900">
+        <SectionHeading>
           Links
           <span className="text-sm font-normal text-stone-400">— all optional</span>
-        </h2>
+        </SectionHeading>
         <div>
           <label htmlFor="websiteUrl" className="block text-sm font-medium text-stone-700 mb-1">Website</label>
           <input id="websiteUrl" type="url" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} onBlur={e => setWebsiteUrl(normalizeUrl(e.target.value))} placeholder="https://yoursite.com" className={inputClass} />
@@ -273,7 +274,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
 
       {/* Visibility */}
       <div>
-        <h2 className="font-medium text-stone-900 mb-3">Profile visibility</h2>
+        <SectionHeading className="mb-3">Profile visibility</SectionHeading>
         <label className="flex items-start gap-3 cursor-pointer">
           <input
             type="checkbox"

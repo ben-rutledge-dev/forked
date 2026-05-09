@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
+// Components
+import { PageHeading } from '@/components/Typography';
 // Lib
 import { prisma } from '@/lib/prisma';
 // Utils
@@ -52,7 +54,7 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
         </div>
       )}
 
-      <h1 className="text-2xl font-semibold text-stone-900">{book.title}</h1>
+      <PageHeading>{book.title}</PageHeading>
       {book.description && <p className="mt-2 text-stone-500">{book.description}</p>}
 
       <div className="mt-3 flex flex-wrap gap-2">

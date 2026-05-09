@@ -3,6 +3,7 @@
 import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
+import { PageHeading } from '@/components/Typography';
 import { Pagination } from '@/components/Pagination';
 import { RecipeCard } from '@/components/RecipeCard';
 // Types
@@ -47,7 +48,7 @@ export const PoolClient = ({
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-stone-900 mb-4">Recipe Pool</h1>
+        <PageHeading className="mb-4">Recipe Pool</PageHeading>
         <form
           onSubmit={(e) => {
             e.preventDefault();

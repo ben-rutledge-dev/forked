@@ -5,6 +5,7 @@ import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
 import { RecipeBookCard } from '@/components/RecipeBookCard';
+import { PageHeading, SectionLabel } from '@/components/Typography';
 // Utils
 import { type Role } from '@/utils/roles';
 
@@ -81,7 +82,7 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-semibold text-stone-900">Recipe Books</h1>
+        <PageHeading>Recipe Books</PageHeading>
         <Link
           href="/my/recipe-books/new"
           className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
@@ -92,9 +93,9 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
 
       {pending.length > 0 && (
         <section className="mb-10">
-          <h2 className="text-sm font-semibold text-stone-500 uppercase tracking-wide mb-4">
+          <SectionLabel className="mb-4">
             Pending invites
-          </h2>
+          </SectionLabel>
           <div className="space-y-3">
             {pending.map(invite => (
               <div

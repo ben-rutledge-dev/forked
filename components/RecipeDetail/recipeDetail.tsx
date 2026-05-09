@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
+// Components
+import { PageHeading, SectionHeading } from '@/components/Typography';
 // Types
 import { RecipeWithRelations } from '@/types';
 
@@ -35,7 +37,7 @@ export const RecipeDetail = ({
 
       <div className="mb-8">
         <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-          <h1 className="text-2xl font-semibold text-stone-900 sm:text-3xl">{recipe.title}</h1>
+          <PageHeading>{recipe.title}</PageHeading>
           {headerAction && <div className="flex items-center gap-2 shrink-0">{headerAction}</div>}
         </div>
 
@@ -93,7 +95,7 @@ export const RecipeDetail = ({
 
       {recipe.ingredients.length > 0 && (
         <section className="mb-8">
-          <h2 className="font-medium text-stone-900 mb-3">Ingredients</h2>
+          <SectionHeading className="mb-3">Ingredients</SectionHeading>
           <ul className="space-y-2">
             {recipe.ingredients.map(ing => (
               <li key={ing.id} className="flex gap-2 text-stone-700">
@@ -113,7 +115,7 @@ export const RecipeDetail = ({
 
       {recipe.steps.length > 0 && (
         <section className="mb-10">
-          <h2 className="font-medium text-stone-900 mb-4">Steps</h2>
+          <SectionHeading className="mb-4">Steps</SectionHeading>
           <ol className="space-y-6">
             {recipe.steps.map((step, i) => (
               <li key={step.id} className="flex gap-4">
@@ -142,7 +144,7 @@ export const RecipeDetail = ({
 
       {(recipe.forks?.length ?? 0) > 0 && (
         <section className="border-t border-stone-200 pt-8">
-          <h2 className="font-medium text-stone-900 mb-4">Public forks</h2>
+          <SectionHeading className="mb-4">Public forks</SectionHeading>
           <ul className="space-y-3">
             {recipe.forks!.map(fork => (
               <li key={fork.id}>

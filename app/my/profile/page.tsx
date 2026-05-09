@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 // Components
 import { ProfileForm } from './components/ProfileForm';
 import { Button } from '@/components/Button';
+import { PageHeading } from '@/components/Typography';
 // Lib
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -34,7 +35,7 @@ const ProfilePage = async () => {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <h1 className="text-2xl font-semibold text-stone-900">Edit profile</h1>
+        <PageHeading>Edit profile</PageHeading>
         {user?.username && user.isPublic && (
           <Button href={`/u/${user.username}`} variant="primary" size="md" shape="pill">
             View profile

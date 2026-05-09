@@ -7,6 +7,7 @@ import { Button } from '@/components/Button';
 import { FormBanner } from '@/components/FormBanner';
 import { IconButton } from '@/components/IconButton';
 import { ImageUpload } from '@/components/ImageUpload';
+import { SectionHeading } from '@/components/Typography';
 import { Toast } from '@/components/Toast';
 // Types
 import { IngredientFormData, RecipeFormData, StepFormData } from '@/types';
@@ -189,7 +190,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
 
       <div>
         <div className="mb-3">
-          <h2 className="font-medium text-stone-900">Ingredients</h2>
+          <SectionHeading>Ingredients</SectionHeading>
         </div>
         {/* Column headers */}
         <div className="flex items-center gap-2 mb-1 pl-15 pr-9">
@@ -265,7 +266,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
 
       <div>
         <div className="mb-3">
-          <h2 className="font-medium text-stone-900">Steps</h2>
+          <SectionHeading>Steps</SectionHeading>
         </div>
         <div className="space-y-0">
           {steps.map((step, i) => (

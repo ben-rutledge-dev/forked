@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
+import { PageHeading, SectionLabel } from '@/components/Typography';
 import { Pagination } from '@/components/Pagination';
 import { RecipeBookCard } from '@/components/RecipeBookCard';
 import { RecipeCard } from '@/components/RecipeCard';
@@ -84,7 +85,7 @@ export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-semibold text-stone-900">My Recipes</h1>
+        <PageHeading>My Recipes</PageHeading>
         {tab === 'recipes'
           ? (
               <Link
@@ -166,7 +167,7 @@ export const MyRecipesClient = ({ initialRecipes, initialBooks, initialPending, 
         <>
           {pending.length > 0 && (
             <section className="mb-8">
-              <h2 className="text-xs font-semibold text-stone-400 uppercase tracking-wide mb-3">Pending invites</h2>
+              <SectionLabel className="mb-3">Pending invites</SectionLabel>
               <div className="space-y-3">
                 {pending.map(invite => (
                   <div key={invite.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-5 py-4">

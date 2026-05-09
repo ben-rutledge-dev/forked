@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { notFound } from 'next/navigation';
 // Components
 import { ProfileRecipesGrid } from './components/ProfileRecipesGrid';
+import { SectionHeading } from '@/components/Typography';
 // Lib
 import { prisma } from '@/lib/prisma';
 
@@ -148,7 +149,7 @@ const PublicProfilePage = async ({ params }: Props) => {
         <hr className="border-stone-100 mb-8" />
 
         {/* Recipes */}
-        <h2 className="font-medium text-stone-900 mb-4">
+        <SectionHeading className="mb-4">
           Recipes
           {' '}
           <span className="text-stone-400 font-normal">
@@ -156,7 +157,7 @@ const PublicProfilePage = async ({ params }: Props) => {
             {user.recipes.length}
             )
           </span>
-        </h2>
+        </SectionHeading>
 
         {user.recipes.length === 0
           ? (
