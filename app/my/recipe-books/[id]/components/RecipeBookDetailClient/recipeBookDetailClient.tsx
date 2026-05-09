@@ -12,9 +12,13 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { FormBanner } from '@/components/FormBanner';
+import { FormField } from '@/components/FormField';
 import { ImageUpload } from '@/components/ImageUpload';
 import { RecipeCard } from '@/components/RecipeCard';
+import { Textarea } from '@/components/Textarea';
+import { TextInput } from '@/components/TextInput';
 import { Toast } from '@/components/Toast';
+import { Toggle } from '@/components/Toggle';
 import { PageHeading } from '@/components/Typography';
 // Types
 import type { Recipe } from '@/types';
@@ -194,7 +198,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
     }
   };
 
-  const handleSaveEdit = async (e: React.FormEvent) => {
+  const handleSaveEdit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSaving(true);
     setError(null);
@@ -277,24 +281,20 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
       {showEditForm && isOwner && (
         <form onSubmit={handleSaveEdit} className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-5 space-y-4 mb-6">
           {error && <FormBanner type="error" message={error} />}
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">Title</label>
-            <input
+          <FormField label="Title">
+            <TextInput
               value={editTitle}
               onChange={e => setEditTitle(e.target.value)}
               required
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-stone-700 mb-1">Description</label>
-            <textarea
+          </FormField>
+          <FormField label="Description">
+            <Textarea
               value={editDescription}
               onChange={e => setEditDescription(e.target.value)}
               rows={2}
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
             />
-          </div>
+          </FormField>
           <div>
             <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
             <ImageUpload
@@ -304,18 +304,11 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
               label="Add cover photo"
             />
           </div>
-          <div className="flex items-center gap-3">
-            <button
-              type="button"
-              role="switch"
-              aria-checked={editIsPublic}
-              onClick={() => setEditIsPublic(v => !v)}
-              className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${editIsPublic ? 'bg-primary-500' : 'bg-stone-300'}`}
-            >
-              <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${editIsPublic ? 'translate-x-6' : 'translate-x-1'}`} />
-            </button>
-            <span className="text-sm text-stone-700">{editIsPublic ? 'Public' : 'Private'}</span>
-          </div>
+          <Toggle
+            checked={editIsPublic}
+            onChange={setEditIsPublic}
+            label={editIsPublic ? 'Public' : 'Private'}
+          />
           <div className="flex gap-2">
             <Button type="submit" variant="primary" size="sm" shape="pill" disabled={saving}>
               {saving ? 'Saving…' : 'Save'}
@@ -481,31 +474,20 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
             <h2 className="text-lg font-semibold text-stone-900 mb-4">Invite collaborator</h2>
             {inviteError && <FormBanner type="error" message={inviteError} />}
             <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-stone-700 mb-1">Username</label>
-                <input
+              <FormField label="Username">
+                <TextInput
                   type="text"
                   value={inviteUsername}
                   onChange={e => setInviteUsername(e.target.value)}
                   placeholder="@username"
-                  className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
                 />
-              </div>
+              </FormField>
               {isPremium && (
-                <div className="flex items-center gap-3">
-                  <button
-                    type="button"
-                    role="switch"
-                    aria-checked={inviteRole === OWNER}
-                    onClick={() => setInviteRole(r => r === COLLABORATOR ? OWNER : COLLABORATOR)}
-                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${inviteRole === OWNER ? 'bg-primary-500' : 'bg-stone-300'}`}
-                  >
-                    <span className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${inviteRole === OWNER ? 'translate-x-6' : 'translate-x-1'}`} />
-                  </button>
-                  <span className="text-sm text-stone-700">
-                    {`Invite as ${inviteRole === OWNER ? 'owner' : 'collaborator'}`}
-                  </span>
-                </div>
+                <Toggle
+                  checked={inviteRole === OWNER}
+                  onChange={v => setInviteRole(v ? OWNER : COLLABORATOR)}
+                  label={`Invite as ${inviteRole === OWNER ? 'owner' : 'collaborator'}`}
+                />
               )}
               <div className="flex gap-2 pt-1">
                 <Button
@@ -531,12 +513,12 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40" onClick={() => setShowAddModal(false)}>
           <div className="bg-white rounded-2xl p-6 w-full max-w-sm shadow-xl" onClick={e => e.stopPropagation()}>
             <h2 className="text-lg font-semibold text-stone-900 mb-4">Add a recipe</h2>
-            <input
+            <TextInput
               type="text"
               value={recipeSearch}
               onChange={e => setRecipeSearch(e.target.value)}
               placeholder="Search your recipes…"
-              className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="mb-3"
             />
             <div className="max-h-72 overflow-y-auto space-y-1">
               {addableRecipes.length === 0

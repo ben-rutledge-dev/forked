@@ -5,7 +5,11 @@ import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
 import { FormBanner } from '@/components/FormBanner';
+import { FormField } from '@/components/FormField';
 import { ImageUpload } from '@/components/ImageUpload';
+import { Textarea } from '@/components/Textarea';
+import { TextInput } from '@/components/TextInput';
+import { Toggle } from '@/components/Toggle';
 
 export const NewRecipeBookForm = () => {
   const router = useRouter();
@@ -16,7 +20,7 @@ export const NewRecipeBookForm = () => {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.trim()) return;
     setSaving(true);
@@ -45,30 +49,34 @@ export const NewRecipeBookForm = () => {
       {error && <FormBanner type="error" message={error} />}
 
       <div>
-        <label className="block text-sm font-medium text-stone-700 mb-1">Title</label>
-        <input
-          type="text"
-          value={title}
-          onChange={e => setTitle(e.target.value)}
-          required
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500"
-          placeholder="My favourite weeknight dinners"
-        />
+        <FormField label="Title">
+          <TextInput
+            type="text"
+            value={title}
+            onChange={e => setTitle(e.target.value)}
+            required
+            placeholder="My favourite weeknight dinners"
+          />
+        </FormField>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-stone-700 mb-1">
-          Description
-          {' '}
-          <span className="font-normal text-stone-400">(optional)</span>
-        </label>
-        <textarea
-          value={description}
-          onChange={e => setDescription(e.target.value)}
-          rows={3}
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 resize-none"
-          placeholder="A short description of this collection…"
-        />
+        <FormField
+          label={(
+            <>
+              Description
+              {' '}
+              <span className="font-normal text-stone-400">(optional)</span>
+            </>
+          )}
+        >
+          <Textarea
+            value={description}
+            onChange={e => setDescription(e.target.value)}
+            rows={3}
+            placeholder="A short description of this collection…"
+          />
+        </FormField>
       </div>
 
       <div>
@@ -84,28 +92,11 @@ export const NewRecipeBookForm = () => {
         />
       </div>
 
-      <div className="flex items-center gap-3">
-        <button
-          type="button"
-          role="switch"
-          aria-checked={isPublic}
-          onClick={() => setIsPublic(v => !v)}
-          className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-            isPublic ? 'bg-primary-500' : 'bg-stone-300'
-          }`}
-        >
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition-transform ${
-              isPublic ? 'translate-x-6' : 'translate-x-1'
-            }`}
-          />
-        </button>
-        <span className="text-sm text-stone-700">
-          {isPublic ? 'Public' : 'Private'}
-          {' '}
-          recipe book
-        </span>
-      </div>
+      <Toggle
+        checked={isPublic}
+        onChange={setIsPublic}
+        label={`${isPublic ? 'Public' : 'Private'} recipe book`}
+      />
 
       <div className="flex gap-3 pt-2">
         <Button type="submit" variant="primary" size="md" shape="pill" disabled={saving || !title.trim()}>

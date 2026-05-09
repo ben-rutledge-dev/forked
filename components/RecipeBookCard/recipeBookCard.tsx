@@ -93,7 +93,7 @@ export const RecipeBookCard = ({
             {isPublic ? 'public' : 'private'}
           </Badge>
           {role && (
-            <Badge variant="primary">{role}</Badge>
+            <Badge variant={role === OWNER ? 'primary' : 'neutral'}>{role}</Badge>
           )}
         </div>
       </div>

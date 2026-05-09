@@ -2,11 +2,16 @@
 
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
+import { Checkbox } from '@/components/Checkbox';
 import { CornerDeleteButton } from '@/components/CornerDeleteButton';
 import { FormBanner } from '@/components/FormBanner';
+import { FormField } from '@/components/FormField';
+import { FormUrl } from '@/components/FormUrl';
+import { Textarea } from '@/components/Textarea';
+import { TextInput } from '@/components/TextInput';
 import { Toast } from '@/components/Toast';
 import { SectionHeading } from '@/components/Typography';
 // Types
@@ -38,39 +43,39 @@ const uploadImage = async (file: File): Promise<string> => {
 
 export const ProfileForm = ({ user }: { user: UserProfile }) => {
   const router = useRouter();
-  const [username, setUsername] = useState(user.username ?? '');
-  const [bio, setBio] = useState(user.bio ?? '');
-  const [isPublic, setIsPublic] = useState(user.isPublic);
-  const [avatarUrl, setAvatarUrl] = useState(user.avatarUrl ?? '');
-  const [coverImageUrl, setCoverImageUrl] = useState(user.coverImageUrl ?? '');
-  const [websiteUrl, setWebsiteUrl] = useState(user.websiteUrl ?? '');
-  const [twitterHandle, setTwitterHandle] = useState(user.twitterHandle ?? '');
-  const [instagramHandle, setInstagramHandle] = useState(user.instagramHandle ?? '');
-  const [youtubeUrl, setYoutubeUrl] = useState(user.youtubeUrl ?? '');
-  const [saving, setSaving] = useState(false);
-  const [error, setError] = useState('');
-  const [saved, setSaved] = useState(false);
-  const [showName, setShowName] = useState(user.showName);
+
+  const [fields, setFields] = useState({
+    username: user.username ?? '',
+    bio: user.bio ?? '',
+    isPublic: user.isPublic,
+    avatarUrl: user.avatarUrl ?? '',
+    coverImageUrl: user.coverImageUrl ?? '',
+    websiteUrl: user.websiteUrl ?? '',
+    twitterHandle: user.twitterHandle ?? '',
+    instagramHandle: user.instagramHandle ?? '',
+    youtubeUrl: user.youtubeUrl ?? '',
+    showName: user.showName,
+  });
+  const setField = <K extends keyof typeof fields>(key: K, value: (typeof fields)[K]) =>
+    setFields(prev => ({ ...prev, [key]: value }));
+
+  const [status, setStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const [errorMsg, setErrorMsg] = useState('');
   const [avatarUploading, setAvatarUploading] = useState(false);
   const [coverUploading, setCoverUploading] = useState(false);
   const avatarInputRef = useRef<HTMLInputElement>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
-
-  const normalizeUrl = (value: string): string => {
-    const v = value.trim();
-    if (!v) return '';
-    return /^https?:\/\//i.test(v) ? v : `https://${v}`;
-  };
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setAvatarUploading(true);
     try {
-      setAvatarUrl(await uploadImage(file));
+      setField('avatarUrl', await uploadImage(file));
     }
     catch {
-      setError('Avatar upload failed');
+      setErrorMsg('Avatar upload failed');
+      setStatus('error');
     }
     finally {
       setAvatarUploading(false);
@@ -82,72 +87,71 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
     if (!file) return;
     setCoverUploading(true);
     try {
-      setCoverImageUrl(await uploadImage(file));
+      setField('coverImageUrl', await uploadImage(file));
     }
     catch {
-      setError('Cover photo upload failed');
+      setErrorMsg('Cover photo upload failed');
+      setStatus('error');
     }
     finally {
       setCoverUploading(false);
     }
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError('');
-    setSaving(true);
+    setStatus('saving');
     try {
       const res = await fetch('/api/profile', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          username: username.trim() || null,
-          bio: bio.trim() || null,
-          isPublic,
-          showName,
-          avatarUrl: avatarUrl || null,
-          coverImageUrl: coverImageUrl || null,
-          websiteUrl: websiteUrl.trim() || null,
-          twitterHandle: twitterHandle.trim() || null,
-          instagramHandle: instagramHandle.trim() || null,
-          youtubeUrl: youtubeUrl.trim() || null,
+          username: fields.username.trim() || null,
+          bio: fields.bio.trim() || null,
+          isPublic: fields.isPublic,
+          showName: fields.showName,
+          avatarUrl: fields.avatarUrl || null,
+          coverImageUrl: fields.coverImageUrl || null,
+          websiteUrl: fields.websiteUrl.trim() || null,
+          twitterHandle: fields.twitterHandle.trim() || null,
+          instagramHandle: fields.instagramHandle.trim() || null,
+          youtubeUrl: fields.youtubeUrl.trim() || null,
         }),
       });
       if (!res.ok) {
         const data = await res.json();
-        setError(data.error ?? 'Something went wrong');
+        setErrorMsg(data.error ?? 'Something went wrong');
+        setStatus('error');
         return;
       }
-      setSaved(true);
-      setTimeout(() => setSaved(false), 4000);
+      setStatus('saved');
+      setTimeout(() => setStatus('idle'), 4000);
       router.refresh();
     }
     finally {
-      setSaving(false);
+      setStatus(s => s === 'saving' ? 'idle' : s);
     }
   };
 
-  const inputClass = 'w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500';
-
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
-      {error && <FormBanner type="error" message={error} />}
-      {saved && <Toast message="Profile saved!" />}
+      {status === 'error' && <FormBanner type="error" message={errorMsg} />}
+      {status === 'saved' && <Toast message="Profile saved!" />}
 
       {/* Photos */}
       <div className="space-y-5">
         {/* Cover photo */}
         <div>
           <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
-          {coverImageUrl
+          {fields.coverImageUrl
             ? (
                 <div className="relative block h-32">
                   <div className="absolute inset-0 rounded-xl overflow-hidden border border-stone-200">
-                    <Image src={coverImageUrl} alt="Cover" fill className="object-cover" sizes="100vw" />
+                    <Image src={fields.coverImageUrl} alt="Cover" fill className="object-cover" sizes="100vw" />
                   </div>
                   <CornerDeleteButton
                     onClick={() => {
-                      setCoverImageUrl('');
+                      setField('coverImageUrl', '');
                       if (coverInputRef.current) coverInputRef.current.value = '';
                     }}
                     label="Remove cover photo"
@@ -168,13 +172,13 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
         {/* Avatar */}
         <div className="flex items-center gap-4">
           <div className="relative shrink-0">
-            {avatarUrl
+            {fields.avatarUrl
               ? (
                   <>
-                    <Image src={avatarUrl} alt="Avatar" width={64} height={64} className="w-16 h-16 rounded-full object-cover border border-stone-200" />
+                    <Image src={fields.avatarUrl} alt="Avatar" width={64} height={64} className="w-16 h-16 rounded-full object-cover border border-stone-200" />
                     <CornerDeleteButton
                       onClick={() => {
-                        setAvatarUrl('');
+                        setField('avatarUrl', '');
                         if (avatarInputRef.current) avatarInputRef.current.value = '';
                       }}
                       label="Remove profile photo"
@@ -191,7 +195,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
                 )}
           </div>
           <label className={`cursor-pointer text-sm text-stone-500 hover:text-stone-700 transition-colors ${avatarUploading ? 'opacity-50 pointer-events-none' : ''}`}>
-            {avatarUploading ? 'Uploading…' : avatarUrl ? 'Change profile photo' : 'Add profile photo'}
+            {avatarUploading ? 'Uploading…' : fields.avatarUrl ? 'Change profile photo' : 'Add profile photo'}
             <input ref={avatarInputRef} type="file" accept="image/*" className="sr-only" onChange={handleAvatarChange} />
           </label>
         </div>
@@ -199,50 +203,42 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
 
       {/* Identity */}
       <div className="space-y-4">
-        <div>
-          <label htmlFor="username" className="block text-sm font-medium text-stone-700 mb-1">
-            Username
-            {' '}
-            <span className="text-stone-400 font-normal">(required to have a public profile)</span>
-          </label>
-          <div className="flex items-center">
-            <span className="px-3 py-2 text-sm text-stone-400 border border-r-0 border-stone-300 rounded-l-lg bg-stone-50">forked.app/u/</span>
-            <input
-              id="username"
-              type="text"
-              value={username}
-              onChange={e => setUsername(e.target.value)}
-              placeholder="your_username"
-              className="flex-1 rounded-l-none rounded-r-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
-            />
-          </div>
-          <p className="mt-1 text-xs text-stone-400">Letters, numbers and underscores only. 3–30 characters.</p>
-        </div>
+        <FormField
+          htmlFor="username"
+          label={(
+            <>
+              Username
+              <span className="text-stone-400 font-normal">(required to have a public profile)</span>
+            </>
+          )}
+          hint="Letters, numbers and underscores only. 3–30 characters."
+        >
+          <TextInput
+            id="username"
+            type="text"
+            value={fields.username}
+            onChange={e => setField('username', e.target.value)}
+            placeholder="your_username"
+            prefix="forked.app/u/"
+          />
+        </FormField>
 
-        <div>
-          <label htmlFor="bio" className="block text-sm font-medium text-stone-700 mb-1">Bio</label>
-          <textarea
+        <FormField htmlFor="bio" label="Bio">
+          <Textarea
             id="bio"
-            value={bio}
-            onChange={e => setBio(e.target.value)}
+            value={fields.bio}
+            onChange={e => setField('bio', e.target.value)}
             rows={3}
             placeholder="Tell people a bit about yourself…"
-            className={inputClass + ' resize-none'}
           />
-        </div>
+        </FormField>
 
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={showName}
-            onChange={e => setShowName(e.target.checked)}
-            className="mt-0.5 rounded border-stone-300"
-          />
-          <div>
-            <span className="text-sm text-stone-700">Show my full name publicly</span>
-            <p className="text-xs text-stone-400 mt-0.5">Display your name on your public profile. Uncheck to show only your username.</p>
-          </div>
-        </label>
+        <Checkbox
+          checked={fields.showName}
+          onChange={e => setField('showName', e.target.checked)}
+          label="Show my full name publicly"
+          description="Display your name on your public profile. Uncheck to show only your username."
+        />
       </div>
 
       {/* Social links */}
@@ -252,50 +248,58 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
           {' '}
           <span className="text-sm font-normal text-stone-400">— all optional</span>
         </SectionHeading>
-        <div>
-          <label htmlFor="websiteUrl" className="block text-sm font-medium text-stone-700 mb-1">Website</label>
-          <input id="websiteUrl" type="url" value={websiteUrl} onChange={e => setWebsiteUrl(e.target.value)} onBlur={e => setWebsiteUrl(normalizeUrl(e.target.value))} placeholder="https://yoursite.com" className={inputClass} />
-        </div>
-        <div>
-          <label htmlFor="twitter" className="block text-sm font-medium text-stone-700 mb-1">X / Twitter handle</label>
-          <div className="flex items-center">
-            <span className="px-3 py-2 text-sm text-stone-400 border border-r-0 border-stone-300 rounded-l-lg bg-stone-50">@</span>
-            <input id="twitter" type="text" value={twitterHandle} onChange={e => setTwitterHandle(e.target.value)} placeholder="username" className="flex-1 rounded-l-none rounded-r-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500" />
-          </div>
-        </div>
-        <div>
-          <label htmlFor="instagram" className="block text-sm font-medium text-stone-700 mb-1">Instagram handle</label>
-          <div className="flex items-center">
-            <span className="px-3 py-2 text-sm text-stone-400 border border-r-0 border-stone-300 rounded-l-lg bg-stone-50">@</span>
-            <input id="instagram" type="text" value={instagramHandle} onChange={e => setInstagramHandle(e.target.value)} placeholder="username" className="flex-1 rounded-l-none rounded-r-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500" />
-          </div>
-        </div>
-        <div>
-          <label htmlFor="youtube" className="block text-sm font-medium text-stone-700 mb-1">YouTube</label>
-          <input id="youtube" type="url" value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} onBlur={e => setYoutubeUrl(normalizeUrl(e.target.value))} placeholder="https://youtube.com/@yourchannel" className={inputClass} />
-        </div>
+        <FormField htmlFor="websiteUrl" label="Website">
+          <FormUrl
+            id="websiteUrl"
+            value={fields.websiteUrl}
+            onChange={v => setField('websiteUrl', v)}
+            placeholder="https://yoursite.com"
+          />
+        </FormField>
+        <FormField htmlFor="twitter" label="X / Twitter handle">
+          <TextInput
+            id="twitter"
+            type="text"
+            value={fields.twitterHandle}
+            onChange={e => setField('twitterHandle', e.target.value)}
+            placeholder="username"
+            prefix="@"
+          />
+        </FormField>
+        <FormField htmlFor="instagram" label="Instagram handle">
+          <TextInput
+            id="instagram"
+            type="text"
+            value={fields.instagramHandle}
+            onChange={e => setField('instagramHandle', e.target.value)}
+            placeholder="username"
+            prefix="@"
+          />
+        </FormField>
+        <FormField htmlFor="youtube" label="YouTube">
+          <FormUrl
+            id="youtube"
+            value={fields.youtubeUrl}
+            onChange={v => setField('youtubeUrl', v)}
+            placeholder="https://youtube.com/@yourchannel"
+          />
+        </FormField>
       </div>
 
       {/* Visibility */}
       <div>
         <SectionHeading className="mb-3">Profile visibility</SectionHeading>
-        <label className="flex items-start gap-3 cursor-pointer">
-          <input
-            type="checkbox"
-            checked={isPublic}
-            onChange={e => setIsPublic(e.target.checked)}
-            className="mt-0.5 rounded border-stone-300"
-          />
-          <div>
-            <span className="text-sm text-stone-700">Make profile public</span>
-            <p className="text-xs text-stone-400 mt-0.5">Your profile page will be visible to anyone. Requires a username.</p>
-          </div>
-        </label>
+        <Checkbox
+          checked={fields.isPublic}
+          onChange={e => setField('isPublic', e.target.checked)}
+          label="Make profile public"
+          description="Your profile page will be visible to anyone. Requires a username."
+        />
       </div>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" variant="neutral" size="lg" shape="pill" disabled={saving}>
-          {saving ? 'Saving…' : 'Save profile'}
+        <Button type="submit" variant="neutral" size="lg" shape="pill" disabled={status === 'saving'}>
+          {status === 'saving' ? 'Saving…' : 'Save profile'}
         </Button>
         <Button type="button" variant="secondary" size="lg" shape="pill" onClick={() => router.back()}>
           Cancel

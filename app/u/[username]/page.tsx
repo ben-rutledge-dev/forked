@@ -66,7 +66,7 @@ const PublicProfilePage = async ({ params }: Props) => {
       {/* Cover — full viewport width */}
       {user.coverImageUrl
         ? (
-            <div className="w-full relative h-48">
+            <div className="w-full relative h-80">
               <Image src={user.coverImageUrl} alt="" fill className="object-cover" sizes="100vw" />
             </div>
           )
