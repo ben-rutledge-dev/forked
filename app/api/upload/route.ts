@@ -1,11 +1,17 @@
 import { randomUUID } from 'crypto';
-import { mkdir, writeFile } from 'fs/promises';
 import { NextResponse } from 'next/server';
-import path from 'path';
 // Lib
 import { auth } from '@/lib/auth';
+import { createServerSupabaseClient } from '@/lib/supabase/server';
 
 const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'gif'];
+const MIME_TYPES: Record<string, string> = {
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  png: 'image/png',
+  webp: 'image/webp',
+  gif: 'image/gif',
+};
 
 export const POST = async (req: Request) => {
   const session = await auth();
@@ -19,11 +25,20 @@ export const POST = async (req: Request) => {
     return NextResponse.json({ error: 'Unsupported file type' }, { status: 400 });
   }
 
-  const uploadsDir = path.join(process.cwd(), 'public', 'uploads');
-  await mkdir(uploadsDir, { recursive: true });
+  const fileBuffer = Buffer.from(String(data), 'base64');
+  const filename = `${session.user.id}/${randomUUID()}.${cleanExt}`;
+  const mimeType = MIME_TYPES[cleanExt];
 
-  const filename = `${randomUUID()}.${cleanExt}`;
-  await writeFile(path.join(uploadsDir, filename), Buffer.from(String(data), 'base64'));
+  const supabase = await createServerSupabaseClient();
+  const { data: uploadData, error } = await supabase.storage
+    .from('recipe-images')
+    .upload(filename, fileBuffer, { contentType: mimeType, upsert: false });
 
-  return NextResponse.json({ url: `/uploads/${filename}` });
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  const { data: { publicUrl } } = supabase.storage
+    .from('recipe-images')
+    .getPublicUrl(uploadData.path);
+
+  return NextResponse.json({ url: publicUrl });
 };

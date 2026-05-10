@@ -1,14 +1,21 @@
 import { PrismaAdapter } from '@auth/prisma-adapter';
+import { PrismaPg } from '@prisma/adapter-pg';
 import NextAuth from 'next-auth';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
 // Lib
-import { prisma } from '@/lib/prisma';
+import { PrismaClient } from '@/generated/prisma/client';
+
+// NextAuth needs its own client — PrismaAdapter is incompatible with the
+// driver-adapter pattern used in lib/prisma.ts
+const authPrisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
+});
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  adapter: PrismaAdapter(prisma as any),
+  adapter: PrismaAdapter(authPrisma as any),
   providers: [
     GitHub({
       clientId: process.env.GITHUB_ID ?? '',

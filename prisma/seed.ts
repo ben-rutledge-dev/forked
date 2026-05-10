@@ -1,7 +1,7 @@
-import { PrismaLibSql } from '@prisma/adapter-libsql';
-import { PrismaClient } from 'generated/prisma/client';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '../generated/prisma/client';
 
-const adapter = new PrismaLibSql({ url: 'file:./dev.db' });
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
 
 const main = async () => {
@@ -180,6 +180,52 @@ const main = async () => {
   }
 
   console.log('Seeded 3 sample recipes.');
+
+  // Seed categories
+  const categories: Array<{ slug: string, label: string, group: 'CUISINE' | 'MEAL_TYPE' | 'DIETARY' | 'EFFORT' }> = [
+    // CUISINE
+    { slug: 'italian', label: 'Italian', group: 'CUISINE' },
+    { slug: 'japanese', label: 'Japanese', group: 'CUISINE' },
+    { slug: 'korean', label: 'Korean', group: 'CUISINE' },
+    { slug: 'thai', label: 'Thai', group: 'CUISINE' },
+    { slug: 'vietnamese', label: 'Vietnamese', group: 'CUISINE' },
+    { slug: 'chinese', label: 'Chinese', group: 'CUISINE' },
+    { slug: 'mexican', label: 'Mexican', group: 'CUISINE' },
+    { slug: 'indian', label: 'Indian', group: 'CUISINE' },
+    { slug: 'middle-eastern', label: 'Middle Eastern', group: 'CUISINE' },
+    { slug: 'french', label: 'French', group: 'CUISINE' },
+    { slug: 'british', label: 'British', group: 'CUISINE' },
+    { slug: 'american', label: 'American', group: 'CUISINE' },
+    { slug: 'spanish', label: 'Spanish', group: 'CUISINE' },
+    { slug: 'greek', label: 'Greek', group: 'CUISINE' },
+    // MEAL_TYPE
+    { slug: 'breakfast', label: 'Breakfast', group: 'MEAL_TYPE' },
+    { slug: 'lunch', label: 'Lunch', group: 'MEAL_TYPE' },
+    { slug: 'dinner', label: 'Dinner', group: 'MEAL_TYPE' },
+    { slug: 'snack', label: 'Snack', group: 'MEAL_TYPE' },
+    { slug: 'dessert', label: 'Dessert', group: 'MEAL_TYPE' },
+    { slug: 'sides', label: 'Sides', group: 'MEAL_TYPE' },
+    { slug: 'drinks', label: 'Drinks', group: 'MEAL_TYPE' },
+    // DIETARY
+    { slug: 'vegetarian', label: 'Vegetarian', group: 'DIETARY' },
+    { slug: 'vegan', label: 'Vegan', group: 'DIETARY' },
+    { slug: 'gluten-free', label: 'Gluten-free', group: 'DIETARY' },
+    { slug: 'dairy-free', label: 'Dairy-free', group: 'DIETARY' },
+    { slug: 'low-carb', label: 'Low-carb', group: 'DIETARY' },
+    // EFFORT
+    { slug: 'quick', label: 'Quick (under 30 mins)', group: 'EFFORT' },
+    { slug: 'weekend-project', label: 'Weekend project', group: 'EFFORT' },
+  ];
+
+  for (const cat of categories) {
+    await prisma.category.upsert({
+      where: { slug: cat.slug },
+      update: { label: cat.label, group: cat.group },
+      create: cat,
+    });
+  }
+
+  console.log(`Seeded ${categories.length} categories.`);
 };
 
 main()

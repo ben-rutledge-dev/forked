@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model Account {
@@ -69,22 +69,58 @@ model User {
 }
 
 model Recipe {
-  id            String       @id @default(cuid())
+  id            String           @id @default(cuid())
   title         String
   description   String?
   coverImageUrl String?
   authorId      String?
-  isPublic     Boolean      @default(false)
-  forkedFromId String?
-  forkCount    Int          @default(0)
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
-  author       User?        @relation(fields: [authorId], references: [id])
-  forkedFrom   Recipe?      @relation("RecipeForks", fields: [forkedFromId], references: [id])
-  forks        Recipe[]     @relation("RecipeForks")
-  ingredients  Ingredient[]
-  steps        Step[]
+  isPublic      Boolean          @default(false)
+  forkedFromId  String?
+  forkCount     Int              @default(0)
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+  author        User?            @relation(fields: [authorId], references: [id])
+  forkedFrom    Recipe?          @relation("RecipeForks", fields: [forkedFromId], references: [id])
+  forks         Recipe[]         @relation("RecipeForks")
+  ingredients   Ingredient[]
+  steps         Step[]
   recipeBookEntries RecipeBookEntry[]
+  categories    RecipeCategory[]
+  tags          RecipeTag[]
+}
+
+model RecipeTag {
+  id       String @id @default(cuid())
+  recipeId String
+  tag      String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, tag])
+}
+
+enum CategoryGroup {
+  CUISINE
+  MEAL_TYPE
+  DIETARY
+  EFFORT
+}
+
+model Category {
+  id      String           @id @default(cuid())
+  slug    String           @unique
+  label   String
+  group   CategoryGroup
+  recipes RecipeCategory[]
+}
+
+model RecipeCategory {
+  id         String   @id @default(cuid())
+  recipeId   String
+  categoryId String
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeId, categoryId])
 }
 
 enum RecipeBookRole {
