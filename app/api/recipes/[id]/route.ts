@@ -25,11 +25,22 @@ export const GET = async (_req: Request, { params }: Params) => {
         },
         orderBy: { createdAt: 'desc' },
       },
+      categories: {
+        select: {
+          category: { select: { id: true, slug: true, label: true, group: true } },
+        },
+      },
     },
   });
 
   if (!recipe) return NextResponse.json({ error: 'Not found' }, { status: 404 });
-  return NextResponse.json(recipe);
+
+  const { categories: rawCategories, tags, ...rest } = recipe;
+  return NextResponse.json({
+    ...rest,
+    categories: rawCategories.map(rc => rc.category),
+    tags,
+  });
 };
 
 export const PUT = async (req: Request, { params }: Params) => {
@@ -41,40 +52,56 @@ export const PUT = async (req: Request, { params }: Params) => {
   if (!recipe) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   if (recipe.authorId !== session.user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const { title, description, isPublic, coverImageUrl, ingredients, steps } = await req.json();
+  const { title, description, isPublic, coverImageUrl, ingredients, steps, categoryIds, tags } = await req.json();
   if (!title?.trim()) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+
+  if (isPublic && (!categoryIds || categoryIds.length === 0)) {
+    return NextResponse.json({ error: 'Select at least one category to make this recipe public' }, { status: 400 });
+  }
 
   await prisma.ingredient.deleteMany({ where: { recipeId: id } });
   await prisma.step.deleteMany({ where: { recipeId: id } });
 
-  const updated = await prisma.recipe.update({
-    where: { id },
-    data: {
-      title: title.trim(),
-      description: description?.trim() || null,
-      coverImageUrl: coverImageUrl || null,
-      isPublic: Boolean(isPublic),
-      ingredients: {
-        create: (ingredients ?? []).map(
-          (ing: { name: string, quantity: string, unit: string }, i: number) => ({
-            name: ing.name,
-            quantity: ing.quantity || null,
-            unit: ing.unit || null,
-            orderIndex: i,
-          }),
-        ),
+  const updated = await prisma.$transaction(async (tx) => {
+    if (categoryIds !== undefined) {
+      await tx.recipeCategory.deleteMany({ where: { recipeId: id } });
+      if (categoryIds.length > 0) {
+        await tx.recipeCategory.createMany({
+          data: categoryIds.map((categoryId: string) => ({ recipeId: id, categoryId })),
+        });
+      }
+    }
+
+    return tx.recipe.update({
+      where: { id },
+      data: {
+        title: title.trim(),
+        description: description?.trim() || null,
+        coverImageUrl: coverImageUrl || null,
+        isPublic: Boolean(isPublic),
+        ...(tags !== undefined && { tags: tags.map((t: string) => t.trim().toLowerCase()).filter(Boolean) }),
+        ingredients: {
+          create: (ingredients ?? []).map(
+            (ing: { name: string, quantity: string, unit: string }, i: number) => ({
+              name: ing.name,
+              quantity: ing.quantity || null,
+              unit: ing.unit || null,
+              orderIndex: i,
+            }),
+          ),
+        },
+        steps: {
+          create: (steps ?? []).map(
+            (step: { instruction: string, timerSeconds: number | string, imageUrl?: string }, i: number) => ({
+              instruction: step.instruction,
+              timerSeconds: step.timerSeconds ? Number(step.timerSeconds) : null,
+              imageUrl: step.imageUrl || null,
+              orderIndex: i,
+            }),
+          ),
+        },
       },
-      steps: {
-        create: (steps ?? []).map(
-          (step: { instruction: string, timerSeconds: number | string, imageUrl?: string }, i: number) => ({
-            instruction: step.instruction,
-            timerSeconds: step.timerSeconds ? Number(step.timerSeconds) : null,
-            imageUrl: step.imageUrl || null,
-            orderIndex: i,
-          }),
-        ),
-      },
-    },
+    });
   });
 
   return NextResponse.json(updated);

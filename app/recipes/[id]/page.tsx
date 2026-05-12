@@ -38,14 +38,24 @@ const RecipePage = async ({ params }: Props) => {
         },
         orderBy: { createdAt: 'desc' },
       },
+      categories: {
+        select: { category: { select: { id: true, slug: true, label: true, group: true } } },
+      },
     },
   });
 
   if (!recipe) notFound();
 
+  const { categories: rawCategories, ...rest } = recipe;
+  const recipeWithCategories = {
+    ...rest,
+    categories: rawCategories.map(rc => rc.category),
+    tags: [],
+  };
+
   return (
     <RecipeDetail
-      recipe={JSON.parse(JSON.stringify(recipe))}
+      recipe={JSON.parse(JSON.stringify(recipeWithCategories))}
       cookHref={`/recipes/${id}/cook`}
       headerAction={(
         <div className="flex items-center gap-2">

@@ -77,6 +77,7 @@ model Recipe {
   isPublic      Boolean          @default(false)
   forkedFromId  String?
   forkCount     Int              @default(0)
+  tags          String[]         @default([])
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   author        User?            @relation(fields: [authorId], references: [id])
@@ -86,16 +87,6 @@ model Recipe {
   steps         Step[]
   recipeBookEntries RecipeBookEntry[]
   categories    RecipeCategory[]
-  tags          RecipeTag[]
-}
-
-model RecipeTag {
-  id       String @id @default(cuid())
-  recipeId String
-  tag      String
-  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
-
-  @@unique([recipeId, tag])
 }
 
 enum CategoryGroup {

@@ -1,4 +1,6 @@
-import type { PostRecipeResponse, RecipeIngredientPayload, RecipeStepPayload, PostRecipePayload } from 'data/recipes/types';
+// Data
+import type { Category } from '@/data/categories/types';
+import type { PostRecipeResponse, RecipeIngredientPayload, RecipeStepPayload, PostRecipePayload } from '@/data/recipes/types';
 
 export type RecipeAuthor = {
   id: string
@@ -48,9 +50,14 @@ export type Recipe = PostRecipeResponse & {
   ingredients: Ingredient[]
   steps: Step[]
   forks: RecipeFork[]
+  categories: Category[]
+  tags: string[]
 };
 
-export type PutRecipePayload = PostRecipePayload;
+export type PutRecipePayload = PostRecipePayload & {
+  categoryIds?: string[]
+  tags?: string[]
+};
 
 export type PutRecipeIngredientPayload = RecipeIngredientPayload;
 

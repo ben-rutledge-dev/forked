@@ -1,4 +1,5 @@
-import type { PostRecipeResponse } from 'data/recipes/types';
+// Data
+import type { PostRecipeResponse } from '@/data/recipes/types';
 
 export type ForkRecipeResponse = PostRecipeResponse;
 

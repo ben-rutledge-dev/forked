@@ -1,8 +1,8 @@
 import type { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 // Components
 import { Badge } from '@/components/Badge';
+import { Button } from '@/components/Button';
 import { RecipeDetail } from '@/components/RecipeDetail';
 // Lib
 import { auth } from '@/lib/auth';
@@ -26,28 +26,39 @@ const MyRecipePage = async ({ params }: Props) => {
       forkedFrom: { select: { id: true, title: true, isPublic: true } },
       ingredients: { orderBy: { orderIndex: 'asc' } },
       steps: { orderBy: { orderIndex: 'asc' } },
+      categories: {
+        select: { category: { select: { id: true, slug: true, label: true, group: true } } },
+      },
     },
   });
 
   if (!recipe) notFound();
 
+  const { categories: rawCategories, ...rest } = recipe;
+  const recipeWithCategories = {
+    ...rest,
+    categories: rawCategories.map(rc => rc.category),
+  };
+
   return (
     <RecipeDetail
-      recipe={JSON.parse(JSON.stringify(recipe))}
+      recipe={JSON.parse(JSON.stringify(recipeWithCategories))}
       cookHref={`/my/recipes/${id}/cook`}
       cookVariant="primary"
       headerAction={(
-        <Link
-          href={`/my/recipes/${id}/edit`}
-          className="shrink-0 rounded-full border border-stone-300 px-5 py-2 text-sm font-medium text-stone-700 hover:bg-stone-100 transition-colors"
-        >
-          Edit
-        </Link>
-      )}
-      metaBadge={(
-        <Badge variant={recipe.isPublic ? 'success' : 'neutral'} className="text-xs">
-          {recipe.isPublic ? 'public' : 'private'}
-        </Badge>
+        <div className="flex items-center gap-2">
+          <Badge variant={recipe.isPublic ? 'success' : 'neutral'} className="text-xs">
+            {recipe.isPublic ? 'public' : 'private'}
+          </Badge>
+          <Button
+            href={`/my/recipes/${id}/edit`}
+            variant="secondary"
+            size="sm"
+            shape="pill"
+          >
+            Edit
+          </Button>
+        </div>
       )}
     />
   );

@@ -7,12 +7,25 @@ export const queryKeys = {
     all: ['pool'] as const,
   },
 
+  categories: {
+    all: () => ['categories'] as const,
+  },
+
   recipes: {
     all: ['recipes'] as const,
-    mine: () => [...queryKeys.recipes.all, 'mine'] as const,
+    mine: (tags?: string[], categories?: string[]) => [
+      ...queryKeys.recipes.all,
+      'mine',
+      { tags: tags ?? [], categories: categories ?? [] },
+    ] as const,
     detail: (id: string) => [...queryKeys.recipes.all, id] as const,
     forks: (id: string) =>
       [...queryKeys.recipes.detail(id), 'forks'] as const,
+    pool: (categories?: string[], q?: string, page?: number) => [
+      ...queryKeys.recipes.all,
+      'pool',
+      { categories: categories ?? [], q: q ?? '', page: page ?? 1 },
+    ] as const,
   },
 
   recipeBooks: {
@@ -30,5 +43,9 @@ export const queryKeys = {
 
   profile: {
     mine: () => ['profile', 'mine'] as const,
+  },
+
+  tags: {
+    mine: () => ['tags', 'mine'] as const,
   },
 };

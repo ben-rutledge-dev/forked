@@ -1,19 +1,50 @@
 'use client';
 
-import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
+// Data
+import { usePoolRecipes } from '@/data/recipes';
 // Components
-import { Button } from '@/components/Button';
 import { Pagination } from '@/components/Pagination';
 import { RecipeCard } from '@/components/RecipeCard';
+import { ResultCount } from '@/components/ResultCount';
+import { SearchFilterBar } from '@/components/SearchFilterBar';
+import type { TokenOption } from '@/components/TokenInput';
 import { PageHeading } from '@/components/Typography';
-// Types
-import type { Recipe } from '@/types';
+// Lib
+import { GROUP_LABELS, GROUP_ORDER } from '@/lib/categories';
+
+type Category = {
+  id: string
+  slug: string
+  label: string
+  group: string
+};
+
+type PoolRecipe = {
+  id: string
+  title: string
+  description: string | null
+  coverImageUrl: string | null
+  forkCount: number
+  authorId: string | null
+  isPublic: boolean
+  forkedFromId: string | null
+  tags: string[]
+};
 
 type Props = {
-  initialRecipes: Recipe[]
+  initialRecipes: PoolRecipe[]
   initialTotal: number
   initialPage: number
   initialQuery: string
+  initialCategories: string[]
+  allCategories: Category[]
+};
+
+type Filters = {
+  query: string
+  categories: string[]
 };
 
 const PAGE_SIZE = 24;
@@ -23,74 +54,91 @@ export const PoolClient = ({
   initialTotal,
   initialPage,
   initialQuery,
+  initialCategories,
+  allCategories,
 }: Props) => {
-  const [recipes, setRecipes] = useState(initialRecipes);
-  const [query, setQuery] = useState(initialQuery);
-  const [page, setPage] = useState(initialPage);
-  const [total, setTotal] = useState(initialTotal);
-  const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
-  const search = async (q: string, p: number) => {
-    setLoading(true);
-    const params = new URLSearchParams({ q, page: String(p) });
-    const res = await fetch(`/api/pool?${params}`);
-    if (res.ok) {
-      const data = await res.json();
-      setRecipes(data.recipes);
-      setTotal(data.total);
-      setPage(p);
+  const [filters, setFilters] = useState<Filters>({
+    query: initialQuery,
+    categories: initialCategories,
+  });
+  const [debouncedFilters, setDebouncedFilters] = useState<Filters>(filters);
+  const [page, setPage] = useState(initialPage);
+
+  const hasFilters = filters.query.length > 0 || filters.categories.length > 0;
+
+  // Single debounce for all filter changes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedFilters(filters);
+      setPage(1);
+    }, 150);
+    return () => clearTimeout(timer);
+  }, [filters]);
+
+  // Single URL sync
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (debouncedFilters.query) params.set('q', debouncedFilters.query);
+    if (page > 1) params.set('page', String(page));
+    if (debouncedFilters.categories.length > 0) {
+      params.set('categories', debouncedFilters.categories.join(','));
     }
-    setLoading(false);
-  };
+    router.replace(`/pool?${params.toString()}`, { scroll: false });
+  }, [debouncedFilters, page, router]);
+
+  const { data, isFetching } = usePoolRecipes({
+    categories: debouncedFilters.categories,
+    q: debouncedFilters.query,
+    page,
+    initialData:
+      initialCategories.length === 0 && !initialQuery
+        ? { recipes: initialRecipes, total: initialTotal }
+        : undefined,
+  });
+
+  const recipes = data?.recipes ?? initialRecipes;
+  const total = data?.total ?? initialTotal;
+
+  const categoryOptions: TokenOption[] = allCategories.map(cat => ({
+    id: cat.slug,
+    label: cat.label,
+    group: cat.group,
+  }));
 
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
+  const clearAll = () => setFilters({ query: '', categories: [] });
+
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <div className="mb-8">
-        <PageHeading className="mb-4">Recipe Pool</PageHeading>
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            search(query, 1);
-          }}
-          className="flex gap-2"
-        >
-          <input
-            type="text"
-            value={query}
-            onChange={e => setQuery(e.target.value)}
-            placeholder="Search by title or ingredient…"
-            className="flex-1 rounded-lg border border-stone-300 px-4 py-2 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
-          />
-          <Button type="submit" variant="primary" size="md" shape="rounded">
-            Search
-          </Button>
-          {query && (
-            <Button
-              type="button"
-              variant="secondary"
-              size="md"
-              shape="rounded"
-              onClick={() => {
-                setQuery('');
-                search('', 1);
-              }}
-            >
-              Clear
-            </Button>
-          )}
-        </form>
+    <div>
+      <PageHeading className="mb-4">Recipe Pool</PageHeading>
+
+      <div className="mb-6">
+        <SearchFilterBar
+          query={filters.query}
+          onQueryChange={q => setFilters(f => ({ ...f, query: q }))}
+          selectedCategories={filters.categories}
+          onCategoriesChange={categories => setFilters(f => ({ ...f, categories }))}
+          categoryOptions={categoryOptions}
+          groupLabels={GROUP_LABELS}
+          groupOrder={GROUP_ORDER}
+          searchPlaceholder="Search by title or ingredient…"
+        />
+        <ResultCount
+          count={total}
+          isFetching={isFetching}
+          hasFilters={hasFilters}
+          onClear={clearAll}
+        />
       </div>
 
-      {loading
-        ? (
-            <div className="text-center py-20 text-stone-400">Loading…</div>
-          )
-        : recipes.length === 0
+      <div className={isFetching ? 'opacity-60 transition-opacity' : ''}>
+        {recipes.length === 0
           ? (
               <div className="text-center py-20 text-stone-400">
-                {query ? `No recipes found for "${query}"` : 'No public recipes yet.'}
+                {hasFilters ? 'No recipes match your filters.' : 'No public recipes yet.'}
               </div>
             )
           : (
@@ -107,10 +155,14 @@ export const PoolClient = ({
                     />
                   ))}
                 </div>
-
-                <Pagination page={page} totalPages={totalPages} onPageChange={p => search(query, p)} />
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={p => setPage(p)}
+                />
               </>
             )}
+      </div>
     </div>
   );
 };

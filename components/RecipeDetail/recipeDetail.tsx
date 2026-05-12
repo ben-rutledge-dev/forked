@@ -2,6 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 // Components
+import { CategoryPill } from '@/components/CategoryPill';
 import { PageHeading, SectionHeading } from '@/components/Typography';
 // Types
 import { RecipeWithRelations } from '@/types';
@@ -43,6 +44,26 @@ export const RecipeDetail = ({
 
         {recipe.description && (
           <p className="mt-3 text-stone-600 leading-relaxed">{recipe.description}</p>
+        )}
+
+        {(recipe.categories?.length ?? 0) > 0 && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {recipe.categories!.map(cat => (
+              <CategoryPill key={cat.id} href={`/pool?categories=${cat.slug}`}>
+                {cat.label}
+              </CategoryPill>
+            ))}
+          </div>
+        )}
+
+        {(recipe.tags?.length ?? 0) > 0 && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {recipe.tags!.map(tag => (
+              <CategoryPill key={tag} href={`/my/recipes?tags=${encodeURIComponent(tag)}`}>
+                {tag}
+              </CategoryPill>
+            ))}
+          </div>
         )}
 
         <div className="mt-4 flex flex-col gap-2 text-sm text-stone-400 sm:flex-row sm:items-center sm:gap-4">

@@ -24,6 +24,8 @@ export type Recipe = {
   isPublic: boolean
   forkedFromId: string | null
   forkCount: number
+  tags: string[]
+  categories?: { id: string, slug: string, label: string, group: string }[]
 };
 
 export type Ingredient = {
@@ -52,6 +54,7 @@ export type RecipeWithRelations = Recipe & {
   ingredients: Ingredient[]
   steps: Step[]
   forks?: { id: string, title: string, description: string | null, author?: { name: string | null, username: string | null, isPublic: boolean } | null }[]
+  categories?: { id: string, slug: string, label: string, group: string }[]
 };
 
 export type RecipeFormData = {

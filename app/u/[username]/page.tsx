@@ -169,6 +169,7 @@ const PublicProfilePage = async ({ params }: Props) => {
                 description: r.description ?? null,
                 coverImageUrl: r.coverImageUrl ?? null,
                 forkedFromId: r.forkedFromId ?? null,
+                tags: [],
               }))}
               />
             )}

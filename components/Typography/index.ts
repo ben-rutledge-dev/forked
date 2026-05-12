@@ -1,1 +1,1 @@
-export { PageHeading, SectionHeading, SectionLabel } from './typography';
+export * from './typography';

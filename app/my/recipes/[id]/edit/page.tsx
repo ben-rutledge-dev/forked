@@ -27,6 +27,7 @@ const EditRecipePage = async ({ params }: Props) => {
       forkedFrom: { select: { id: true, title: true, isPublic: true } },
       ingredients: { orderBy: { orderIndex: 'asc' } },
       steps: { orderBy: { orderIndex: 'asc' } },
+      categories: { select: { categoryId: true } },
     },
   });
 
@@ -58,6 +59,8 @@ const EditRecipePage = async ({ params }: Props) => {
           description: recipe.description ?? '',
           isPublic: recipe.isPublic,
           coverImageUrl: recipe.coverImageUrl ?? '',
+          categoryIds: recipe.categories.map(c => c.categoryId),
+          tags: recipe.tags,
           ingredients: recipe.ingredients.map(i => ({
             id: i.id,
             name: i.name,

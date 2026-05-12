@@ -1,0 +1,1 @@
+export { useMyTags } from './tags';

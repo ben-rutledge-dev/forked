@@ -9,16 +9,27 @@ export const GET = async (req: Request) => {
   const q = searchParams.get('q') ?? '';
   const page = Math.max(1, Number(searchParams.get('page') ?? 1));
   const skip = (page - 1) * PAGE_SIZE;
+  const categoriesParam = searchParams.get('categories') ?? '';
+  const categorySlugs = categoriesParam ? categoriesParam.split(',').map(s => s.trim()).filter(Boolean) : [];
 
-  const where = q
-    ? {
-        isPublic: true,
-        OR: [
-          { title: { contains: q } },
-          { ingredients: { some: { name: { contains: q } } } },
-        ],
-      }
-    : { isPublic: true };
+  const where = {
+    isPublic: true,
+    ...(q && {
+      OR: [
+        { title: { contains: q } },
+        { ingredients: { some: { name: { contains: q } } } },
+      ],
+    }),
+    ...(categorySlugs.length > 0 && {
+      categories: {
+        some: {
+          category: {
+            slug: { in: categorySlugs },
+          },
+        },
+      },
+    }),
+  };
 
   const [recipes, total] = await Promise.all([
     prisma.recipe.findMany({
