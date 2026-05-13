@@ -1,4 +1,5 @@
 import { signIn, signOut, useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import Head from 'next/head';
 import Link from 'next/link';
 import { ReactNode } from 'react';
@@ -12,6 +13,7 @@ type Props = {
 
 export const Layout = ({ children, title = 'Forked' }: Props) => {
   const { data: session, status } = useSession();
+  const t = useTranslations('nav');
 
   return (
     <>
@@ -33,7 +35,7 @@ export const Layout = ({ children, title = 'Forked' }: Props) => {
                 href="/pool"
                 className="text-orange-100 hover:text-white transition-colors"
               >
-                Pool
+                {t('pool')}
               </Link>
               {session
                 ? (
@@ -42,10 +44,10 @@ export const Layout = ({ children, title = 'Forked' }: Props) => {
                         href="/my/recipes"
                         className="text-orange-100 hover:text-white transition-colors"
                       >
-                        My Recipes
+                        {t('myRecipes')}
                       </Link>
                       <Button variant="nav-link" onClick={() => signOut()}>
-                        Sign out
+                        {t('signOut')}
                       </Button>
                     </>
                   )
@@ -57,7 +59,7 @@ export const Layout = ({ children, title = 'Forked' }: Props) => {
                       disabled={status === 'loading'}
                       onClick={() => signIn()}
                     >
-                      Sign in
+                      {t('signIn')}
                     </Button>
                   )}
             </div>

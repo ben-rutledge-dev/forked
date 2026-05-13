@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 // Data
@@ -66,6 +67,7 @@ const withIds = <T extends object>(items: T[]): (T & { _id: string })[] =>
 
 export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
   const router = useRouter();
+  const t = useTranslations('recipeForm');
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
 
   const [fields, setFields] = useState<RecipeFields>({
@@ -160,7 +162,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
     setStatus('saving');
 
     if (fields.isPublic && selectedCategoryIds.size === 0) {
-      setErrorMessage('Select at least one category to make this recipe public');
+      setErrorMessage(t('categoryRequired'));
       setStatus('error');
       return;
     }
@@ -189,7 +191,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
 
       if (!res.ok) {
         const data = await res.json();
-        setErrorMessage(data.error ?? 'Something went wrong');
+        setErrorMessage(data.error ?? t('somethingWentWrong'));
         setStatus('error');
         return;
       }
@@ -206,7 +208,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
       }
     }
     catch {
-      setErrorMessage('Something went wrong');
+      setErrorMessage(t('somethingWentWrong'));
       setStatus('error');
     }
   };
@@ -217,7 +219,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
     <form onSubmit={handleSubmit} className="space-y-8">
       {forkedFrom && (
         <p className="text-sm text-stone-500">
-          Forked from
+          {t('forkedFrom')}
           {' '}
           {forkedFrom.isPublic
             ? (
@@ -232,33 +234,33 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
       )}
 
       {status === 'error' && <FormBanner type="error" message={errorMessage} />}
-      {status === 'saved' && <Toast message="Recipe saved!" />}
+      {status === 'saved' && <Toast message={t('saved')} />}
 
       <div className="space-y-4">
-        <FormField label="Title">
+        <FormField label={t('titleLabel')}>
           <TextInput
             type="text"
             value={fields.title}
             onChange={e => setField('title', e.target.value)}
             required
-            placeholder="Grandma's tomato sauce"
+            placeholder={t('titlePlaceholder')}
           />
         </FormField>
 
-        <FormField label="Description">
+        <FormField label={t('descriptionLabel')}>
           <Textarea
             value={fields.description}
             onChange={e => setField('description', e.target.value)}
             rows={2}
-            placeholder="A short description (optional)"
+            placeholder={t('descriptionPlaceholder')}
           />
         </FormField>
 
         {/* Categories + My Tags */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">Categories</label>
+          <label className="block text-sm font-medium text-stone-700 mb-2">{t('categoriesLabel')}</label>
           {categoriesLoading
-            ? <p className="text-sm text-stone-400">Loading categories…</p>
+            ? <p className="text-sm text-stone-400">{t('loadingCategories')}</p>
             : (
                 <div className="space-y-3">
                   {CATEGORY_GROUP_ORDER.map((group) => {
@@ -284,7 +286,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
 
                   {/* My Tags — same pill style, with hover delete */}
                   <div>
-                    <SectionLabel className="mb-1.5">My Tags</SectionLabel>
+                    <SectionLabel className="mb-1.5">{t('myTagsLabel')}</SectionLabel>
                     <div className="flex flex-wrap gap-1.5">
                       {tagPool.map(tag => (
                         <div key={tag} className="relative group/tag">
@@ -305,7 +307,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
                       value={tagInput}
                       onChange={e => setTagInput(e.target.value)}
                       onKeyDown={handleTagInputKeyDown}
-                      placeholder="Add a tag…"
+                      placeholder={t('tagPlaceholder')}
                       className="mt-2 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
                     />
                   </div>
@@ -314,12 +316,12 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
+          <label className="block text-sm font-medium text-stone-700 mb-2">{t('coverPhotoLabel')}</label>
           <ImageUpload
             value={fields.coverImageUrl}
             onChange={url => setField('coverImageUrl', url)}
             onError={msg => setErrorMessage(msg)}
-            label="Add cover photo"
+            label={t('coverPhotoLabel')}
           />
         </div>
 
@@ -327,12 +329,12 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
           <Checkbox
             checked={fields.isPublic}
             onChange={handleIsPublicChange}
-            label="Make this recipe public"
+            label={t('makePublicLabel')}
             disabled={noCategoriesSelected && !fields.isPublic}
           />
           {noCategoriesSelected && !fields.isPublic && (
             <p className="mt-1 text-xs text-stone-400">
-              Select at least one category to make this recipe public
+              {t('categoryRequired')}
             </p>
           )}
         </div>
@@ -359,7 +361,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
           shape="pill"
           disabled={status === 'saving'}
         >
-          {status === 'saving' ? 'Saving…' : recipeId ? 'Save changes' : 'Create recipe'}
+          {status === 'saving' ? t('saving') : recipeId ? t('saveChanges') : t('createRecipe')}
         </Button>
         <Button
           type="button"
@@ -368,7 +370,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
           shape="pill"
           onClick={() => router.back()}
         >
-          Cancel
+          {t('cancel')}
         </Button>
       </div>
     </form>

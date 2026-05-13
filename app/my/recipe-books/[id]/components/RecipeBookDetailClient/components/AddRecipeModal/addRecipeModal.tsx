@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useState } from 'react';
 // Components
@@ -16,6 +17,7 @@ type Props = {
 
 export const AddRecipeModal = ({ userRecipes, existingRecipeIds, onConfirm }: Props) => {
   const [recipeSearch, setRecipeSearch] = useState('');
+  const t = useTranslations('recipeBooks');
   const existing = new Set(existingRecipeIds);
   const addableRecipes = userRecipes.filter(
     r => !existing.has(r.id) && r.title.toLowerCase().includes(recipeSearch.toLowerCase()),
@@ -23,18 +25,18 @@ export const AddRecipeModal = ({ userRecipes, existingRecipeIds, onConfirm }: Pr
 
   return (
     <div className="p-6">
-      <h2 className="text-lg font-semibold text-stone-900 mb-4">Add a recipe</h2>
+      <h2 className="text-lg font-semibold text-stone-900 mb-4">{t('addRecipeHeading')}</h2>
       <TextInput
         type="text"
         value={recipeSearch}
         onChange={e => setRecipeSearch(e.target.value)}
-        placeholder="Search your recipes…"
+        placeholder={t('searchRecipesPlaceholder')}
         className="mb-3"
       />
       <div className="max-h-72 overflow-y-auto space-y-1">
         {addableRecipes.length === 0
           ? (
-              <p className="text-center text-stone-400 text-sm py-6">No recipes to add.</p>
+              <p className="text-center text-stone-400 text-sm py-6">{t('noRecipesToAdd')}</p>
             )
           : (
               addableRecipes.map(r => (
@@ -57,7 +59,7 @@ export const AddRecipeModal = ({ userRecipes, existingRecipeIds, onConfirm }: Pr
       </div>
       <div className="mt-4">
         <Button variant="secondary" size="sm" shape="pill" onClick={() => onConfirm(null)}>
-          Close
+          {t('close')}
         </Button>
       </div>
     </div>

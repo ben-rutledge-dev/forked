@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 // Components
 import { Badge } from '@/components/Badge';
@@ -19,6 +20,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 const MyRecipePage = async ({ params }: Props) => {
   const { id } = await params;
   const session = await auth();
+  const t = await getTranslations('myRecipes');
 
   const recipe = await prisma.recipe.findUnique({
     where: { id, authorId: session!.user.id },
@@ -48,7 +50,7 @@ const MyRecipePage = async ({ params }: Props) => {
       headerAction={(
         <div className="flex items-center gap-2">
           <Badge variant={recipe.isPublic ? 'success' : 'neutral'} className="text-xs">
-            {recipe.isPublic ? 'public' : 'private'}
+            {recipe.isPublic ? t('publicBadge') : t('privateBadge')}
           </Badge>
           <Button
             href={`/my/recipes/${id}/edit`}
@@ -56,7 +58,7 @@ const MyRecipePage = async ({ params }: Props) => {
             size="sm"
             shape="pill"
           >
-            Edit
+            {t('editLabel')}
           </Button>
         </div>
       )}

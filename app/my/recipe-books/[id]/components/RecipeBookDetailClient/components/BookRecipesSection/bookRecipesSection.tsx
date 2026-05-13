@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 // Data
 import type { BookEntry } from '@/data/recipe-books/[recipeBookId]/types';
 // Components
@@ -17,21 +18,22 @@ type Props = {
 
 export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddRecipe, onRemoveEntry, onMove }: Props) => {
   const sortedEntries = [...entries].sort((a, b) => a.orderIndex - b.orderIndex);
+  const t = useTranslations('recipeBooks');
 
   return (
     <div className="mt-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-stone-900">Recipes</h2>
+        <h2 className="text-lg font-semibold text-stone-900">{t('recipesSection')}</h2>
         {isMember && (
           <Button variant="secondary" size="sm" shape="pill" onClick={onAddRecipe}>
-            + Add recipe
+            {t('addRecipe')}
           </Button>
         )}
       </div>
 
       {sortedEntries.length === 0
         ? (
-            <p className="text-stone-400 text-sm py-8 text-center">No recipes in this book yet.</p>
+            <p className="text-stone-400 text-sm py-8 text-center">{t('noRecipes')}</p>
           )
         : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -53,7 +55,7 @@ export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddReci
                         disabled={i === 0}
                         onClick={() => onMove(entry.id, 'up')}
                         className="rounded px-2 py-0.5 text-xs text-stone-400 hover:text-stone-600 disabled:opacity-30 border border-stone-200 bg-white"
-                        title="Move up"
+                        title={t('moveUp')}
                       >
                         ↑
                       </button>
@@ -61,7 +63,7 @@ export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddReci
                         disabled={i === sortedEntries.length - 1}
                         onClick={() => onMove(entry.id, 'down')}
                         className="rounded px-2 py-0.5 text-xs text-stone-400 hover:text-stone-600 disabled:opacity-30 border border-stone-200 bg-white"
-                        title="Move down"
+                        title={t('moveDown')}
                       >
                         ↓
                       </button>

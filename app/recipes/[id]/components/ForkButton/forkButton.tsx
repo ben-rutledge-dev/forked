@@ -1,6 +1,7 @@
 'use client';
 
 import { signIn, useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 // Components
@@ -10,6 +11,7 @@ import { ForkIcon } from '@/components/ForkIcon';
 export const ForkButton = ({ recipeId }: { recipeId: string }) => {
   const { data: session } = useSession();
   const router = useRouter();
+  const t = useTranslations('recipeCard');
   const [forking, setForking] = useState(false);
   const [iconAnimating, setIconAnimating] = useState(false);
   const pendingForkId = useRef<string | null>(null);
@@ -50,7 +52,7 @@ export const ForkButton = ({ recipeId }: { recipeId: string }) => {
       disabled={forking}
       className="shrink-0 flex items-center gap-2"
     >
-      {forking ? 'Forking…' : 'Fork'}
+      {forking ? t('forking') : t('fork')}
       <ForkIcon size={16} animating={iconAnimating} onDone={handleAnimationDone} />
     </Button>
   );

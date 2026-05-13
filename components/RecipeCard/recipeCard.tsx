@@ -1,6 +1,7 @@
 'use client';
 
 import { signIn, useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 // Data
@@ -41,6 +42,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   const { data: session } = useSession();
   const router = useRouter();
   const { confirm } = useConfirm();
+  const t = useTranslations('recipeCard');
   const [forking, setForking] = useState(false);
   const [iconAnimating, setIconAnimating] = useState(false);
   const pendingForkId = useRef<string | null>(null);
@@ -104,7 +106,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   };
 
   const handleDelete = async () => {
-    if (!await confirm('Delete this recipe? This cannot be undone.', { confirmLabel: 'Delete' })) return;
+    if (!await confirm('Delete this recipe? This cannot be undone.', { confirmLabel: t('delete') })) return;
     deleteRecipe();
   };
 
@@ -123,7 +125,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   const cardActions: CardAction[] = [
     ...(isOwned
       ? [{
-          title: 'Edit recipe',
+          title: t('editRecipe'),
           Icon: (
             <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -139,7 +141,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
       : []),
     ...(session && (onRemoveFromBook || isOwned)
       ? [{
-          title: 'More actions',
+          title: t('moreActions'),
           Icon: (
             <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
               <circle cx="5" cy="12" r="1.5" />
@@ -150,18 +152,18 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           menuItems: [
             ...(onRemoveFromBook
               ? [{
-                  label: 'Remove from Recipe Book',
+                  label: t('removeFromBook'),
                   onClick: async () => {
-                    if (await confirm('Remove this recipe from the book?', { confirmLabel: 'Remove' })) {
+                    if (await confirm('Remove this recipe from the book?', { confirmLabel: t('remove') })) {
                       onRemoveFromBook();
                     }
                   },
                 }]
               : [{
-                  label: 'Add to Recipe Book',
+                  label: t('addToBook'),
                   subMenu: {
-                    title: 'Add to Recipe Book',
-                    emptyLabel: 'No recipe books yet.',
+                    title: t('addToBook'),
+                    emptyLabel: t('noBooksYet'),
                     items: books
                       ? books.map(b => ({
                           label: b.title,
@@ -174,7 +176,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
                 }]),
             ...(isOwned && !onRemoveFromBook
               ? [{
-                  label: deleting ? 'Deleting…' : 'Move to trash',
+                  label: deleting ? t('deleting') : t('moveToTrash'),
                   onClick: handleDelete,
                   disabled: deleting,
                 }]
@@ -192,19 +194,17 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
       </div>
       <div className="flex items-center justify-between text-xs text-stone-400">
         <span>
-          {forkCount}
-          {' '}
-          {forkCount === 1 ? 'fork' : 'forks'}
+          {t('forks', { count: forkCount })}
         </span>
         {isOwned
           ? (
               <Badge variant={isPublic ? 'success' : 'neutral'}>
-                {isPublic ? 'public' : 'private'}
+                {isPublic ? t('public') : t('private')}
               </Badge>
             )
           : (
               <Button variant="primary" size="sm" shape="pill" disabled={forking} onClick={handleFork} className="flex items-center gap-1.5">
-                {forking ? 'Forking…' : 'Fork'}
+                {forking ? t('forking') : t('fork')}
                 <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} size={12} />
               </Button>
             )}

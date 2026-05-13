@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from 'next';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages, getTranslations } from 'next-intl/server';
 // Components
 import { Providers } from './components/Providers';
 import { Nav } from '@/components/Nav';
@@ -25,23 +27,23 @@ const RootLayout = async ({
   children: React.ReactNode
 }) => {
   const session = await auth();
+  const messages = await getMessages();
+  const t = await getTranslations('layout');
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en-GB" suppressHydrationWarning>
       <body className="antialiased min-h-screen text-stone-900">
-        <QueryProvider>
-          <Providers session={session}>
-            <Nav />
-            <main>{children}</main>
-            <footer className="mt-16 border-t border-stone-100 py-8 text-center text-xs text-stone-400">
-              ©
-              {' '}
-              {new Date().getFullYear()}
-              {' '}
-              Forked
-            </footer>
-          </Providers>
-        </QueryProvider>
+        <NextIntlClientProvider messages={messages}>
+          <QueryProvider>
+            <Providers session={session}>
+              <Nav />
+              <main>{children}</main>
+              <footer className="mt-16 border-t border-stone-100 py-8 text-center text-xs text-stone-400">
+                {t('footer', { year: new Date().getFullYear() })}
+              </footer>
+            </Providers>
+          </QueryProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

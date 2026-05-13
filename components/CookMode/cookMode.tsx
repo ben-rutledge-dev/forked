@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -15,6 +16,7 @@ type Props = {
 
 export const CookMode = ({ recipe, backHref }: Props) => {
   const steps = recipe.steps;
+  const t = useTranslations('cookMode');
   const [stepIndex, setStepIndex] = useState(0);
   const [showIngredients, setShowIngredients] = useState(false);
   const [timerRemaining, setTimerRemaining] = useState<number | null>(null);
@@ -127,9 +129,9 @@ export const CookMode = ({ recipe, backHref }: Props) => {
   if (steps.length === 0) {
     return (
       <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-stone-50 px-4">
-        <p className="text-stone-500">This recipe has no steps yet.</p>
+        <p className="text-stone-500">{t('noSteps')}</p>
         <Link href={backHref} className="mt-4 text-stone-700 underline">
-          Go back
+          {t('goBack')}
         </Link>
       </div>
     );
@@ -154,13 +156,13 @@ export const CookMode = ({ recipe, backHref }: Props) => {
           size="sm"
           onClick={() => setShowIngredients(v => !v)}
         >
-          Ingredients
+          {t('ingredients')}
         </Button>
       </div>
 
       {showIngredients && (
         <div className="border-b border-stone-200 bg-white px-4 py-4">
-          <h3 className="text-sm font-medium text-stone-700 mb-2">Ingredients</h3>
+          <h3 className="text-sm font-medium text-stone-700 mb-2">{t('ingredients')}</h3>
           <ul className="space-y-1 text-sm text-stone-600">
             {recipe.ingredients.map(ing => (
               <li key={ing.id} className="flex gap-2">
@@ -208,7 +210,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                       <path d="M10.5 3.75a.75.75 0 0 0-1.264-.546L5.203 7H2.667a.75.75 0 0 0-.75.75v4.5c0 .414.336.75.75.75h2.536l4.033 3.796a.75.75 0 0 0 1.264-.546V3.75ZM13.463 4.6a.75.75 0 0 1 1.06.038 9 9 0 0 1 0 12.723.75.75 0 0 1-1.098-1.022 7.5 7.5 0 0 0 0-10.678.75.75 0 0 1 .038-1.061Zm-1.92 2.31a.75.75 0 0 1 1.06.04 6 6 0 0 1 0 8.497.75.75 0 1 1-1.1-1.02 4.5 4.5 0 0 0 0-6.456.75.75 0 0 1 .04-1.06Z" />
                     </svg>
-                    Read aloud
+                    {t('readAloud')}
                   </Button>
                 )
               : (
@@ -222,7 +224,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
                       <path d="M5.25 3A2.25 2.25 0 0 0 3 5.25v9.5A2.25 2.25 0 0 0 5.25 17h9.5A2.25 2.25 0 0 0 17 14.75v-9.5A2.25 2.25 0 0 0 14.75 3h-9.5Z" />
                     </svg>
-                    Stop
+                    {t('stop')}
                   </Button>
                 )}
           </div>
@@ -245,7 +247,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                       onClick={startTimer}
                       disabled={timerRemaining === 0}
                     >
-                      {timerRemaining === 0 ? 'Done' : 'Start timer'}
+                      {timerRemaining === 0 ? t('done') : t('startTimer')}
                     </Button>
                   )
                 : (
@@ -255,7 +257,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                       shape="pill"
                       onClick={stopTimer}
                     >
-                      Pause
+                      {t('pause')}
                     </Button>
                   )}
               {(timerRemaining !== currentStep.timerSeconds || timerRunning) && (
@@ -265,7 +267,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                   shape="pill"
                   onClick={resetTimer}
                 >
-                  Reset
+                  {t('reset')}
                 </Button>
               )}
             </div>
@@ -282,7 +284,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
           disabled={stepIndex === 0}
           className="flex-1"
         >
-          ← Back
+          {t('back')}
         </Button>
         <div className="flex gap-1">
           {steps.map((_, i) => (
@@ -303,7 +305,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
           disabled={stepIndex === steps.length - 1}
           className="flex-1"
         >
-          Next →
+          {t('next')}
         </Button>
       </div>
     </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
@@ -43,6 +44,7 @@ const uploadImage = async (file: File): Promise<string> => {
 
 export const ProfileForm = ({ user }: { user: UserProfile }) => {
   const router = useRouter();
+  const t = useTranslations('myProfile');
 
   const [fields, setFields] = useState({
     username: user.username ?? '',
@@ -74,7 +76,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
       setField('avatarUrl', await uploadImage(file));
     }
     catch {
-      setErrorMsg('Avatar upload failed');
+      setErrorMsg(t('avatarUploadFailed'));
       setStatus('error');
     }
     finally {
@@ -90,7 +92,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
       setField('coverImageUrl', await uploadImage(file));
     }
     catch {
-      setErrorMsg('Cover photo upload failed');
+      setErrorMsg(t('coverUploadFailed'));
       setStatus('error');
     }
     finally {
@@ -120,7 +122,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
       });
       if (!res.ok) {
         const data = await res.json();
-        setErrorMsg(data.error ?? 'Something went wrong');
+        setErrorMsg(data.error ?? t('uploadFailed'));
         setStatus('error');
         return;
       }
@@ -136,18 +138,18 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {status === 'error' && <FormBanner type="error" message={errorMsg} />}
-      {status === 'saved' && <Toast message="Profile saved!" />}
+      {status === 'saved' && <Toast message={t('saved')} />}
 
       {/* Photos */}
       <div className="space-y-5">
         {/* Cover photo */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">Cover photo</label>
+          <label className="block text-sm font-medium text-stone-700 mb-2">{t('coverPhotoLabel')}</label>
           {fields.coverImageUrl
             ? (
                 <div className="relative block h-32">
                   <div className="absolute inset-0 rounded-xl overflow-hidden border border-stone-200">
-                    <Image src={fields.coverImageUrl} alt="Cover" fill className="object-cover" sizes="100vw" />
+                    <Image src={fields.coverImageUrl} alt={t('coverPhotoAlt')} fill className="object-cover" sizes="100vw" />
                   </div>
                   <CornerDeleteButton
                     onClick={() => {
@@ -163,7 +165,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0">
                     <path fillRule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
                   </svg>
-                  {coverUploading ? 'Uploading…' : 'Add cover photo'}
+                  {coverUploading ? t('uploading') : t('addCoverPhoto')}
                   <input ref={coverInputRef} type="file" accept="image/*" className="sr-only" onChange={handleCoverChange} />
                 </label>
               )}
@@ -175,7 +177,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
             {fields.avatarUrl
               ? (
                   <>
-                    <Image src={fields.avatarUrl} alt="Avatar" width={64} height={64} className="w-16 h-16 rounded-full object-cover border border-stone-200" />
+                    <Image src={fields.avatarUrl} alt={t('avatarAlt')} width={64} height={64} className="w-16 h-16 rounded-full object-cover border border-stone-200" />
                     <CornerDeleteButton
                       onClick={() => {
                         setField('avatarUrl', '');
@@ -195,7 +197,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
                 )}
           </div>
           <label className={`cursor-pointer text-sm text-stone-500 hover:text-stone-700 transition-colors ${avatarUploading ? 'opacity-50 pointer-events-none' : ''}`}>
-            {avatarUploading ? 'Uploading…' : fields.avatarUrl ? 'Change profile photo' : 'Add profile photo'}
+            {avatarUploading ? t('uploading') : fields.avatarUrl ? t('changeProfilePhoto') : t('addProfilePhoto')}
             <input ref={avatarInputRef} type="file" accept="image/*" className="sr-only" onChange={handleAvatarChange} />
           </label>
         </div>
@@ -207,102 +209,102 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
           htmlFor="username"
           label={(
             <>
-              Username
-              <span className="text-stone-400 font-normal">(required to have a public profile)</span>
+              {t('usernameLabel')}
+              <span className="text-stone-400 font-normal">{t('usernameHint')}</span>
             </>
           )}
-          hint="Letters, numbers and underscores only. 3–30 characters."
+          hint={t('usernameFormat')}
         >
           <TextInput
             id="username"
             type="text"
             value={fields.username}
             onChange={e => setField('username', e.target.value)}
-            placeholder="your_username"
-            prefix="forked.app/u/"
+            placeholder={t('usernamePlaceholder')}
+            prefix={t('usernamePrefix')}
           />
         </FormField>
 
-        <FormField htmlFor="bio" label="Bio">
+        <FormField htmlFor="bio" label={t('bioLabel')}>
           <Textarea
             id="bio"
             value={fields.bio}
             onChange={e => setField('bio', e.target.value)}
             rows={3}
-            placeholder="Tell people a bit about yourself…"
+            placeholder={t('bioPlaceholder')}
           />
         </FormField>
 
         <Checkbox
           checked={fields.showName}
           onChange={e => setField('showName', e.target.checked)}
-          label="Show my full name publicly"
-          description="Display your name on your public profile. Uncheck to show only your username."
+          label={t('showNameLabel')}
+          description={t('showNameDescription')}
         />
       </div>
 
       {/* Social links */}
       <div className="space-y-4">
         <SectionHeading>
-          Links
+          {t('linksHeading')}
           {' '}
-          <span className="text-sm font-normal text-stone-400">— all optional</span>
+          <span className="text-sm font-normal text-stone-400">{t('linksOptional')}</span>
         </SectionHeading>
-        <FormField htmlFor="websiteUrl" label="Website">
+        <FormField htmlFor="websiteUrl" label={t('websiteLabel')}>
           <FormUrl
             id="websiteUrl"
             value={fields.websiteUrl}
             onChange={v => setField('websiteUrl', v)}
-            placeholder="https://yoursite.com"
+            placeholder={t('websitePlaceholder')}
           />
         </FormField>
-        <FormField htmlFor="twitter" label="X / Twitter handle">
+        <FormField htmlFor="twitter" label={t('twitterLabel')}>
           <TextInput
             id="twitter"
             type="text"
             value={fields.twitterHandle}
             onChange={e => setField('twitterHandle', e.target.value)}
-            placeholder="username"
+            placeholder={t('handlePlaceholder')}
             prefix="@"
           />
         </FormField>
-        <FormField htmlFor="instagram" label="Instagram handle">
+        <FormField htmlFor="instagram" label={t('instagramLabel')}>
           <TextInput
             id="instagram"
             type="text"
             value={fields.instagramHandle}
             onChange={e => setField('instagramHandle', e.target.value)}
-            placeholder="username"
+            placeholder={t('handlePlaceholder')}
             prefix="@"
           />
         </FormField>
-        <FormField htmlFor="youtube" label="YouTube">
+        <FormField htmlFor="youtube" label={t('youtubeLabel')}>
           <FormUrl
             id="youtube"
             value={fields.youtubeUrl}
             onChange={v => setField('youtubeUrl', v)}
-            placeholder="https://youtube.com/@yourchannel"
+            placeholder={t('youtubePlaceholder')}
           />
         </FormField>
       </div>
 
       {/* Visibility */}
       <div>
-        <SectionHeading className="mb-3">Profile visibility</SectionHeading>
+        <SectionHeading className="mb-3">{t('visibilityHeading')}</SectionHeading>
         <Checkbox
           checked={fields.isPublic}
           onChange={e => setField('isPublic', e.target.checked)}
-          label="Make profile public"
-          description="Your profile page will be visible to anyone. Requires a username."
+          label={t('makePublicLabel')}
+          description={t('makePublicDescription')}
         />
       </div>
 
       <div className="flex gap-3 pt-2">
         <Button type="submit" variant="neutral" size="lg" shape="pill" disabled={status === 'saving'}>
-          {status === 'saving' ? 'Saving…' : 'Save profile'}
+          {status === 'saving' ? t('saving') : t('saveProfile')}
         </Button>
         <Button type="button" variant="secondary" size="lg" shape="pill" onClick={() => router.back()}>
-          Cancel
+          {t('cancel')}
         </Button>
       </div>
     </form>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
@@ -40,9 +41,11 @@ type ActionProps = {
   onMenuItemClick: (item: CardMenuItem, index: number) => void
   onSubMenuBack: () => void
   onClose: () => void
+  loadingLabel: string
+  noItemsLabel: string
 };
 
-const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSubMenuBack, onClose }: ActionProps) => (
+const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSubMenuBack, onClose, loadingLabel, noItemsLabel }: ActionProps) => (
   <div className="relative">
     <button title={action.title} className={cardIconBtnCls} onClick={onToggle}>
       {action.Icon}
@@ -62,11 +65,11 @@ const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSu
                 </div>
                 {activeSubMenu.items === null
                   ? (
-                      <div className="px-4 py-3 text-sm text-stone-400">Loading…</div>
+                      <div className="px-4 py-3 text-sm text-stone-400">{loadingLabel}</div>
                     )
                   : activeSubMenu.items.length === 0
                     ? (
-                        <div className="px-4 py-3 text-sm text-stone-400">{activeSubMenu.emptyLabel ?? 'No items.'}</div>
+                        <div className="px-4 py-3 text-sm text-stone-400">{activeSubMenu.emptyLabel ?? noItemsLabel}</div>
                       )
                     : (
                         <div className="max-h-48 overflow-y-auto">
@@ -114,6 +117,7 @@ const Actions = ({ actions }: ActionsProps) => {
   const [openActionIndex, setOpenActionIndex] = useState<number | null>(null);
   const [activeSubMenuIndex, setActiveSubMenuIndex] = useState<number | null>(null);
   const actionsRef = useRef<HTMLDivElement>(null);
+  const t = useTranslations('common');
 
   useEffect(() => {
     if (openActionIndex === null) return;
@@ -175,6 +179,8 @@ const Actions = ({ actions }: ActionsProps) => {
           onToggle={() => handleActionToggle(action, i)}
           onMenuItemClick={handleMenuItemClick}
           onSubMenuBack={() => setActiveSubMenuIndex(null)}
+          loadingLabel={t('loading')}
+          noItemsLabel={t('noItems')}
           onClose={() => {
             setOpenActionIndex(null);
             setActiveSubMenuIndex(null);

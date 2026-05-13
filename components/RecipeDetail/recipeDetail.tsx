@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
@@ -15,13 +16,14 @@ type Props = {
   metaBadge?: ReactNode
 };
 
-export const RecipeDetail = ({
+export const RecipeDetail = async ({
   recipe,
   cookHref,
   cookVariant = 'secondary',
   headerAction,
   metaBadge,
 }: Props) => {
+  const t = await getTranslations('recipeDetail');
   return (
     <div className="mx-auto max-w-2xl px-4 pb-6 sm:py-10">
       {recipe.coverImageUrl && (
@@ -70,7 +72,7 @@ export const RecipeDetail = ({
           {metaBadge}
           {recipe.author && (
             <span>
-              by
+              {t('by')}
               {' '}
               {recipe.author.isPublic && recipe.author.username
                 ? (
@@ -79,13 +81,13 @@ export const RecipeDetail = ({
                     </Link>
                   )
                 : (
-                    <span>{recipe.author.username ?? recipe.author.name ?? 'unknown'}</span>
+                    <span>{recipe.author.username ?? recipe.author.name ?? t('unknownAuthor')}</span>
                   )}
             </span>
           )}
           {recipe.forkedFrom && (
             <span>
-              fork of
+              {t('forkOf')}
               {' '}
               {recipe.forkedFrom.isPublic
                 ? (
@@ -109,14 +111,14 @@ export const RecipeDetail = ({
                 : 'border border-stone-300 text-stone-600 hover:bg-stone-100'
             }`}
           >
-            Cook mode
+            {t('cookMode')}
           </Link>
         </div>
       </div>
 
       {recipe.ingredients.length > 0 && (
         <section className="mb-8">
-          <SectionHeading className="mb-3">Ingredients</SectionHeading>
+          <SectionHeading className="mb-3">{t('ingredients')}</SectionHeading>
           <ul className="space-y-2">
             {recipe.ingredients.map(ing => (
               <li key={ing.id} className="flex gap-2 text-stone-700">
@@ -136,7 +138,7 @@ export const RecipeDetail = ({
 
       {recipe.steps.length > 0 && (
         <section className="mb-10">
-          <SectionHeading className="mb-4">Steps</SectionHeading>
+          <SectionHeading className="mb-4">{t('steps')}</SectionHeading>
           <ol className="space-y-6">
             {recipe.steps.map((step, i) => (
               <li key={step.id} className="flex gap-4">
@@ -147,13 +149,10 @@ export const RecipeDetail = ({
                   <p className="text-stone-700 leading-relaxed">{step.instruction}</p>
                   {step.timerSeconds && (
                     <p className="mt-1 text-sm text-stone-400">
-                      Timer:
-                      {' '}
-                      {Math.floor(step.timerSeconds / 60)}
-                      m
-                      {' '}
-                      {step.timerSeconds % 60}
-                      s
+                      {t('timer', {
+                        min: Math.floor(step.timerSeconds / 60),
+                        sec: step.timerSeconds % 60,
+                      })}
                     </p>
                   )}
                 </div>
@@ -165,7 +164,7 @@ export const RecipeDetail = ({
 
       {(recipe.forks?.length ?? 0) > 0 && (
         <section className="border-t border-stone-200 pt-8">
-          <SectionHeading className="mb-4">Public forks</SectionHeading>
+          <SectionHeading className="mb-4">{t('publicForks')}</SectionHeading>
           <ul className="space-y-3">
             {recipe.forks!.map(fork => (
               <li key={fork.id}>

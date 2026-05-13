@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 // Components
 import { ProfileForm } from './components/ProfileForm';
 import { Button } from '@/components/Button';
@@ -11,6 +12,7 @@ export const metadata: Metadata = { title: 'Edit Profile' };
 
 const ProfilePage = async () => {
   const session = await auth();
+  const t = await getTranslations('myProfile');
 
   const user = await prisma.user.findUnique({
     where: { id: session!.user.id },
@@ -35,10 +37,10 @@ const ProfilePage = async () => {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <PageHeading>Edit profile</PageHeading>
+        <PageHeading>{t('heading')}</PageHeading>
         {user?.username && user.isPublic && (
           <Button href={`/u/${user.username}`} variant="primary" size="md" shape="pill">
-            View profile
+            {t('viewProfile')}
           </Button>
         )}
       </div>

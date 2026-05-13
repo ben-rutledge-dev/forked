@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useContext } from 'react';
 // Hooks
 import { useModal } from '@/hooks/useModal';
@@ -10,6 +11,7 @@ export const Modal = () => {
   const { state } = useContext(GlobalContext);
   const { onConfirm } = useModal();
   const { modal } = state;
+  const t = useTranslations('common');
 
   if (!modal.show || !modal.Component) return null;
 
@@ -26,7 +28,7 @@ export const Modal = () => {
     >
       {/* Backdrop */}
       <button
-        aria-label="Close dialog"
+        aria-label={t('closeDialog')}
         className="absolute inset-0 bg-black/40 cursor-default w-full"
         onClick={handleBackdropClick}
       />

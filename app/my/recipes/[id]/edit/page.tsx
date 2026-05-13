@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 // Components
 import { DeleteButton } from './components/DeleteButton';
@@ -20,6 +21,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 const EditRecipePage = async ({ params }: Props) => {
   const { id } = await params;
   const session = await auth();
+  const t = await getTranslations('myRecipes');
 
   const recipe = await prisma.recipe.findUnique({
     where: { id, authorId: session!.user.id },
@@ -36,9 +38,9 @@ const EditRecipePage = async ({ params }: Props) => {
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <PageHeading>Edit recipe</PageHeading>
+        <PageHeading>{t('editRecipeHeading')}</PageHeading>
         <div className="flex items-center gap-3">
-          <Button href={`/my/recipes/${id}/cook`} variant="primary" size="md" shape="pill">Cook mode</Button>
+          <Button href={`/my/recipes/${id}/cook`} variant="primary" size="md" shape="pill">{t('cookModeLabel')}</Button>
           <DeleteButton recipeId={id} />
         </div>
       </div>

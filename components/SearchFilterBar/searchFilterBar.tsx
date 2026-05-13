@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 // Components
 import { TokenInput, type TokenOption } from '@/components/TokenInput';
@@ -25,10 +26,12 @@ export const SearchFilterBar = ({
   categoryOptions,
   groupLabels = GROUP_LABELS,
   groupOrder = GROUP_ORDER,
-  searchPlaceholder = 'Search…',
+  searchPlaceholder,
 }: Props) => {
+  const t = useTranslations('search');
   const [open, setOpen] = useState(selectedCategories.length > 0);
   const activeCount = selectedCategories.length;
+  const placeholder = searchPlaceholder ?? t('placeholder');
 
   return (
     <div>
@@ -38,7 +41,7 @@ export const SearchFilterBar = ({
           type="text"
           value={query}
           onChange={e => onQueryChange(e.target.value)}
-          placeholder={searchPlaceholder}
+          placeholder={placeholder}
           className="flex-1 min-w-0 rounded-lg border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
         />
         {categoryOptions.length > 0 && (
@@ -54,7 +57,7 @@ export const SearchFilterBar = ({
             <svg width="13" height="13" viewBox="0 0 16 16" fill="none" className="opacity-60 shrink-0">
               <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
-            Filters
+            {t('filters')}
             {activeCount > 0 && (
               <span className="rounded-full bg-stone-700 px-1.5 py-0.5 text-[11px] font-medium leading-none text-white">
                 {activeCount}

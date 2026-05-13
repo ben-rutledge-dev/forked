@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 // Data
 import { useDeleteRecipeBook } from '@/data/recipe-books/[recipeBookId]';
 // Hooks
@@ -33,11 +34,12 @@ export const RecipeBookCard = ({
 }: Props) => {
   const { confirm } = useConfirm();
   const { mutate: deleteBook, isPending: removing } = useDeleteRecipeBook({ recipeBookId: id });
+  const t = useTranslations('recipeBookCard');
   const target = href ?? `/my/recipe-books/${id}`;
 
   const handleRemove = async () => {
-    const label = role === OWNER ? 'Remove this book from your collection?' : 'Leave this recipe book?';
-    if (!await confirm(label, { confirmLabel: role === OWNER ? 'Remove' : 'Leave' })) return;
+    const label = role === OWNER ? t('confirmRemove') : t('confirmLeave');
+    if (!await confirm(label, { confirmLabel: role === OWNER ? t('confirmRemoveLabel') : t('confirmLeaveLabel') })) return;
     deleteBook();
   };
 
@@ -52,8 +54,7 @@ export const RecipeBookCard = ({
     </svg>
   );
 
-  let removeLabel = role === OWNER ? 'Remove from collection' : 'Leave book';
-  if (removing) removeLabel = 'Removing…';
+  const removeLabel = removing ? t('removing') : role === OWNER ? t('removeFromCollection') : t('leaveBook');
 
   const cardActions: CardAction[] = [{
     title: 'More actions',
@@ -78,19 +79,11 @@ export const RecipeBookCard = ({
       </div>
       <div className="flex items-center justify-between text-xs text-stone-400">
         <span>
-          {recipeCount}
-          {' '}
-          {recipeCount === 1 ? 'recipe' : 'recipes'}
-          {' '}
-          ·
-          {' '}
-          {memberCount}
-          {' '}
-          {memberCount === 1 ? 'member' : 'members'}
+          {t('count', { recipes: recipeCount, members: memberCount })}
         </span>
         <div className="flex items-center gap-1.5">
           <Badge variant={isPublic ? 'success' : 'neutral'}>
-            {isPublic ? 'public' : 'private'}
+            {isPublic ? t('public') : t('private')}
           </Badge>
           {role && (
             <Badge variant={role === OWNER ? 'primary' : 'neutral'}>{role}</Badge>

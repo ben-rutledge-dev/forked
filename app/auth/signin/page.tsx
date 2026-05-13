@@ -1,6 +1,7 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 // Components
@@ -12,21 +13,22 @@ const PROVIDERS = [
   { id: 'google', name: 'Google' },
 ];
 
-const ERROR_MESSAGES: Record<string, string> = {
-  OAuthSignin: 'Error starting sign in. Check your OAuth configuration.',
-  OAuthCallback: 'Error during OAuth callback.',
-  OAuthCreateAccount: 'Could not create OAuth account.',
-  Callback: 'Error in the OAuth callback.',
-  OAuthAccountNotLinked: 'This email is already linked to another account.',
-  AccessDenied: 'Access denied.',
-  MissingCSRF: 'Session expired. Please try again.',
-  Default: 'An error occurred during sign in.',
-};
-
 const SignInPage = () => {
   const searchParams = useSearchParams();
+  const t = useTranslations('auth');
   const error = searchParams?.get('error');
-  const errorMessage = error ? (ERROR_MESSAGES[error] ?? `${ERROR_MESSAGES.Default} (${error})`) : null;
+
+  const getErrorMessage = (errorCode: string): string => {
+    const key = `errors.${errorCode}` as Parameters<typeof t>[0];
+    try {
+      return t(key);
+    }
+    catch {
+      return `${t('errors.Default')} (${errorCode})`;
+    }
+  };
+
+  const errorMessage = error ? getErrorMessage(error) : null;
 
   return (
     <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-stone-50 px-4">
@@ -35,7 +37,7 @@ const SignInPage = () => {
           <Link href="/" className="text-2xl font-semibold tracking-tight text-stone-900">
             Forked
           </Link>
-          <p className="mt-2 text-stone-500 text-sm">Sign in to your account</p>
+          <p className="mt-2 text-stone-500 text-sm">{t('signInHeading')}</p>
         </div>
 
         {errorMessage && (
@@ -54,15 +56,13 @@ const SignInPage = () => {
               onClick={() => signIn(provider.id, { callbackUrl: '/my/recipes' })}
               className="w-full"
             >
-              Continue with
-              {' '}
-              {provider.name}
+              {t('continueWith', { provider: provider.name })}
             </Button>
           ))}
         </div>
 
         <p className="mt-6 text-center text-xs text-stone-400">
-          By signing in you agree to keep cooking.
+          {t('terms')}
         </p>
       </div>
     </div>

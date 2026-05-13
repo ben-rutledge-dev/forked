@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 // Components
@@ -18,6 +19,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 
 const PublicProfilePage = async ({ params }: Props) => {
   const { username } = await params;
+  const t = await getTranslations('myProfile');
 
   const user = await prisma.user.findUnique({
     where: { username, isPublic: true },
@@ -150,7 +152,7 @@ const PublicProfilePage = async ({ params }: Props) => {
 
         {/* Recipes */}
         <SectionHeading className="mb-4">
-          Recipes
+          {t('recipesHeading')}
           {' '}
           <span className="text-stone-400 font-normal">
             (
@@ -161,7 +163,7 @@ const PublicProfilePage = async ({ params }: Props) => {
 
         {user.recipes.length === 0
           ? (
-              <p className="text-stone-400 text-sm">No public recipes yet.</p>
+              <p className="text-stone-400 text-sm">{t('noPublicRecipes')}</p>
             )
           : (
               <ProfileRecipesGrid recipes={user.recipes.map(r => ({

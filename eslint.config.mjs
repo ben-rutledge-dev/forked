@@ -1,6 +1,7 @@
 import stylistic from '@stylistic/eslint-plugin';
 import nextVitals from 'eslint-config-next/core-web-vitals';
 import nextTs from 'eslint-config-next/typescript';
+import i18next from 'eslint-plugin-i18next';
 import noRelativeImportPaths from 'eslint-plugin-no-relative-import-paths';
 import perfectionist from 'eslint-plugin-perfectionist';
 import preferArrow from 'eslint-plugin-prefer-arrow';
@@ -59,6 +60,20 @@ const eslintConfig = defineConfig([
         disallowPrototype: true,
         singleReturnOnly: false,
         classPropertiesAllowed: false,
+      }],
+    },
+  },
+  {
+    plugins: { i18next },
+    rules: {
+      'i18next/no-literal-string': ['error', {
+        'mode': 'jsx-only',
+        'jsx-attributes': {
+          include: ['placeholder', 'aria-label', 'title', 'alt'],
+        },
+        'words': {
+          exclude: ['Forked', '©', '@', '↑', '↓', '▲', '▼', '·', '←', '/', 'x\\.com/', 'instagram\\.com/', '0', '\\(', '\\)', '×', 'recipes', 'books', ':'],
+        },
       }],
     },
   },

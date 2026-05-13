@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
 // Components
@@ -35,6 +36,7 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
   const [books, setBooks] = useState(initialBooks);
   const [pending, setPending] = useState(initialPending);
   const [acting, setActing] = useState<string | null>(null);
+  const t = useTranslations('recipeBooks');
 
   const handleAccept = async (invite: PendingInvite) => {
     setActing(invite.id);
@@ -82,19 +84,19 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="flex items-center justify-between mb-8">
-        <PageHeading>Recipe Books</PageHeading>
+        <PageHeading>{t('heading')}</PageHeading>
         <Link
           href="/my/recipe-books/new"
           className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
         >
-          + New recipe book
+          {t('newBookLink')}
         </Link>
       </div>
 
       {pending.length > 0 && (
         <section className="mb-10">
           <SectionLabel className="mb-4">
-            Pending invites
+            {t('pendingInvites')}
           </SectionLabel>
           <div className="space-y-3">
             {pending.map(invite => (
@@ -105,7 +107,8 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
                 <div>
                   <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
                   <p className="text-xs text-stone-400 mt-0.5">
-                    {'Invited as '}
+                    {t('invitedAs')}
+                    {' '}
                     <span className="font-medium">{invite.role}</span>
                   </p>
                 </div>
@@ -117,7 +120,7 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
                     disabled={acting === invite.id}
                     onClick={() => handleAccept(invite)}
                   >
-                    Accept
+                    {t('accept')}
                   </Button>
                   <Button
                     variant="secondary"
@@ -126,7 +129,7 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
                     disabled={acting === invite.id}
                     onClick={() => handleDecline(invite)}
                   >
-                    Decline
+                    {t('decline')}
                   </Button>
                 </div>
               </div>
@@ -138,9 +141,9 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
       {books.length === 0
         ? (
             <div className="text-center py-20 text-stone-400">
-              <p>No recipe books yet.</p>
+              <p>{t('noBooksYet')}</p>
               <Link href="/my/recipe-books/new" className="mt-4 inline-block text-stone-700 underline hover:text-stone-900">
-                Create one
+                {t('createBook')}
               </Link>
             </div>
           )

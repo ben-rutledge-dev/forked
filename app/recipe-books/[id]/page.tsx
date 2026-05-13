@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -19,6 +20,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 
 const PublicRecipeBookPage = async ({ params }: Props) => {
   const { id } = await params;
+  const t = await getTranslations('recipeBooks');
 
   const book = await prisma.recipeBook.findUnique({
     where: { id },
@@ -67,10 +69,10 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
                   </Link>
                 )
               : (
-                  m.user.name ?? 'Anonymous'
+                  m.user.name ?? m.user.username ?? t('anonymous')
                 )}
             {m.role === OWNER && (
-              <span className="ml-1 text-stone-300">(owner)</span>
+              <span className="ml-1 text-stone-300">{t('ownerLabel')}</span>
             )}
           </span>
         ))}
@@ -79,7 +81,7 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
       <div className="mt-8">
         {publicEntries.length === 0
           ? (
-              <p className="text-stone-400 text-center py-12">No public recipes in this book.</p>
+              <p className="text-stone-400 text-center py-12">{t('noPublicRecipes')}</p>
             )
           : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

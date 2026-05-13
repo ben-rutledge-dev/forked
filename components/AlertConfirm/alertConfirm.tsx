@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 // Components
 import { Button } from '@/components/Button';
 
@@ -13,17 +14,19 @@ export type AlertConfirmProps = {
 
 export const AlertConfirm = ({
   text,
-  confirmLabel = 'Confirm',
-  cancelLabel = 'Cancel',
+  confirmLabel,
+  cancelLabel,
   variant = 'danger',
   onConfirm,
 }: AlertConfirmProps) => {
+  const t = useTranslations('alertConfirm');
+
   return (
     <div className="p-6 flex flex-col gap-5">
       <p className="text-stone-700 text-sm leading-relaxed">{text}</p>
       <div className="flex justify-end gap-2">
         <Button variant="secondary" size="sm" shape="rounded" onClick={() => onConfirm(false)}>
-          {cancelLabel}
+          {cancelLabel ?? t('cancel')}
         </Button>
         <Button
           variant={variant === 'danger' ? 'danger' : 'primary'}
@@ -32,7 +35,7 @@ export const AlertConfirm = ({
           className={variant === 'danger' ? 'bg-danger-500 text-white hover:bg-danger-600 px-3 py-1' : ''}
           onClick={() => onConfirm(true)}
         >
-          {confirmLabel}
+          {confirmLabel ?? t('confirm')}
         </Button>
       </div>
     </div>

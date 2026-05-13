@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 // Components
@@ -13,6 +14,7 @@ import { Toggle } from '@/components/Toggle';
 
 export const NewRecipeBookForm = () => {
   const router = useRouter();
+  const t = useTranslations('recipeBooks');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [isPublic, setIsPublic] = useState(false);
@@ -49,13 +51,13 @@ export const NewRecipeBookForm = () => {
       {error && <FormBanner type="error" message={error} />}
 
       <div>
-        <FormField label="Title">
+        <FormField label={t('titleLabel')}>
           <TextInput
             type="text"
             value={title}
             onChange={e => setTitle(e.target.value)}
             required
-            placeholder="My favourite weeknight dinners"
+            placeholder={t('titlePlaceholder')}
           />
         </FormField>
       </div>
@@ -64,9 +66,9 @@ export const NewRecipeBookForm = () => {
         <FormField
           label={(
             <>
-              Description
+              {t('descriptionLabel')}
               {' '}
-              <span className="font-normal text-stone-400">(optional)</span>
+              <span className="font-normal text-stone-400">{t('descriptionOptional')}</span>
             </>
           )}
         >
@@ -74,15 +76,15 @@ export const NewRecipeBookForm = () => {
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            placeholder="A short description of this collection…"
+            placeholder={t('descriptionPlaceholder')}
           />
         </FormField>
       </div>
 
       <div>
         <label className="block text-sm font-medium text-stone-700 mb-2">
-          Cover photo
-          <span className="font-normal text-stone-400">(optional)</span>
+          {t('coverPhotoLabel')}
+          <span className="font-normal text-stone-400">{t('descriptionOptional')}</span>
         </label>
         <ImageUpload
           value={coverImageUrl}
@@ -95,15 +97,15 @@ export const NewRecipeBookForm = () => {
       <Toggle
         checked={isPublic}
         onChange={setIsPublic}
-        label={`${isPublic ? 'Public' : 'Private'} recipe book`}
+        label={isPublic ? t('publicLabel') : t('privateLabel')}
       />
 
       <div className="flex gap-3 pt-2">
         <Button type="submit" variant="primary" size="md" shape="pill" disabled={saving || !title.trim()}>
-          {saving ? 'Creating…' : 'Create recipe book'}
+          {saving ? t('creating') : t('create')}
         </Button>
         <Button type="button" variant="secondary" size="md" shape="pill" href="/my/recipe-books">
-          Cancel
+          {t('cancel')}
         </Button>
       </div>
     </form>

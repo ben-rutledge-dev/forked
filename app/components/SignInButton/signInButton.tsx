@@ -1,10 +1,12 @@
 'use client';
 
 import { signIn } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 // Components
 import { Button } from '@/components/Button';
 
 export const SignInButton = () => {
+  const t = useTranslations('auth');
   return (
     <Button
       variant="secondary"
@@ -13,7 +15,7 @@ export const SignInButton = () => {
       onClick={() => signIn()}
       className="w-full sm:w-auto"
     >
-      Sign in to start collecting
+      {t('signInToStart')}
     </Button>
   );
 };

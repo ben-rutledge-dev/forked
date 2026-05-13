@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
@@ -28,6 +29,7 @@ export const InviteModal = ({ bookId, isPremium, onConfirm }: Props) => {
   const [fields, setFields] = useState<Fields>({ username: '', role: COLLABORATOR });
   const [status, setStatus] = useState<Status>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const t = useTranslations('recipeBooks');
 
   const setField = <K extends keyof Fields>(key: K, value: Fields[K]) =>
     setFields(prev => ({ ...prev, [key]: value }));
@@ -58,14 +60,14 @@ export const InviteModal = ({ bookId, isPremium, onConfirm }: Props) => {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-lg font-semibold text-stone-900">Invite collaborator</h2>
+      <h2 className="text-lg font-semibold text-stone-900">{t('inviteHeading')}</h2>
       {status === 'error' && <FormBanner type="error" message={errorMessage} />}
-      <FormField label="Username">
+      <FormField label={t('usernameLabel')}>
         <TextInput
           type="text"
           value={fields.username}
           onChange={e => setField('username', e.target.value)}
-          placeholder="@username"
+          placeholder={t('usernamePlaceholder')}
         />
       </FormField>
       {isPremium && (
@@ -83,10 +85,10 @@ export const InviteModal = ({ bookId, isPremium, onConfirm }: Props) => {
           disabled={status === 'sending' || !fields.username.trim()}
           onClick={handleInvite}
         >
-          {status === 'sending' ? 'Inviting…' : 'Send invite'}
+          {status === 'sending' ? t('inviting') : t('sendInvite')}
         </Button>
         <Button variant="secondary" size="md" shape="pill" onClick={() => onConfirm(null)}>
-          Cancel
+          {t('cancel')}
         </Button>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 // Components
 import { AddToBookButton } from './components/AddToBookButton';
@@ -20,6 +21,7 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 
 const RecipePage = async ({ params }: Props) => {
   const { id } = await params;
+  const t = await getTranslations('recipe');
 
   const recipe = await prisma.recipe.findUnique({
     where: { id, isPublic: true },
@@ -65,11 +67,7 @@ const RecipePage = async ({ params }: Props) => {
       )}
       metaBadge={(
         <span>
-          forked by
-          {' '}
-          {recipe.forkCount}
-          {' '}
-          {recipe.forkCount === 1 ? 'cook' : 'cooks'}
+          {t('forkedBy', { count: recipe.forkCount })}
         </span>
       )}
     />

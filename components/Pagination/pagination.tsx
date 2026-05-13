@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 // Components
 import { Button } from '@/components/Button';
 
@@ -10,6 +11,7 @@ type Props = {
 };
 
 export const Pagination = ({ page, totalPages, onPageChange }: Props) => {
+  const t = useTranslations('pagination');
   if (totalPages <= 1) return null;
 
   return (
@@ -21,14 +23,14 @@ export const Pagination = ({ page, totalPages, onPageChange }: Props) => {
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
       >
-        ← Previous
+        {t('previous')}
       </Button>
       <span className="text-sm text-stone-500">
-        Page
+        {t('page')}
         {' '}
         {page}
         {' '}
-        of
+        {t('of')}
         {' '}
         {totalPages}
       </span>
@@ -39,7 +41,7 @@ export const Pagination = ({ page, totalPages, onPageChange }: Props) => {
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
       >
-        Next →
+        {t('next')}
       </Button>
     </div>
   );

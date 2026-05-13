@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useCallback } from 'react';
 // Components
@@ -13,13 +14,6 @@ type Category = {
   group: string
 };
 
-const GROUP_LABELS: Record<string, string> = {
-  CUISINE: 'Cuisine',
-  MEAL_TYPE: 'Meal type',
-  DIETARY: 'Dietary',
-  EFFORT: 'Effort',
-};
-
 const GROUP_ORDER = ['CUISINE', 'MEAL_TYPE', 'DIETARY', 'EFFORT'];
 
 type Props = {
@@ -30,6 +24,7 @@ type Props = {
 export const CategoryFilter = ({ allCategories, activeCategories }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('search');
 
   const updateUrl = useCallback((newSlugs: string[]) => {
     const params = new URLSearchParams(searchParams?.toString() ?? '');
@@ -66,7 +61,7 @@ export const CategoryFilter = ({ allCategories, activeCategories }: Props) => {
         if (cats.length === 0) return null;
         return (
           <div key={group} className="mb-3">
-            <SectionLabel className="mb-1.5">{GROUP_LABELS[group]}</SectionLabel>
+            <SectionLabel className="mb-1.5">{t(`groups.${group}`)}</SectionLabel>
             <div className="flex flex-wrap gap-1.5">
               {cats.map((cat) => {
                 const active = activeCategories.includes(cat.slug);
@@ -90,7 +85,7 @@ export const CategoryFilter = ({ allCategories, activeCategories }: Props) => {
           onClick={clearFilters}
           className="text-sm text-stone-500 underline hover:text-stone-700 mt-1"
         >
-          Clear filters
+          {t('clearFilters')}
         </button>
       )}
     </div>

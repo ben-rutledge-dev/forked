@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 // Data
 import type { RecipeBookDetail } from '@/data/recipe-books/[recipeBookId]/types';
@@ -36,6 +37,7 @@ export const RecipeBookEditForm = ({ book, onSaved, onCancel }: Props) => {
   });
   const [status, setStatus] = useState<EditStatus>('idle');
   const [errorMessage, setErrorMessage] = useState('');
+  const t = useTranslations('recipeBooks');
 
   const setField = <K extends keyof EditFields>(key: K, value: EditFields[K]) =>
     setFields(prev => ({ ...prev, [key]: value }));
@@ -72,31 +74,31 @@ export const RecipeBookEditForm = ({ book, onSaved, onCancel }: Props) => {
   return (
     <form onSubmit={handleSubmit} className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-5 space-y-4 mb-6">
       {status === 'error' && <FormBanner type="error" message={errorMessage} />}
-      <FormField label="Title">
+      <FormField label={t('editTitleLabel')}>
         <TextInput value={fields.title} onChange={e => setField('title', e.target.value)} required />
       </FormField>
-      <FormField label="Description">
+      <FormField label={t('editDescriptionLabel')}>
         <Textarea value={fields.description} onChange={e => setField('description', e.target.value)} rows={2} />
       </FormField>
-      <FormField label="Cover photo">
+      <FormField label={t('editCoverPhotoLabel')}>
         <ImageUpload
           value={fields.coverImageUrl}
           onChange={url => setField('coverImageUrl', url)}
           onError={msg => setErrorMessage(msg)}
-          label="Add cover photo"
+          label={t('editAddCoverPhoto')}
         />
       </FormField>
       <Checkbox
         checked={fields.isPublic}
         onChange={e => setField('isPublic', e.target.checked)}
-        label="Make this recipe book public"
+        label={t('editMakePublicLabel')}
       />
       <div className="flex gap-2">
         <Button type="submit" variant="primary" size="sm" shape="pill" disabled={status === 'saving'}>
-          {status === 'saving' ? 'Saving…' : 'Save'}
+          {status === 'saving' ? t('editSaving') : t('editSave')}
         </Button>
         <Button type="button" variant="secondary" size="sm" shape="pill" onClick={onCancel}>
-          Cancel
+          {t('editCancel')}
         </Button>
       </div>
     </form>

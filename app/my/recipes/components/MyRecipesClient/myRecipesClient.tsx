@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -52,6 +53,7 @@ export const MyRecipesClient = ({
 }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const t = useTranslations('myRecipes');
   const defaultTabFromUrl = (searchParams?.get('tab') as 'recipes' | 'books') ?? defaultTab;
   const [tab, setTab] = useState<'recipes' | 'books'>(defaultTabFromUrl);
   const [page, setPage] = useState(1);
@@ -162,14 +164,14 @@ export const MyRecipesClient = ({
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
       <div className="flex items-center justify-between mb-6">
-        <PageHeading>My Recipes</PageHeading>
+        <PageHeading>{t('heading')}</PageHeading>
         {tab === 'recipes'
           ? (
               <Link
                 href="/my/recipes/new"
                 className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
               >
-                + New recipe
+                {t('newRecipe')}
               </Link>
             )
           : (
@@ -177,25 +179,25 @@ export const MyRecipesClient = ({
                 href="/my/recipe-books/new"
                 className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
               >
-                + New recipe book
+                {t('newRecipeBook')}
               </Link>
             )}
       </div>
 
       {/* Tabs */}
       <div className="flex gap-1 mb-8 border-b border-stone-200">
-        {(['recipes', 'books'] as const).map(t => (
+        {(['recipes', 'books'] as Array<'recipes' | 'books'>).map(tabKey => (
           <button
-            key={t}
-            onClick={() => handleTabChange(t)}
+            key={tabKey}
+            onClick={() => handleTabChange(tabKey)}
             className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
-              tab === t
+              tab === tabKey
                 ? 'border-primary-500 text-primary-500'
                 : 'border-transparent text-stone-500 hover:text-stone-700'
             }`}
           >
-            {t === 'recipes' ? 'Recipes' : 'Recipe Books'}
-            {t === 'books' && pending.length > 0 && (
+            {tabKey === 'recipes' ? t('tabRecipes') : t('tabBooks')}
+            {tabKey === 'books' && pending.length > 0 && (
               <span className="ml-1.5 rounded-full bg-primary-500 px-1.5 py-0.5 text-xs text-white">
                 {pending.length}
               </span>
@@ -215,7 +217,7 @@ export const MyRecipesClient = ({
               categoryOptions={filterOptions}
               groupLabels={GROUP_LABELS}
               groupOrder={[...GROUP_ORDER]}
-              searchPlaceholder="Search recipes…"
+              searchPlaceholder={t('searchPlaceholder')}
             />
             <ResultCount
               count={recipes.length}
@@ -230,14 +232,14 @@ export const MyRecipesClient = ({
               ? (
                   <div className="text-center py-20 text-stone-400">
                     {hasFilters
-                      ? 'No recipes match your filters.'
+                      ? t('noResults')
                       : (
                           <>
-                            <p>No recipes yet.</p>
+                            <p>{t('noRecipesYet')}</p>
                             <div className="mt-4 flex items-center justify-center gap-4">
-                              <Link href="/my/recipes/new" className="text-stone-700 underline hover:text-stone-900">Create one</Link>
-                              <span className="text-stone-300">or</span>
-                              <Link href="/pool" className="text-stone-700 underline hover:text-stone-900">fork from the pool</Link>
+                              <Link href="/my/recipes/new" className="text-stone-700 underline hover:text-stone-900">{t('createOne')}</Link>
+                              <span className="text-stone-300">{t('or')}</span>
+                              <Link href="/pool" className="text-stone-700 underline hover:text-stone-900">{t('forkFromPool')}</Link>
                             </div>
                           </>
                         )}
@@ -271,7 +273,7 @@ export const MyRecipesClient = ({
         <>
           {pending.length > 0 && (
             <section className="mb-8">
-              <SectionLabel className="mb-3">Pending invites</SectionLabel>
+              <SectionLabel className="mb-3">{t('pendingInvites')}</SectionLabel>
               <div className="space-y-3">
                 {pending.map(invite => (
                   <InviteRow key={invite.id} invite={invite} />
@@ -282,8 +284,8 @@ export const MyRecipesClient = ({
           {books.length === 0
             ? (
                 <div className="text-center py-20 text-stone-400">
-                  <p>No recipe books yet.</p>
-                  <Link href="/my/recipe-books/new" className="mt-4 inline-block text-stone-700 underline hover:text-stone-900">Create one</Link>
+                  <p>{t('noBooksYet')}</p>
+                  <Link href="/my/recipe-books/new" className="mt-4 inline-block text-stone-700 underline hover:text-stone-900">{t('createBook')}</Link>
                 </div>
               )
             : (
@@ -316,19 +318,21 @@ const InviteRow = ({ invite }: InviteRowProps) => {
   const { mutate: accept, isPending: accepting } = usePostAcceptInvite({ recipeBookId: invite.recipeBook.id });
   const { mutate: decline, isPending: declining } = usePostDeclineInvite({ recipeBookId: invite.recipeBook.id });
   const isPending = accepting || declining;
+  const t = useTranslations('myRecipes');
 
   return (
     <div className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-5 py-4">
       <div>
         <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
         <p className="text-xs text-stone-400 mt-0.5">
-          {'Invited as '}
+          {t('invitedAs')}
+          {' '}
           <span className="font-medium">{invite.role}</span>
         </p>
       </div>
       <div className="flex gap-2">
-        <Button variant="primary" size="sm" shape="pill" disabled={isPending} onClick={() => accept()}>Accept</Button>
-        <Button variant="secondary" size="sm" shape="pill" disabled={isPending} onClick={() => decline()}>Decline</Button>
+        <Button variant="primary" size="sm" shape="pill" disabled={isPending} onClick={() => accept()}>{t('accept')}</Button>
+        <Button variant="secondary" size="sm" shape="pill" disabled={isPending} onClick={() => decline()}>{t('decline')}</Button>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 // Components
 import { Pagination } from '@/components/Pagination';
@@ -11,11 +12,12 @@ const PAGE_SIZE = 12;
 
 export const ProfileRecipesGrid = ({ recipes }: { recipes: Recipe[] }) => {
   const [page, setPage] = useState(1);
+  const t = useTranslations('myProfile');
   const totalPages = Math.ceil(recipes.length / PAGE_SIZE);
   const visible = recipes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   if (recipes.length === 0) {
-    return <p className="text-stone-400 text-sm">No public recipes yet.</p>;
+    return <p className="text-stone-400 text-sm">{t('noPublicRecipes')}</p>;
   }
 
   return (

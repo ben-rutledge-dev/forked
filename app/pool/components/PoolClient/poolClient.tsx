@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // Data
@@ -58,6 +59,7 @@ export const PoolClient = ({
   allCategories,
 }: Props) => {
   const router = useRouter();
+  const t = useTranslations('pool');
 
   const [filters, setFilters] = useState<Filters>({
     query: initialQuery,
@@ -113,7 +115,7 @@ export const PoolClient = ({
 
   return (
     <div>
-      <PageHeading className="mb-4">Recipe Pool</PageHeading>
+      <PageHeading className="mb-4">{t('heading')}</PageHeading>
 
       <div className="mb-6">
         <SearchFilterBar
@@ -124,7 +126,7 @@ export const PoolClient = ({
           categoryOptions={categoryOptions}
           groupLabels={GROUP_LABELS}
           groupOrder={GROUP_ORDER}
-          searchPlaceholder="Search by title or ingredient…"
+          searchPlaceholder={t('searchPlaceholder')}
         />
         <ResultCount
           count={total}
@@ -138,7 +140,7 @@ export const PoolClient = ({
         {recipes.length === 0
           ? (
               <div className="text-center py-20 text-stone-400">
-                {hasFilters ? 'No recipes match your filters.' : 'No public recipes yet.'}
+                {hasFilters ? t('noResults') : t('empty')}
               </div>
             )
           : (

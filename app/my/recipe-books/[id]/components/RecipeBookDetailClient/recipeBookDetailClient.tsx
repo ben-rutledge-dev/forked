@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -34,6 +35,7 @@ type Props = {
 
 export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPremium, userRecipes }: Props) => {
   const router = useRouter();
+  const t = useTranslations('recipeBooks');
   const [book, setBook] = useState<RecipeBookDetail>(initialBook);
   const [toast, setToast] = useState<string | null>(null);
   const [showEditForm, setShowEditForm] = useState(false);
@@ -109,7 +111,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
           },
         ],
       }));
-      setToast('Recipe added!');
+      setToast(t('recipeAdded'));
     }
   };
 
@@ -126,11 +128,11 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
       const updated = await bookRes.json();
       setBook(updated);
     }
-    setToast('Invite sent!');
+    setToast(t('inviteSent'));
   };
 
   const handleRemoveMember = async (userId: string) => {
-    if (!await confirm('Remove this collaborator?', { confirmLabel: 'Remove' })) return;
+    if (!await confirm(t('removeCollaborator'), { confirmLabel: t('confirmRemoveLabel') })) return;
     const res = await fetch(`/api/recipe-books/${book.id}/members/${userId}`, { method: 'DELETE' });
     if (res.ok) {
       setBook(b => ({ ...b, members: b.members.filter(m => m.userId !== userId) }));
@@ -138,7 +140,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
   };
 
   const handleDelete = async (message: string) => {
-    if (!await confirm(message, { confirmLabel: isOwner ? 'Remove' : 'Leave' })) return;
+    if (!await confirm(message, { confirmLabel: isOwner ? t('confirmRemoveLabel') : t('confirmLeaveLabel') })) return;
     const res = await fetch(`/api/recipe-books/${book.id}`, { method: 'DELETE' });
     if (res.ok) {
       await queryClient.invalidateQueries({ queryKey: queryKeys.recipeBooks.mine() });
@@ -166,7 +168,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
         </div>
         <div className="flex items-center gap-2 shrink-0">
           <Badge variant={book.isPublic ? 'success' : 'neutral'} className="text-xs font-medium">
-            {book.isPublic ? 'public' : 'private'}
+            {book.isPublic ? t('public') : t('private')}
           </Badge>
           {book.currentUserRole && (
             <Badge variant={isOwner ? 'primary' : 'neutral'} className="text-xs font-medium">
@@ -175,7 +177,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
           )}
           {isOwner && (
             <Button variant="secondary" size="sm" shape="pill" onClick={() => setShowEditForm(v => !v)}>
-              Edit
+              {t('edit')}
             </Button>
           )}
         </div>
@@ -213,13 +215,13 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
       <div className="mt-10 pt-6 border-t border-stone-100 flex gap-3">
         {isOwner
           ? (
-              <Button variant="danger" size="sm" onClick={() => handleDelete('Remove this book from your collection? If you are the last owner, the book will be permanently deleted.')}>
-                Remove from my collection
+              <Button variant="danger" size="sm" onClick={() => handleDelete(t('removeFromCollectionConfirm'))}>
+                {t('removeFromCollection')}
               </Button>
             )
           : (
-              <Button variant="danger" size="sm" onClick={() => handleDelete('Leave this recipe book?')}>
-                Leave book
+              <Button variant="danger" size="sm" onClick={() => handleDelete(t('leaveBookConfirm'))}>
+                {t('leaveBook')}
               </Button>
             )}
       </div>

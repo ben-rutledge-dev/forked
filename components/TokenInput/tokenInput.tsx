@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState, useRef, type KeyboardEvent } from 'react';
 // Components
 import { CategoryPillButton } from '@/components/CategoryPill';
@@ -37,6 +38,7 @@ export const TokenInput = ({
   const [focusedIndex, setFocusedIndex] = useState(-1);
   const inputRef = useRef<HTMLInputElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const t = useTranslations('common');
 
   if (mode === 'pills') {
     return (
@@ -171,7 +173,7 @@ export const TokenInput = ({
                 type="button"
                 onClick={() => removeToken(id)}
                 className="text-stone-400 hover:text-stone-700 leading-none"
-                aria-label={`Remove ${getLabel(id)}`}
+                aria-label={t('removeToken', { label: getLabel(id) })}
               >
                 ×
               </button>
@@ -210,7 +212,7 @@ export const TokenInput = ({
             }
           }}
           className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
-          aria-label="Toggle dropdown"
+          aria-label={t('toggleDropdown')}
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
             <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -224,8 +226,8 @@ export const TokenInput = ({
             {flatOptions.length === 0 && (
               <li className="px-3 py-2 text-sm text-stone-400">
                 {mode === 'create' && inputValue.trim()
-                  ? `Press Enter to add "${inputValue.trim()}"`
-                  : 'No options found'}
+                  ? t('pressEnterToAdd', { value: inputValue.trim() })
+                  : t('noOptionsFound')}
               </li>
             )}
             {ungrouped.map((opt) => {

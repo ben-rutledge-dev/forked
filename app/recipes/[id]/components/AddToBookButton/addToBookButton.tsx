@@ -1,6 +1,7 @@
 'use client';
 
 import { signIn, useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 // Components
@@ -10,6 +11,7 @@ type BookOption = { id: string, title: string };
 
 export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
   const { data: session } = useSession();
+  const t = useTranslations('recipeBooks');
   const [open, setOpen] = useState(false);
   const [books, setBooks] = useState<BookOption[] | null>(null);
   const [adding, setAdding] = useState<string | null>(null);
@@ -64,14 +66,14 @@ export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
 
   let dropdownContent: ReactNode;
   if (books === null) {
-    dropdownContent = <div className="px-4 py-3 text-sm text-stone-400">Loading…</div>;
+    dropdownContent = <div className="px-4 py-3 text-sm text-stone-400">{t('loadingBooks')}</div>;
   }
   else if (books.length === 0) {
     dropdownContent = (
       <div className="px-4 py-3 text-sm text-stone-400">
-        No recipe books yet.
+        {t('noBooksList')}
         {' '}
-        <Link href="/my/recipe-books/new" className="underline text-stone-600 hover:text-stone-900">Create one</Link>
+        <Link href="/my/recipe-books/new" className="underline text-stone-600 hover:text-stone-900">{t('createOne')}</Link>
       </div>
     );
   }
@@ -100,7 +102,7 @@ export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
   return (
     <div className="relative" ref={ref}>
       <Button variant="secondary" size="md" shape="pill" onClick={handleOpen}>
-        + Add to Recipe Book
+        {t('addToBookButton')}
       </Button>
 
       {open && (

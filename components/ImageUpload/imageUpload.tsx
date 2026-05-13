@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRef, useState } from 'react';
 // Components
@@ -40,6 +41,7 @@ type Props = {
 export const ImageUpload = ({ value, onChange, onError, label = 'Add photo', previewSize = 'md' }: Props) => {
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const t = useTranslations('common');
 
   const previewCls = previewSize === 'sm'
     ? 'w-12 h-8 rounded object-cover border border-stone-200'
@@ -81,7 +83,7 @@ export const ImageUpload = ({ value, onChange, onError, label = 'Add photo', pre
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4 shrink-0">
         <path fillRule="evenodd" d="M1 8a2 2 0 0 1 2-2h.93a2 2 0 0 0 1.664-.89l.812-1.22A2 2 0 0 1 8.07 3h3.86a2 2 0 0 1 1.664.89l.812 1.22A2 2 0 0 0 16.07 6H17a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8Zm13.5 3a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM10 14a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" clipRule="evenodd" />
       </svg>
-      {uploading ? 'Uploading…' : label}
+      {uploading ? t('uploading') : label}
       <input ref={inputRef} type="file" accept="image/*" className="sr-only" onChange={handleChange} />
     </label>
   );

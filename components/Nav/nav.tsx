@@ -1,6 +1,7 @@
 'use client';
 
 import { signIn, signOut, useSession } from 'next-auth/react';
+import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useState } from 'react';
 // Components
@@ -8,6 +9,7 @@ import { Button } from '@/components/Button';
 
 export const Nav = () => {
   const { data: session, status } = useSession();
+  const t = useTranslations('nav');
   const [menuOpen, setMenuOpen] = useState(false);
 
   const closeMenu = () => setMenuOpen(false);
@@ -39,7 +41,7 @@ export const Nav = () => {
             href="/pool"
             className="text-primary-100 hover:text-white transition-colors"
           >
-            Pool
+            {t('pool')}
           </Link>
           {session
             ? (
@@ -48,16 +50,16 @@ export const Nav = () => {
                     href="/my/recipes"
                     className="text-primary-100 hover:text-white transition-colors"
                   >
-                    My Recipes
+                    {t('myRecipes')}
                   </Link>
                   <Link
                     href="/my/profile"
                     className="text-primary-100 hover:text-white transition-colors"
                   >
-                    Profile
+                    {t('profile')}
                   </Link>
                   <Button variant="nav-link" onClick={() => signOut()}>
-                    Sign out
+                    {t('signOut')}
                   </Button>
                 </>
               )
@@ -69,7 +71,7 @@ export const Nav = () => {
                   disabled={status === 'loading'}
                   onClick={() => signIn()}
                 >
-                  Sign in
+                  {t('signIn')}
                 </Button>
               )}
         </div>
@@ -77,7 +79,7 @@ export const Nav = () => {
         {/* Mobile hamburger */}
         <button
           className="md:hidden flex flex-col justify-center items-center w-10 h-10 gap-1.5 rounded-lg hover:bg-black/20 transition-colors"
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          aria-label={menuOpen ? t('closeMenu') : t('openMenu')}
           onClick={() => setMenuOpen(open => !open)}
         >
           <span className={`block w-5 h-0.5 bg-white transition-all duration-200 ${menuOpen ? 'translate-y-2 rotate-45' : ''}`} />
@@ -95,7 +97,7 @@ export const Nav = () => {
               className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
               onClick={closeMenu}
             >
-              Pool
+              {t('pool')}
             </Link>
             {session
               ? (
@@ -105,14 +107,14 @@ export const Nav = () => {
                       className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
                       onClick={closeMenu}
                     >
-                      My Recipes
+                      {t('myRecipes')}
                     </Link>
                     <Link
                       href="/my/profile"
                       className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
                       onClick={closeMenu}
                     >
-                      Profile
+                      {t('profile')}
                     </Link>
                     <button
                       className="px-2 py-2.5 text-left text-primary-200 hover:text-white transition-colors"
@@ -121,7 +123,7 @@ export const Nav = () => {
                         closeMenu();
                       }}
                     >
-                      Sign out
+                      {t('signOut')}
                     </button>
                   </>
                 )
@@ -137,7 +139,7 @@ export const Nav = () => {
                         closeMenu();
                       }}
                     >
-                      Sign in
+                      {t('signIn')}
                     </Button>
                   </div>
                 )}
