@@ -23,7 +23,7 @@ const MyRecipesPage = async ({
   const tags = tagsParam ? tagsParam.split(',').map(t => t.trim()).filter(Boolean) : [];
   const categorySlugs = categoriesParam ? categoriesParam.split(',').map(s => s.trim()).filter(Boolean) : [];
 
-  const [allRecipes, filteredRecipes, members] = await Promise.all([
+  const [allRecipes, filteredRecipes, members, favouriteRecords] = await Promise.all([
     // Full unfiltered set — lightweight, only what's needed to build filter options
     prisma.recipe.findMany({
       where: { authorId: userId },
@@ -71,6 +71,30 @@ const MyRecipesPage = async ({
         },
       },
       orderBy: { createdAt: 'asc' },
+    }),
+    prisma.recipeFavourite.findMany({
+      where: { userId },
+      include: {
+        recipe: {
+          select: {
+            id: true,
+            title: true,
+            description: true,
+            coverImageUrl: true,
+            forkCount: true,
+            isPublic: true,
+            forkedFromId: true,
+            authorId: true,
+            tags: true,
+            categories: {
+              select: {
+                category: { select: { id: true, slug: true, label: true, group: true } },
+              },
+            },
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     }),
   ]);
 
@@ -121,6 +145,13 @@ const MyRecipesPage = async ({
         initialPending={pending}
         initialTagFilter={tags}
         initialCategories={categorySlugs}
+        initialFavourites={favouriteRecords.map(({ recipe: { categories, ...r } }) => ({
+          ...r,
+          description: r.description ?? null,
+          coverImageUrl: r.coverImageUrl ?? null,
+          forkedFromId: r.forkedFromId ?? null,
+          categories: categories.map(rc => rc.category),
+        }))}
       />
     </Suspense>
   );

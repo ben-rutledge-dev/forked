@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
+import { SpeakerWaveIcon, StopSquareIcon } from '@/components/Icons';
 import { IngredientsDisplay } from '@/components/IngredientsDisplay';
 // Types
 import { RecipeWithRelations } from '@/types';
@@ -194,9 +195,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                     onClick={speakInstruction}
                     className="flex items-center gap-2"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                      <path d="M10.5 3.75a.75.75 0 0 0-1.264-.546L5.203 7H2.667a.75.75 0 0 0-.75.75v4.5c0 .414.336.75.75.75h2.536l4.033 3.796a.75.75 0 0 0 1.264-.546V3.75ZM13.463 4.6a.75.75 0 0 1 1.06.038 9 9 0 0 1 0 12.723.75.75 0 0 1-1.098-1.022 7.5 7.5 0 0 0 0-10.678.75.75 0 0 1 .038-1.061Zm-1.92 2.31a.75.75 0 0 1 1.06.04 6 6 0 0 1 0 8.497.75.75 0 1 1-1.1-1.02 4.5 4.5 0 0 0 0-6.456.75.75 0 0 1 .04-1.06Z" />
-                    </svg>
+                    <SpeakerWaveIcon className="w-4 h-4" />
                     {t('readAloud')}
                   </Button>
                 )
@@ -208,9 +207,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                     onClick={stopSpeaking}
                     className="flex items-center gap-2 bg-stone-100 text-stone-700 hover:bg-stone-200"
                   >
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-                      <path d="M5.25 3A2.25 2.25 0 0 0 3 5.25v9.5A2.25 2.25 0 0 0 5.25 17h9.5A2.25 2.25 0 0 0 17 14.75v-9.5A2.25 2.25 0 0 0 14.75 3h-9.5Z" />
-                    </svg>
+                    <StopSquareIcon className="w-4 h-4" />
                     {t('stop')}
                   </Button>
                 )}

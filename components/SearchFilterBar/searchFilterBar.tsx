@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 // Components
+import { FilterIcon } from '@/components/Icons';
 import { TokenInput, type TokenOption } from '@/components/TokenInput';
 // Lib
 import { GROUP_LABELS, GROUP_ORDER } from '@/lib/categories';
@@ -54,9 +55,7 @@ export const SearchFilterBar = ({
                 : 'border-stone-300 bg-white text-stone-500 hover:bg-stone-50'
             }`}
           >
-            <svg width="13" height="13" viewBox="0 0 16 16" fill="none" className="opacity-60 shrink-0">
-              <path d="M2 4h12M4 8h8M6 12h4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-            </svg>
+            <FilterIcon className="w-3.5 h-3.5 opacity-60 shrink-0" />
             {t('filters')}
             {activeCount > 0 && (
               <span className="rounded-full bg-stone-700 px-1.5 py-0.5 text-[11px] font-medium leading-none text-white">

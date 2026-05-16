@@ -3,6 +3,7 @@ import { Suspense } from 'react';
 // Components
 import { PoolClient } from './components/PoolClient';
 // Lib
+import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = { title: 'Recipe Pool' };
@@ -36,7 +37,10 @@ const PoolPage = async ({
     }),
   };
 
-  const [recipes, total, allCategories] = await Promise.all([
+  const session = await auth();
+  const userId = session?.user?.id;
+
+  const [recipes, total, allCategories, favourites] = await Promise.all([
     prisma.recipe.findMany({
       where,
       select: { id: true, title: true, description: true, coverImageUrl: true, forkCount: true, authorId: true, isPublic: true, forkedFromId: true, tags: true },
@@ -49,7 +53,15 @@ const PoolPage = async ({
       select: { id: true, slug: true, label: true, group: true },
       orderBy: { label: 'asc' },
     }),
+    userId
+      ? prisma.recipeFavourite.findMany({
+          where: { userId },
+          select: { recipeId: true },
+        })
+      : Promise.resolve([]),
   ]);
+
+  const favouritedIds = favourites.map((f: { recipeId: string }) => f.recipeId);
 
   return (
     <div className="mx-auto max-w-4xl px-4 py-10">
@@ -61,6 +73,7 @@ const PoolPage = async ({
           initialQuery={q}
           initialCategories={categorySlugs}
           allCategories={allCategories}
+          initialFavourites={favouritedIds}
         />
       </Suspense>
     </div>

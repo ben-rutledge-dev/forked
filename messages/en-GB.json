@@ -98,7 +98,9 @@
     "forking": "Forking…",
     "fork": "Fork",
     "public": "public",
-    "private": "private"
+    "private": "private",
+    "favourite": "Favourite",
+    "unfavourite": "Unfavourite"
   },
   "recipeBookCard": {
     "moreActions": "More actions",
@@ -187,11 +189,14 @@
     "heading": "My Recipes",
     "newRecipe": "+ New recipe",
     "newRecipeBook": "+ New recipe book",
-    "tabRecipes": "Recipes",
+    "tabRecipes": "My Recipes",
     "tabBooks": "Recipe Books",
+    "tabFavourites": "Favourited Recipes",
     "searchPlaceholder": "Search recipes…",
     "noResults": "No recipes match your filters.",
     "noRecipesYet": "No recipes yet.",
+    "noFavouritesYet": "No favourited recipes yet.",
+    "browsPool": "Browse the pool",
     "createOne": "Create one",
     "or": "or",
     "forkFromPool": "fork from the pool",

@@ -41,6 +41,7 @@ type Props = {
   initialQuery: string
   initialCategories: string[]
   allCategories: Category[]
+  initialFavourites?: string[]
 };
 
 type Filters = {
@@ -57,6 +58,7 @@ export const PoolClient = ({
   initialQuery,
   initialCategories,
   allCategories,
+  initialFavourites = [],
 }: Props) => {
   const router = useRouter();
   const t = useTranslations('pool');
@@ -154,6 +156,8 @@ export const PoolClient = ({
                       description={r.description}
                       coverImageUrl={r.coverImageUrl}
                       forkCount={r.forkCount}
+                      showPoolActions
+                      isFavourited={initialFavourites.includes(r.id)}
                     />
                   ))}
                 </div>

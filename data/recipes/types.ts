@@ -7,6 +7,10 @@ export type MyRecipesParams = {
   categories?: string[]
 };
 
+export type FavouriteRecipesParams = {
+  initialData?: Recipe[]
+};
+
 export type RecipeIngredientPayload = {
   name: string
   quantity: string

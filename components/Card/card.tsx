@@ -4,6 +4,8 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useRef, useState } from 'react';
+// Components
+import { ChevronLeftIcon } from '@/components/Icons';
 
 export const cardIconBtnCls
   = 'flex items-center justify-center w-7 h-7 rounded-lg bg-white/90 text-stone-500 hover:bg-white hover:text-stone-700 shadow-sm transition-colors cursor-pointer';
@@ -57,9 +59,7 @@ const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSu
               <div className="w-52 rounded-xl border border-stone-200 bg-white shadow-lg overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-100">
                   <button onClick={onSubMenuBack} className="text-stone-400 hover:text-stone-600 cursor-pointer">
-                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                    </svg>
+                    <ChevronLeftIcon className="w-3.5 h-3.5" />
                   </button>
                   <span className="text-xs font-medium text-stone-500">{activeSubMenu.title}</span>
                 </div>

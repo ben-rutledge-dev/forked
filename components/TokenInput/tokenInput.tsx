@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useState, useRef, type KeyboardEvent } from 'react';
 // Components
 import { CategoryPillButton } from '@/components/CategoryPill';
+import { CheckIcon, ChevronDownIcon } from '@/components/Icons';
 import { SectionLabel } from '@/components/Typography';
 
 export type TokenOption = {
@@ -214,9 +215,7 @@ export const TokenInput = ({
           className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
           aria-label={t('toggleDropdown')}
         >
-          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-            <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-          </svg>
+          <ChevronDownIcon className="w-4 h-4" />
         </button>
       </div>
 
@@ -368,9 +367,7 @@ const OptionItem = ({ opt, selected, focused, onSelect, onMouseEnter }: OptionIt
   >
     <span>{opt.label}</span>
     {selected && (
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-        <path d="M2 7l3.5 3.5L12 3" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
+      <CheckIcon className="w-3.5 h-3.5" />
     )}
   </li>
 );

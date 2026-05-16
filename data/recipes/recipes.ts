@@ -3,7 +3,7 @@ import { queryKeys } from '@/data/queryKeys';
 import { useApiQuery, useApiPost, useQueryClient } from '@/data/shared/hooks';
 // Types
 import type { Recipe } from '@/types';
-import type { MyRecipesParams, PostRecipePayload, PostRecipeResponse, PoolParams, PoolRecipesResponse } from './types';
+import type { FavouriteRecipesParams, MyRecipesParams, PostRecipePayload, PostRecipeResponse, PoolParams, PoolRecipesResponse } from './types';
 
 export const useMyRecipes = (params?: MyRecipesParams) => {
   const searchParams = new URLSearchParams();
@@ -16,6 +16,13 @@ export const useMyRecipes = (params?: MyRecipesParams) => {
     { initialData: params?.initialData },
   );
 };
+
+export const useFavouriteRecipes = (params?: FavouriteRecipesParams) =>
+  useApiQuery<Recipe[]>(
+    queryKeys.recipes.favourites(),
+    '/api/recipes/favourites',
+    { initialData: params?.initialData },
+  );
 
 export const usePoolRecipes = (params?: PoolParams) => {
   const searchParams = new URLSearchParams();

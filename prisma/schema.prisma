@@ -66,6 +66,7 @@ model User {
   recipeBookMembers RecipeBookMember[] @relation("BookMember")
   invitedMembers    RecipeBookMember[] @relation("BookInvitedBy")
   recipeBookEntries RecipeBookEntry[]
+  favourites        RecipeFavourite[]
 }
 
 model Recipe {
@@ -87,6 +88,7 @@ model Recipe {
   steps         Step[]
   recipeBookEntries RecipeBookEntry[]
   categories    RecipeCategory[]
+  favouritedBy  RecipeFavourite[]
 }
 
 enum CategoryGroup {
@@ -158,6 +160,17 @@ model RecipeBookEntry {
   addedBy        User       @relation(fields: [addedByUserId], references: [id])
 
   @@unique([recipeBookId, recipeId])
+}
+
+model RecipeFavourite {
+  id        String   @id @default(cuid())
+  userId    String
+  recipeId  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, recipeId])
 }
 
 enum UnitType {

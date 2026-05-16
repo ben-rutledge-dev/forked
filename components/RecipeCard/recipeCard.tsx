@@ -13,6 +13,7 @@ import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Card, CardAction } from '@/components/Card';
 import { ForkIcon } from '@/components/ForkIcon';
+import { DotsHorizontalIcon, EditIcon, HeartIcon, RecipeIcon } from '@/components/Icons';
 
 type BookOption = { id: string, title: string };
 
@@ -27,6 +28,9 @@ type RecipeCardProps = {
   forkedFromId?: string | null
   onVisibilityToggle?: (id: string, isPublic: boolean) => void
   onRemoveFromBook?: () => void
+  /** Show pool-specific actions: favourite heart + add-to-book */
+  showPoolActions?: boolean
+  isFavourited?: boolean
 };
 
 export const RecipeCard: React.FC<RecipeCardProps> = ({
@@ -38,6 +42,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   isPublic,
   isOwned,
   onRemoveFromBook,
+  showPoolActions,
+  isFavourited: initialIsFavourited,
 }: RecipeCardProps) => {
   const { data: session } = useSession();
   const router = useRouter();
@@ -48,6 +54,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   const pendingForkId = useRef<string | null>(null);
 
   const [addingToBook, setAddingToBook] = useState<string | null>(null);
+  const [favourited, setFavourited] = useState(initialIsFavourited ?? false);
+  const [togglingFavourite, setTogglingFavourite] = useState(false);
 
   const [books, setBooks] = useState<BookOption[] | null>(null);
   const { mutate: deleteRecipe, isPending: deleting } = useDeleteRecipe({ recipeId: id });
@@ -76,6 +84,28 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
     if (pendingForkId.current) {
       router.push(`/my/recipes/${pendingForkId.current}/edit`);
       pendingForkId.current = null;
+    }
+  };
+
+  const handleToggleFavourite = async () => {
+    if (!session) {
+      signIn();
+      return;
+    }
+    if (togglingFavourite) return;
+    const next = !favourited;
+    setFavourited(next);
+    setTogglingFavourite(true);
+    try {
+      await fetch(`/api/recipes/${id}/favourite`, {
+        method: next ? 'POST' : 'DELETE',
+      });
+    }
+    catch {
+      setFavourited(!next);
+    }
+    finally {
+      setTogglingFavourite(false);
     }
   };
 
@@ -111,44 +141,35 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   };
 
   const href = isOwned ? `/my/recipes/${id}` : `/recipes/${id}`;
-  const PlaceholderIcon = (
-    <svg className="w-10 h-10 text-stone-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={1.5}
-        d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-      />
-    </svg>
-  );
+  const PlaceholderIcon = <RecipeIcon className="w-10 h-10 text-stone-300" />;
 
   const cardActions: CardAction[] = [
+    // Pool: heart/favourite button
+    ...(showPoolActions && !isOwned
+      ? [{
+          title: favourited ? t('unfavourite') : t('favourite'),
+          Icon: (
+            <HeartIcon
+              className={`w-3.5 h-3.5 ${favourited ? 'text-red-500' : ''}`}
+              filled={favourited}
+            />
+          ),
+          onClick: handleToggleFavourite,
+        }]
+      : []),
+    // Owned: edit button
     ...(isOwned
       ? [{
           title: t('editRecipe'),
-          Icon: (
-            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 0l.172.172a2 2 0 010 2.828L12 16H9v-3z"
-              />
-            </svg>
-          ),
+          Icon: <EditIcon className="w-3.5 h-3.5" />,
           onClick: () => router.push(`/my/recipes/${id}/edit`),
         }]
       : []),
+    // Owned or in-book: more actions (add to book / remove / delete)
     ...(session && (onRemoveFromBook || isOwned)
       ? [{
           title: t('moreActions'),
-          Icon: (
-            <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 24 24">
-              <circle cx="5" cy="12" r="1.5" />
-              <circle cx="12" cy="12" r="1.5" />
-              <circle cx="19" cy="12" r="1.5" />
-            </svg>
-          ),
+          Icon: <DotsHorizontalIcon className="w-3.5 h-3.5" />,
           menuItems: [
             ...(onRemoveFromBook
               ? [{
@@ -182,6 +203,28 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
                 }]
               : []),
           ],
+        }]
+      : []),
+    // Pool: more actions (add to book)
+    ...(showPoolActions && !isOwned && session
+      ? [{
+          title: t('moreActions'),
+          Icon: <DotsHorizontalIcon className="w-3.5 h-3.5" />,
+          menuItems: [{
+            label: t('addToBook'),
+            subMenu: {
+              title: t('addToBook'),
+              emptyLabel: t('noBooksYet'),
+              items: books
+                ? books.map(b => ({
+                    label: b.title,
+                    onClick: () => handleAddToBook(b.id),
+                    disabled: addingToBook === b.id,
+                  }))
+                : null,
+              onOpen: handleOpenAddToBook,
+            },
+          }],
         }]
       : []),
   ];

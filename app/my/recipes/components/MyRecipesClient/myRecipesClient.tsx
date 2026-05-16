@@ -9,7 +9,7 @@ import { useRecipeBooks } from '@/data/recipe-books';
 import { usePostAcceptInvite } from '@/data/recipe-books/[recipeBookId]/invites/accept';
 import { usePostDeclineInvite } from '@/data/recipe-books/[recipeBookId]/invites/decline';
 import type { BookWithStats, PendingInvite } from '@/data/recipe-books/types';
-import { useMyRecipes } from '@/data/recipes';
+import { useFavouriteRecipes, useMyRecipes } from '@/data/recipes';
 // Components
 import { Button } from '@/components/Button';
 import { Pagination } from '@/components/Pagination';
@@ -35,9 +35,10 @@ type Props = {
   allRecipes: RecipeFilterMeta[]
   initialBooks: BookWithStats[]
   initialPending: PendingInvite[]
-  defaultTab?: 'recipes' | 'books'
+  defaultTab?: 'recipes' | 'books' | 'favourites'
   initialTagFilter?: string[]
   initialCategories?: string[]
+  initialFavourites?: Recipe[]
 };
 
 const PAGE_SIZE = 12;
@@ -50,12 +51,13 @@ export const MyRecipesClient = ({
   defaultTab = 'recipes',
   initialTagFilter = [],
   initialCategories = [],
+  initialFavourites = [],
 }: Props) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('myRecipes');
-  const defaultTabFromUrl = (searchParams?.get('tab') as 'recipes' | 'books') ?? defaultTab;
-  const [tab, setTab] = useState<'recipes' | 'books'>(defaultTabFromUrl);
+  const defaultTabFromUrl = (searchParams?.get('tab') as 'recipes' | 'books' | 'favourites') ?? defaultTab;
+  const [tab, setTab] = useState<'recipes' | 'books' | 'favourites'>(defaultTabFromUrl);
   const [page, setPage] = useState(1);
 
   // Filter options always derived from the full unfiltered allRecipes set
@@ -111,6 +113,10 @@ export const MyRecipesClient = ({
     initialData: initialRecipes,
   });
 
+  const { data: favouriteRecipes = initialFavourites } = useFavouriteRecipes({
+    initialData: initialFavourites,
+  });
+
   let recipes = allRecipeData;
   if (query) {
     const q = query.toLowerCase();
@@ -135,7 +141,7 @@ export const MyRecipesClient = ({
   });
   const { books, pending } = booksData;
 
-  const handleTabChange = (t: 'recipes' | 'books') => {
+  const handleTabChange = (t: 'recipes' | 'books' | 'favourites') => {
     setTab(t);
     const params = new URLSearchParams(searchParams?.toString() ?? '');
     params.set('tab', t);
@@ -174,19 +180,21 @@ export const MyRecipesClient = ({
                 {t('newRecipe')}
               </Link>
             )
-          : (
-              <Link
-                href="/my/recipe-books/new"
-                className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
-              >
-                {t('newRecipeBook')}
-              </Link>
-            )}
+          : tab === 'books'
+            ? (
+                <Link
+                  href="/my/recipe-books/new"
+                  className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
+                >
+                  {t('newRecipeBook')}
+                </Link>
+              )
+            : null}
       </div>
 
       {/* Tabs */}
       <div className="flex gap-1 mb-8 border-b border-stone-200">
-        {(['recipes', 'books'] as Array<'recipes' | 'books'>).map(tabKey => (
+        {(['recipes', 'favourites', 'books'] as Array<'recipes' | 'favourites' | 'books'>).map(tabKey => (
           <button
             key={tabKey}
             onClick={() => handleTabChange(tabKey)}
@@ -196,7 +204,7 @@ export const MyRecipesClient = ({
                 : 'border-transparent text-stone-500 hover:text-stone-700'
             }`}
           >
-            {tabKey === 'recipes' ? t('tabRecipes') : t('tabBooks')}
+            {tabKey === 'recipes' ? t('tabRecipes') : tabKey === 'favourites' ? t('tabFavourites') : t('tabBooks')}
             {tabKey === 'books' && pending.length > 0 && (
               <span className="ml-1.5 rounded-full bg-primary-500 px-1.5 py-0.5 text-xs text-white">
                 {pending.length}
@@ -267,6 +275,34 @@ export const MyRecipesClient = ({
                 )}
           </div>
         </>
+      )}
+
+      {tab === 'favourites' && (
+        <div>
+          {favouriteRecipes.length === 0
+            ? (
+                <div className="text-center py-20 text-stone-400">
+                  <p>{t('noFavouritesYet')}</p>
+                  <Link href="/pool" className="mt-4 inline-block text-stone-700 underline hover:text-stone-900">{t('browsPool')}</Link>
+                </div>
+              )
+            : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {favouriteRecipes.map(r => (
+                    <RecipeCard
+                      key={r.id}
+                      id={r.id}
+                      title={r.title}
+                      description={r.description}
+                      coverImageUrl={r.coverImageUrl}
+                      forkCount={r.forkCount}
+                      showPoolActions
+                      isFavourited
+                    />
+                  ))}
+                </div>
+              )}
+        </div>
       )}
 
       {tab === 'books' && (

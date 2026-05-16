@@ -18,6 +18,7 @@ export const queryKeys = {
       'mine',
       { tags: tags ?? [], categories: categories ?? [] },
     ] as const,
+    favourites: () => [...queryKeys.recipes.all, 'favourites'] as const,
     detail: (id: string) => [...queryKeys.recipes.all, id] as const,
     forks: (id: string) =>
       [...queryKeys.recipes.detail(id), 'forks'] as const,
