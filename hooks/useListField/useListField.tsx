@@ -3,7 +3,7 @@ import { useCallback } from 'react';
 type WithId = { _id: string };
 
 type ListFieldActions<T extends WithId> = {
-  update: (id: string, field: keyof Omit<T, '_id'>, value: string) => void
+  update: (id: string, field: keyof Omit<T, '_id'>, value: string | null) => void
   remove: (id: string) => void
   move: (id: string, dir: -1 | 1) => void
   insert: (afterId: string, empty: () => T) => void
@@ -14,7 +14,7 @@ export const useListField = <T extends WithId>(
   setter: React.Dispatch<React.SetStateAction<T[]>>,
 ): ListFieldActions<T> => {
   const update = useCallback(
-    (id: string, field: keyof Omit<T, '_id'>, value: string) => {
+    (id: string, field: keyof Omit<T, '_id'>, value: string | null) => {
       setter(prev =>
         prev.map(item => (item._id === id ? { ...item, [field]: value } : item)),
       );

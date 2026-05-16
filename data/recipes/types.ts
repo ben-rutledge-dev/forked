@@ -11,6 +11,7 @@ export type RecipeIngredientPayload = {
   name: string
   quantity: string
   unit: string
+  unitKey?: string | null
 };
 
 export type RecipeStepPayload = {

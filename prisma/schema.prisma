@@ -160,14 +160,35 @@ model RecipeBookEntry {
   @@unique([recipeBookId, recipeId])
 }
 
+enum UnitType {
+  // Volume — metric
+  ML
+  L
+  // Volume — imperial
+  TSP
+  TBSP
+  FL_OZ
+  CUP
+  PT
+  QT
+  GAL
+  // Weight — metric
+  G
+  KG
+  // Weight — imperial
+  OZ
+  LB
+}
+
 model Ingredient {
-  id         String  @id @default(cuid())
+  id         String    @id @default(cuid())
   recipeId   String
   name       String
-  quantity   String?
+  quantity   Float?
   unit       String?
+  unitKey    UnitType?
   orderIndex Int
-  recipe     Recipe  @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  recipe     Recipe    @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 }
 
 model Step {

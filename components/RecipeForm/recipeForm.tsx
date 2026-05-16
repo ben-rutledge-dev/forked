@@ -52,7 +52,8 @@ export const emptyIngredient = (): IngredientItem => ({
   _id: newId(),
   name: '',
   quantity: '',
-  unit: '',
+  unit: null,
+  unitKey: null,
 });
 
 export const emptyStep = (): StepItem => ({
@@ -168,7 +169,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
     }
 
     const validIngredients = ingredients
-      .map(i => ({ id: i.id, name: i.name, quantity: i.quantity, unit: i.unit }));
+      .map(i => ({ id: i.id, name: i.name, quantity: i.quantity, unit: i.unit, unitKey: i.unitKey ?? null }));
 
     const validSteps = steps
       .map(s => ({ id: s.id, instruction: s.instruction, timerSeconds: s.timerSeconds, imageUrl: s.imageUrl }));

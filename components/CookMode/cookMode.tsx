@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
+import { IngredientsDisplay } from '@/components/IngredientsDisplay';
 // Types
 import { RecipeWithRelations } from '@/types';
 
@@ -162,21 +163,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
 
       {showIngredients && (
         <div className="border-b border-stone-200 bg-white px-4 py-4">
-          <h3 className="text-sm font-medium text-stone-700 mb-2">{t('ingredients')}</h3>
-          <ul className="space-y-1 text-sm text-stone-600">
-            {recipe.ingredients.map(ing => (
-              <li key={ing.id} className="flex gap-2">
-                {(ing.quantity || ing.unit) && (
-                  <span className="text-stone-400 min-w-[4rem]">
-                    {ing.quantity}
-                    {' '}
-                    {ing.unit}
-                  </span>
-                )}
-                <span>{ing.name}</span>
-              </li>
-            ))}
-          </ul>
+          <IngredientsDisplay ingredients={recipe.ingredients} compact />
         </div>
       )}
 

@@ -32,8 +32,9 @@ export type Ingredient = {
   id: string
   recipeId: string
   name: string
-  quantity: string | null
+  quantity: number | null
   unit: string | null
+  unitKey: string | null
   orderIndex: number
 };
 
@@ -71,6 +72,7 @@ export type IngredientFormData = {
   name: string
   quantity: string
   unit: string
+  unitKey: string | null
 };
 
 export type StepFormData = {

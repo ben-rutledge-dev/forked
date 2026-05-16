@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 // Lib
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+// Utils
+import { parseQuantity } from '@/utils/units';
+import { UnitType } from '@/generated/prisma/client';
+
+const VALID_UNIT_KEYS = new Set<string>(Object.values(UnitType));
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -59,6 +64,12 @@ export const PUT = async (req: Request, { params }: Params) => {
     return NextResponse.json({ error: 'Select at least one category to make this recipe public' }, { status: 400 });
   }
 
+  for (const ing of ingredients ?? []) {
+    if (ing.unitKey && !VALID_UNIT_KEYS.has(ing.unitKey)) {
+      return NextResponse.json({ error: `Invalid unitKey: ${ing.unitKey}` }, { status: 400 });
+    }
+  }
+
   await prisma.ingredient.deleteMany({ where: { recipeId: id } });
   await prisma.step.deleteMany({ where: { recipeId: id } });
 
@@ -82,12 +93,16 @@ export const PUT = async (req: Request, { params }: Params) => {
         ...(tags !== undefined && { tags: tags.map((t: string) => t.trim().toLowerCase()).filter(Boolean) }),
         ingredients: {
           create: (ingredients ?? []).map(
-            (ing: { name: string, quantity: string, unit: string }, i: number) => ({
-              name: ing.name,
-              quantity: ing.quantity || null,
-              unit: ing.unit || null,
-              orderIndex: i,
-            }),
+            (ing: { name: string, quantity: string, unit: string, unitKey?: string | null }, i: number) => {
+              const hasUnitKey = !!ing.unitKey;
+              return {
+                name: ing.name,
+                quantity: parseQuantity(ing.quantity ?? ''),
+                unit: hasUnitKey ? null : (ing.unit || null),
+                unitKey: hasUnitKey ? (ing.unitKey as UnitType) : null,
+                orderIndex: i,
+              };
+            },
           ),
         },
         steps: {

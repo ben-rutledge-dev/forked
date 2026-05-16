@@ -1,5 +1,6 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from 'generated/prisma/client';
+import { UnitType } from 'generated/prisma/enums';
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
@@ -13,14 +14,14 @@ const main = async () => {
       forkCount: 0,
       ingredients: {
         create: [
-          { name: '00 flour', quantity: '500', unit: 'g', orderIndex: 0 },
-          { name: 'active dry yeast', quantity: '7', unit: 'g', orderIndex: 1 },
-          { name: 'warm water', quantity: '325', unit: 'ml', orderIndex: 2 },
-          { name: 'salt', quantity: '10', unit: 'g', orderIndex: 3 },
-          { name: 'San Marzano tomatoes', quantity: '400', unit: 'g', orderIndex: 4 },
-          { name: 'fresh mozzarella', quantity: '250', unit: 'g', orderIndex: 5 },
-          { name: 'fresh basil leaves', quantity: 'handful', unit: '', orderIndex: 6 },
-          { name: 'olive oil', quantity: '2', unit: 'tbsp', orderIndex: 7 },
+          { name: '00 flour', quantity: 500, unitKey: UnitType.G, orderIndex: 0 },
+          { name: 'active dry yeast', quantity: 7, unitKey: UnitType.G, orderIndex: 1 },
+          { name: 'warm water', quantity: 325, unitKey: UnitType.ML, orderIndex: 2 },
+          { name: 'salt', quantity: 10, unitKey: UnitType.G, orderIndex: 3 },
+          { name: 'San Marzano tomatoes', quantity: 400, unitKey: UnitType.G, orderIndex: 4 },
+          { name: 'fresh mozzarella', quantity: 250, unitKey: UnitType.G, orderIndex: 5 },
+          { name: 'fresh basil leaves', unit: 'handful', orderIndex: 6 },
+          { name: 'olive oil', quantity: 2, unitKey: UnitType.TBSP, orderIndex: 7 },
         ],
       },
       steps: {
@@ -67,16 +68,16 @@ const main = async () => {
       forkCount: 0,
       ingredients: {
         create: [
-          { name: 'unsalted butter', quantity: '225', unit: 'g', orderIndex: 0 },
-          { name: 'light brown sugar', quantity: '200', unit: 'g', orderIndex: 1 },
-          { name: 'granulated sugar', quantity: '100', unit: 'g', orderIndex: 2 },
-          { name: 'eggs', quantity: '2', unit: '', orderIndex: 3 },
-          { name: 'vanilla extract', quantity: '2', unit: 'tsp', orderIndex: 4 },
-          { name: 'all-purpose flour', quantity: '280', unit: 'g', orderIndex: 5 },
-          { name: 'baking soda', quantity: '1', unit: 'tsp', orderIndex: 6 },
-          { name: 'fine sea salt', quantity: '1', unit: 'tsp', orderIndex: 7 },
-          { name: 'dark chocolate chips', quantity: '340', unit: 'g', orderIndex: 8 },
-          { name: 'flaky sea salt', quantity: '', unit: 'for topping', orderIndex: 9 },
+          { name: 'unsalted butter', quantity: 225, unitKey: UnitType.G, orderIndex: 0 },
+          { name: 'light brown sugar', quantity: 200, unitKey: UnitType.G, orderIndex: 1 },
+          { name: 'granulated sugar', quantity: 100, unitKey: UnitType.G, orderIndex: 2 },
+          { name: 'eggs', quantity: 2, orderIndex: 3 },
+          { name: 'vanilla extract', quantity: 2, unitKey: UnitType.TSP, orderIndex: 4 },
+          { name: 'all-purpose flour', quantity: 280, unitKey: UnitType.G, orderIndex: 5 },
+          { name: 'baking soda', quantity: 1, unitKey: UnitType.TSP, orderIndex: 6 },
+          { name: 'fine sea salt', quantity: 1, unitKey: UnitType.TSP, orderIndex: 7 },
+          { name: 'dark chocolate chips', quantity: 340, unitKey: UnitType.G, orderIndex: 8 },
+          { name: 'flaky sea salt', unit: 'for topping', orderIndex: 9 },
         ],
       },
       steps: {
@@ -123,18 +124,18 @@ const main = async () => {
       forkCount: 0,
       ingredients: {
         create: [
-          { name: 'yellow lentils (moong or toor dal)', quantity: '250', unit: 'g', orderIndex: 0 },
-          { name: 'water', quantity: '750', unit: 'ml', orderIndex: 1 },
-          { name: 'turmeric', quantity: '0.5', unit: 'tsp', orderIndex: 2 },
-          { name: 'salt', quantity: '', unit: 'to taste', orderIndex: 3 },
-          { name: 'ghee or neutral oil', quantity: '3', unit: 'tbsp', orderIndex: 4 },
-          { name: 'cumin seeds', quantity: '1', unit: 'tsp', orderIndex: 5 },
-          { name: 'dried red chillies', quantity: '2', unit: '', orderIndex: 6 },
-          { name: 'garlic cloves, thinly sliced', quantity: '4', unit: '', orderIndex: 7 },
-          { name: 'onion, finely diced', quantity: '1', unit: 'medium', orderIndex: 8 },
-          { name: 'tomatoes, chopped', quantity: '2', unit: '', orderIndex: 9 },
-          { name: 'garam masala', quantity: '0.5', unit: 'tsp', orderIndex: 10 },
-          { name: 'fresh coriander', quantity: '', unit: 'to finish', orderIndex: 11 },
+          { name: 'yellow lentils (moong or toor dal)', quantity: 250, unitKey: UnitType.G, orderIndex: 0 },
+          { name: 'water', quantity: 750, unitKey: UnitType.ML, orderIndex: 1 },
+          { name: 'turmeric', quantity: 0.5, unitKey: UnitType.TSP, orderIndex: 2 },
+          { name: 'salt', unit: 'to taste', orderIndex: 3 },
+          { name: 'ghee or neutral oil', quantity: 3, unitKey: UnitType.TBSP, orderIndex: 4 },
+          { name: 'cumin seeds', quantity: 1, unitKey: UnitType.TSP, orderIndex: 5 },
+          { name: 'dried red chillies', quantity: 2, orderIndex: 6 },
+          { name: 'garlic cloves, thinly sliced', quantity: 4, orderIndex: 7 },
+          { name: 'onion, finely diced', unit: '1 medium', orderIndex: 8 },
+          { name: 'tomatoes, chopped', quantity: 2, orderIndex: 9 },
+          { name: 'garam masala', quantity: 0.5, unitKey: UnitType.TSP, orderIndex: 10 },
+          { name: 'fresh coriander', unit: 'to finish', orderIndex: 11 },
         ],
       },
       steps: {

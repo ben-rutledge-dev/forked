@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 // Components
 import { CategoryPill } from '@/components/CategoryPill';
+import { IngredientsDisplay } from '@/components/IngredientsDisplay';
 import { PageHeading, SectionHeading } from '@/components/Typography';
 // Types
 import { RecipeWithRelations } from '@/types';
@@ -39,7 +40,7 @@ export const RecipeDetail = async ({
       )}
 
       <div className="mb-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="flex flex-col gap-3 flex-row items-start justify-between">
           <PageHeading>{recipe.title}</PageHeading>
           {headerAction && <div className="flex items-center gap-2 shrink-0">{headerAction}</div>}
         </div>
@@ -118,21 +119,7 @@ export const RecipeDetail = async ({
 
       {recipe.ingredients.length > 0 && (
         <section className="mb-8">
-          <SectionHeading className="mb-3">{t('ingredients')}</SectionHeading>
-          <ul className="space-y-2">
-            {recipe.ingredients.map(ing => (
-              <li key={ing.id} className="flex gap-2 text-stone-700">
-                {(ing.quantity || ing.unit) && (
-                  <span className="text-stone-400 min-w-[5rem] text-right">
-                    {ing.quantity}
-                    {' '}
-                    {ing.unit}
-                  </span>
-                )}
-                <span>{ing.name}</span>
-              </li>
-            ))}
-          </ul>
+          <IngredientsDisplay ingredients={recipe.ingredients} />
         </section>
       )}
 

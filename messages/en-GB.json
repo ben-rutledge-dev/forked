@@ -121,7 +121,9 @@
     "by": "by",
     "forkOf": "fork of",
     "cookMode": "Cook mode",
-    "timer": "Timer: {min}m {sec}s"
+    "timer": "Timer: {min}m {sec}s",
+    "switchToMetric": "Switch to metric",
+    "switchToImperial": "Switch to imperial"
   },
   "recipeForm": {
     "forkedFrom": "Forked from",
@@ -150,6 +152,9 @@
     "ingredient": "Ingredient",
     "qtyPlaceholder": "e.g. 2",
     "unitPlaceholder": "e.g. cups",
+    "customUnitPlaceholder": "Custom unit…",
+    "customUnitLabel": "Custom…",
+    "unitAriaLabel": "Unit",
     "ingredientPlaceholder": "e.g. flour",
     "removeIngredient": "Remove ingredient",
     "addIngredient": "+ add ingredient"
@@ -174,7 +179,9 @@
     "pause": "Pause",
     "reset": "Reset",
     "back": "← Back",
-    "next": "Next →"
+    "next": "Next →",
+    "switchToMetric": "Switch to metric",
+    "switchToImperial": "Switch to imperial"
   },
   "myRecipes": {
     "heading": "My Recipes",
@@ -313,7 +320,8 @@
     "ownerBadge": "owner",
     "noBooksList": "No recipe books yet.",
     "createOne": "Create one",
-    "loadingBooks": "Loading…"
+    "loadingBooks": "Loading…",
+    "addToBookButton": "Add to recipe book"
   },
   "recipe": {
     "forkedBy": "forked by {count, plural, one {# cook} other {# cooks}}"

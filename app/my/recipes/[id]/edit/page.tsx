@@ -66,8 +66,9 @@ const EditRecipePage = async ({ params }: Props) => {
           ingredients: recipe.ingredients.map(i => ({
             id: i.id,
             name: i.name,
-            quantity: i.quantity ?? '',
-            unit: i.unit ?? '',
+            quantity: i.quantity !== null ? String(i.quantity) : '',
+            unit: i.unit,
+            unitKey: i.unitKey ?? null,
           })),
           steps: recipe.steps.map(s => ({
             id: s.id,

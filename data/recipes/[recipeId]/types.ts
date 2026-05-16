@@ -19,8 +19,9 @@ export type Ingredient = {
   id: string
   recipeId: string
   name: string
-  quantity: string | null
+  quantity: number | null
   unit: string | null
+  unitKey: string | null
   orderIndex: number
 };
 

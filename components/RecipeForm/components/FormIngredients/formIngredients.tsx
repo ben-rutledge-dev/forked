@@ -8,6 +8,7 @@ import { IconButton } from '@/components/IconButton';
 import { RemoveButton } from '@/components/RecipeForm/components/RemoveButton';
 import { TextInput } from '@/components/TextInput';
 import { SectionHeading } from '@/components/Typography';
+import { UnitSelect } from '@/components/UnitSelect';
 // Types
 import { IngredientFormData } from '@/types';
 
@@ -34,8 +35,8 @@ export const FormIngredients = ({ ingredients, actions, emptyIngredient }: Props
       </div>
       <div className="space-y-2">
         {ingredients.map((ing, i) => (
-          <div key={ing._id} className="flex items-center gap-2">
-            <div className="flex flex-col gap-1 mr-1">
+          <div key={ing._id} className="flex items-start gap-2">
+            <div className="flex flex-col gap-1 mr-1 mt-1">
               <IconButton
                 type="button"
                 onClick={() => actions.move(ing._id, -1)}
@@ -60,14 +61,16 @@ export const FormIngredients = ({ ingredients, actions, emptyIngredient }: Props
               fullWidth={false}
               className="w-16"
             />
-            <TextInput
-              type="text"
-              value={ing.unit}
-              onChange={e => actions.update(ing._id, 'unit', e.target.value)}
-              placeholder={t('unitPlaceholder')}
-              size="sm"
-              fullWidth={false}
-              className="w-28"
+            <UnitSelect
+              unitKey={ing.unitKey}
+              unit={ing.unit}
+              onChange={({ unitKey, unit }) => {
+                actions.update(ing._id, 'unitKey', unitKey);
+                actions.update(ing._id, 'unit', unit);
+              }}
+              customPlaceholder={t('customUnitPlaceholder')}
+              customLabel={t('customUnitLabel')}
+              ariaLabel={t('unitAriaLabel')}
             />
             <TextInput
               type="text"

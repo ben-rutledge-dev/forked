@@ -2,6 +2,11 @@ import { NextResponse } from 'next/server';
 // Lib
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
+// Utils
+import { parseQuantity } from '@/utils/units';
+import { UnitType } from '@/generated/prisma/client';
+
+const VALID_UNIT_KEYS = new Set<string>(Object.values(UnitType));
 
 export const GET = async (req: Request) => {
   const session = await auth();
@@ -46,36 +51,51 @@ export const POST = async (req: Request) => {
     return NextResponse.json({ error: 'Title is required' }, { status: 400 });
   }
 
-  const recipe = await prisma.recipe.create({
-    data: {
-      title: title.trim(),
-      description: description?.trim() || null,
-      coverImageUrl: coverImageUrl || null,
-      authorId: session.user.id,
-      isPublic: Boolean(isPublic),
-      tags: Array.isArray(tags) ? tags.map((t: string) => t.trim().toLowerCase()).filter(Boolean) : [],
-      ingredients: {
-        create: (ingredients ?? []).map(
-          (ing: { name: string, quantity: string, unit: string }, i: number) => ({
-            name: ing.name,
-            quantity: ing.quantity || null,
-            unit: ing.unit || null,
-            orderIndex: i,
-          }),
-        ),
+  try {
+    const recipe = await prisma.recipe.create({
+      data: {
+        title: title.trim(),
+        description: description?.trim() || null,
+        coverImageUrl: coverImageUrl || null,
+        authorId: session.user.id,
+        isPublic: Boolean(isPublic),
+        tags: Array.isArray(tags) ? tags.map((t: string) => t.trim().toLowerCase()).filter(Boolean) : [],
+        ingredients: {
+          create: (ingredients ?? []).map(
+            (ing: { name: string, quantity: string, unit: string, unitKey?: string | null }, i: number) => {
+              if (ing.unitKey && !VALID_UNIT_KEYS.has(ing.unitKey)) {
+                throw new Error(`Invalid unitKey: ${ing.unitKey}`);
+              }
+              const hasUnitKey = !!ing.unitKey;
+              return {
+                name: ing.name,
+                quantity: parseQuantity(ing.quantity ?? ''),
+                unit: hasUnitKey ? null : (ing.unit || null),
+                unitKey: hasUnitKey ? (ing.unitKey as UnitType) : null,
+                orderIndex: i,
+              };
+            },
+          ),
+        },
+        steps: {
+          create: (steps ?? []).map(
+            (step: { instruction: string, timerSeconds: number | string, imageUrl?: string }, i: number) => ({
+              instruction: step.instruction,
+              timerSeconds: step.timerSeconds ? Number(step.timerSeconds) : null,
+              imageUrl: step.imageUrl || null,
+              orderIndex: i,
+            }),
+          ),
+        },
       },
-      steps: {
-        create: (steps ?? []).map(
-          (step: { instruction: string, timerSeconds: number | string, imageUrl?: string }, i: number) => ({
-            instruction: step.instruction,
-            timerSeconds: step.timerSeconds ? Number(step.timerSeconds) : null,
-            imageUrl: step.imageUrl || null,
-            orderIndex: i,
-          }),
-        ),
-      },
-    },
-  });
+    });
 
-  return NextResponse.json(recipe, { status: 201 });
+    return NextResponse.json(recipe, { status: 201 });
+  }
+  catch (err) {
+    if (err instanceof Error && err.message.startsWith('Invalid unitKey')) {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    }
+    throw err;
+  }
 };

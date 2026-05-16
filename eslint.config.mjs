@@ -72,7 +72,7 @@ const eslintConfig = defineConfig([
           include: ['placeholder', 'aria-label', 'title', 'alt'],
         },
         'words': {
-          exclude: ['Forked', '©', '@', '↑', '↓', '▲', '▼', '·', '←', '/', 'x\\.com/', 'instagram\\.com/', '0', '\\(', '\\)', '×', 'recipes', 'books', ':'],
+          exclude: ['Forked', '©', '@', '↑', '↓', '▲', '▼', '·', '←', '/', 'x\\.com/', 'instagram\\.com/', '0', '\\(', '\\)', '×', 'recipes', 'books', ':', '—'],
         },
       }],
     },
