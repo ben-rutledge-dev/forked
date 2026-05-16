@@ -42,6 +42,7 @@ type Props = {
 };
 
 const PAGE_SIZE = 12;
+const TAB_KEYS = ['recipes', 'favourites', 'books'] as Array<'recipes' | 'favourites' | 'books'>;
 
 export const MyRecipesClient = ({
   initialRecipes,
@@ -194,7 +195,7 @@ export const MyRecipesClient = ({
 
       {/* Tabs */}
       <div className="flex gap-1 mb-8 border-b border-stone-200">
-        {(['recipes', 'favourites', 'books'] as Array<'recipes' | 'favourites' | 'books'>).map(tabKey => (
+        {TAB_KEYS.map(tabKey => (
           <button
             key={tabKey}
             onClick={() => handleTabChange(tabKey)}
