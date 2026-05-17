@@ -32,7 +32,7 @@ const RootLayout = async ({
 
   return (
     <html lang="en-GB" suppressHydrationWarning>
-      <body className="antialiased min-h-screen text-stone-900">
+      <body className="antialiased min-h-screen text-stone-900" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <Providers session={session}>

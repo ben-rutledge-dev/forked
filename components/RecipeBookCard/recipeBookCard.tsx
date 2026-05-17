@@ -9,6 +9,7 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { Badge } from '@/components/Badge';
 import { Card, CardAction } from '@/components/Card';
 import { BookIcon, DotsHorizontalIcon } from '@/components/Icons';
+import { UserBadge } from '@/components/UserBadge';
 // Utils
 import { OWNER, type Role } from '@/utils/roles';
 
@@ -46,7 +47,10 @@ export const RecipeBookCard = ({
 
   const PlaceholderIcon = <BookIcon className="w-10 h-10 text-stone-300" />;
 
-  const removeLabel = removing ? t('removing') : role === OWNER ? t('removeFromCollection') : t('leaveBook');
+  const removeLabel = (() => {
+    if (removing) return t('removing');
+    return role === OWNER ? t('removeFromCollection') : t('leaveBook');
+  })();
 
   const cardActions: CardAction[] = [{
     title: 'More actions',
@@ -72,7 +76,7 @@ export const RecipeBookCard = ({
             {isPublic ? t('public') : t('private')}
           </Badge>
           {role && (
-            <Badge variant={role === OWNER ? 'primary' : 'neutral'}>{role}</Badge>
+            <UserBadge role={role} />
           )}
         </div>
       </div>

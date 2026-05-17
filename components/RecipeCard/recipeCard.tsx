@@ -8,12 +8,15 @@ import { useRef, useState } from 'react';
 import { useDeleteRecipe } from '@/data/recipes/[recipeId]';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
+import { useModal } from '@/hooks/useModal';
 // Components
+import { AddToShoppingListModal } from '@/components/AddToShoppingListModal';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Card, CardAction } from '@/components/Card';
 import { ForkIcon } from '@/components/ForkIcon';
 import { DotsHorizontalIcon, EditIcon, HeartIcon, RecipeIcon } from '@/components/Icons';
+import { Toast } from '@/components/Toast';
 
 type BookOption = { id: string, title: string };
 
@@ -58,7 +61,9 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   const [togglingFavourite, setTogglingFavourite] = useState(false);
 
   const [books, setBooks] = useState<BookOption[] | null>(null);
+  const [shoppingToast, setShoppingToast] = useState<string | null>(null);
   const { mutate: deleteRecipe, isPending: deleting } = useDeleteRecipe({ recipeId: id });
+  const { modal } = useModal();
 
   const handleFork = async () => {
     if (!session) {
@@ -140,6 +145,24 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
     deleteRecipe();
   };
 
+  const handleAddToShoppingList = async () => {
+    const res = await fetch(`/api/recipes/${id}`);
+    if (!res.ok) return;
+    const recipe = await res.json();
+    const ingredients = (recipe.ingredients ?? []).map((ing: { id: string, name: string }) => ({
+      id: ing.id,
+      name: ing.name,
+    }));
+    const result = await modal<{ success: boolean, count: number, listName: string } | null>({
+      Component: AddToShoppingListModal as React.FC<Record<string, unknown>>,
+      props: { recipeId: id, recipeTitle: title, ingredients },
+      maxWidth: 'max-w-md',
+    });
+    if (result?.success) {
+      setShoppingToast(`Added ${result.count} item${result.count !== 1 ? 's' : ''} to ${result.listName}`);
+    }
+  };
+
   const href = isOwned ? `/my/recipes/${id}` : `/recipes/${id}`;
   const PlaceholderIcon = <RecipeIcon className="w-10 h-10 text-stone-300" />;
 
@@ -195,6 +218,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
                     onOpen: handleOpenAddToBook,
                   },
                 }]),
+            {
+              label: 'Add to shopping list',
+              onClick: handleAddToShoppingList,
+            },
             ...(isOwned && !onRemoveFromBook
               ? [{
                   label: deleting ? t('deleting') : t('moveToTrash'),
@@ -230,28 +257,31 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   ];
 
   return (
-    <Card href={href} coverImageUrl={coverImageUrl} CoverPlaceholderIcon={PlaceholderIcon} actions={cardActions}>
-      <div className="flex-1">
-        <h3 className="font-semibold text-stone-900 line-clamp-2">{title}</h3>
-        {description && <p className="mt-1 text-sm text-stone-500 line-clamp-2">{description}</p>}
-      </div>
-      <div className="flex items-center justify-between text-xs text-stone-400">
-        <span>
-          {t('forks', { count: forkCount })}
-        </span>
-        {isOwned
-          ? (
-              <Badge variant={isPublic ? 'success' : 'neutral'}>
-                {isPublic ? t('public') : t('private')}
-              </Badge>
-            )
-          : (
-              <Button variant="primary" size="sm" shape="pill" disabled={forking} onClick={handleFork} className="flex items-center gap-1.5">
-                {forking ? t('forking') : t('fork')}
-                <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} size={12} />
-              </Button>
-            )}
-      </div>
-    </Card>
+    <>
+      {shoppingToast && <Toast message={shoppingToast} onDismiss={() => setShoppingToast(null)} />}
+      <Card href={href} coverImageUrl={coverImageUrl} CoverPlaceholderIcon={PlaceholderIcon} actions={cardActions}>
+        <div className="flex-1">
+          <h3 className="font-semibold text-stone-900 line-clamp-2">{title}</h3>
+          {description && <p className="mt-1 text-sm text-stone-500 line-clamp-2">{description}</p>}
+        </div>
+        <div className="flex items-center justify-between text-xs text-stone-400">
+          <span>
+            {t('forks', { count: forkCount })}
+          </span>
+          {isOwned
+            ? (
+                <Badge variant={isPublic ? 'success' : 'neutral'}>
+                  {isPublic ? t('public') : t('private')}
+                </Badge>
+              )
+            : (
+                <Button variant="primary" size="sm" shape="pill" disabled={forking} onClick={handleFork} className="flex items-center gap-1.5">
+                  {forking ? t('forking') : t('fork')}
+                  <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} size={12} />
+                </Button>
+              )}
+        </div>
+      </Card>
+    </>
   );
 };

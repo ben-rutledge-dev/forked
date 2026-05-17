@@ -49,4 +49,14 @@ export const queryKeys = {
   tags: {
     mine: () => ['tags', 'mine'] as const,
   },
+
+  shoppingLists: {
+    all: ['shoppingLists'] as const,
+    mine: () => [...queryKeys.shoppingLists.all, 'mine'] as const,
+    detail: (id: string) => [...queryKeys.shoppingLists.all, id] as const,
+    sections: (id: string) =>
+      [...queryKeys.shoppingLists.detail(id), 'sections'] as const,
+    items: (id: string) =>
+      [...queryKeys.shoppingLists.detail(id), 'items'] as const,
+  },
 };

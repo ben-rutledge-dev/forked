@@ -45,6 +45,12 @@ export const Nav = () => {
                     {t('myRecipes')}
                   </Link>
                   <Link
+                    href="/shopping-lists"
+                    className="text-primary-100 hover:text-white transition-colors"
+                  >
+                    {t('shoppingLists')}
+                  </Link>
+                  <Link
                     href="/my/profile"
                     className="text-primary-100 hover:text-white transition-colors"
                   >
@@ -100,6 +106,13 @@ export const Nav = () => {
                       onClick={closeMenu}
                     >
                       {t('myRecipes')}
+                    </Link>
+                    <Link
+                      href="/shopping-lists"
+                      className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
+                      onClick={closeMenu}
+                    >
+                      {t('shoppingLists')}
                     </Link>
                     <Link
                       href="/my/profile"

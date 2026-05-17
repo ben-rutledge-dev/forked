@@ -4,7 +4,7 @@ type Props = {
   checked: boolean
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   /** Main label text. */
-  label: React.ReactNode
+  label?: React.ReactNode
   /** Optional helper text rendered below the label, indented to align with the label text. */
   description?: React.ReactNode
   id?: string
@@ -23,7 +23,7 @@ export const Checkbox = ({ checked, onChange, label, description, id, className,
         disabled={disabled}
         className="h-4 w-4 shrink-0 rounded border-stone-300 accent-stone-900"
       />
-      <span className="text-sm text-stone-700">{label}</span>
+      {label !== undefined && <span className="text-sm text-stone-700">{label}</span>}
     </label>
     {description && (
       <p className="mt-0.5 pl-6 text-xs text-stone-400">{description}</p>

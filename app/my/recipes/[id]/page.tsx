@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 // Components
+import { AddToShoppingListButton } from '@/components/AddToShoppingListModal';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { RecipeDetail } from '@/components/RecipeDetail';
@@ -62,6 +63,7 @@ const MyRecipePage = async ({ params }: Props) => {
           </Button>
         </div>
       )}
+      ingredientsAction={<AddToShoppingListButton recipeId={id} recipeTitle={recipe.title} />}
     />
   );
 };

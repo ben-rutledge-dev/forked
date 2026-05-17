@@ -14,6 +14,7 @@ type Props = {
   cookHref: string
   cookVariant?: 'primary' | 'secondary'
   headerAction?: ReactNode
+  ingredientsAction?: ReactNode
   metaBadge?: ReactNode
 };
 
@@ -22,6 +23,7 @@ export const RecipeDetail = async ({
   cookHref,
   cookVariant = 'secondary',
   headerAction,
+  ingredientsAction,
   metaBadge,
 }: Props) => {
   const t = await getTranslations('recipeDetail');
@@ -119,7 +121,7 @@ export const RecipeDetail = async ({
 
       {recipe.ingredients.length > 0 && (
         <section className="mb-8">
-          <IngredientsDisplay ingredients={recipe.ingredients} />
+          <IngredientsDisplay ingredients={recipe.ingredients} action={ingredientsAction} />
         </section>
       )}
 

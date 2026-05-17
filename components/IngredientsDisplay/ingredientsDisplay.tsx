@@ -1,6 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+import { ReactNode } from 'react';
 // Hooks
 import { useUnitSystem } from '@/hooks/useUnitSystem';
 // Components
@@ -13,9 +14,10 @@ import { convertIngredient, formatQuantity, UNIT_META } from '@/utils/units';
 type Props = {
   ingredients: Ingredient[]
   compact?: boolean
+  action?: ReactNode
 };
 
-export const IngredientsDisplay = ({ ingredients, compact = false }: Props) => {
+export const IngredientsDisplay = ({ ingredients, compact = false, action }: Props) => {
   const t = useTranslations('recipeDetail');
   const { system, toggle } = useUnitSystem();
 
@@ -35,19 +37,22 @@ export const IngredientsDisplay = ({ ingredients, compact = false }: Props) => {
 
   return (
     <div>
-      <div className={`flex items-center gap-3 ${compact ? 'mb-2' : 'mb-3'}`}>
-        {compact
-          ? <h3 className="text-sm font-medium text-stone-700">{t('ingredients')}</h3>
-          : <SectionHeading>{t('ingredients')}</SectionHeading>}
-        {hasConvertibleUnit && (
-          <button
-            type="button"
-            onClick={toggle}
-            className="text-xs text-stone-400 hover:text-stone-600 underline underline-offset-2 transition-colors"
-          >
-            {system === 'imperial' ? t('switchToMetric') : t('switchToImperial')}
-          </button>
-        )}
+      <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-3'}`}>
+        <div className="flex items-center gap-3">
+          {compact
+            ? <h3 className="text-sm font-medium text-stone-700">{t('ingredients')}</h3>
+            : <SectionHeading>{t('ingredients')}</SectionHeading>}
+          {hasConvertibleUnit && (
+            <button
+              type="button"
+              onClick={toggle}
+              className="text-xs text-stone-400 hover:text-stone-600 underline underline-offset-2 transition-colors"
+            >
+              {system === 'imperial' ? t('switchToMetric') : t('switchToImperial')}
+            </button>
+          )}
+        </div>
+        {action && <div className="shrink-0">{action}</div>}
       </div>
       <ul className={compact ? 'space-y-1 text-sm text-stone-600' : 'space-y-2'}>
         {ingredients.map((ing) => {

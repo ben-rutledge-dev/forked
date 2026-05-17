@@ -13,14 +13,15 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { useModal } from '@/hooks/useModal';
 // Components
 import { AddRecipeModal } from './components/AddRecipeModal';
-import { BookMembersSection } from './components/BookMembersSection';
 import { BookRecipesSection } from './components/BookRecipesSection';
-import { InviteModal } from './components/InviteModal';
 import { RecipeBookEditForm } from './components/RecipeBookEditForm';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
+import { InviteModal } from '@/components/Invites';
+import { MembersSection } from '@/components/MembersSection';
 import { Toast } from '@/components/Toast';
 import { PageHeading } from '@/components/Typography';
+import { UserBadge } from '@/components/UserBadge';
 // Types
 import type { Recipe } from '@/types';
 // Utils
@@ -118,7 +119,19 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
   const handleInvite = async () => {
     const result = await modal<true | null, React.ComponentProps<typeof InviteModal>>({
       Component: InviteModal,
-      props: { bookId: book.id, isPremium },
+      props: {
+        heading: t('inviteHeading'),
+        isPremium,
+        onSubmit: async (username: string, role: 'OWNER' | 'COLLABORATOR') => {
+          const res = await fetch(`/api/recipe-books/${book.id}/invites`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, role }),
+          });
+          const data = await res.json();
+          if (!res.ok) throw new Error(data.error ?? 'Failed');
+        },
+      },
       maxWidth: 'max-w-sm',
       cancelValue: null,
     });
@@ -171,9 +184,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
             {book.isPublic ? t('public') : t('private')}
           </Badge>
           {book.currentUserRole && (
-            <Badge variant={isOwner ? 'primary' : 'neutral'} className="text-xs font-medium">
-              {book.currentUserRole}
-            </Badge>
+            <UserBadge role={book.currentUserRole} />
           )}
           {isOwner && (
             <Button variant="secondary" size="sm" shape="pill" onClick={() => setShowEditForm(v => !v)}>
@@ -204,7 +215,7 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
         onMove={handleMove}
       />
 
-      <BookMembersSection
+      <MembersSection
         members={book.members}
         isOwner={isOwner}
         currentUserId={currentUserId}

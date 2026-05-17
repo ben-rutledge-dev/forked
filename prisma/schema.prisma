@@ -63,10 +63,12 @@ model User {
   accounts      Account[]
   sessions      Session[]
   recipes       Recipe[]
-  recipeBookMembers RecipeBookMember[] @relation("BookMember")
-  invitedMembers    RecipeBookMember[] @relation("BookInvitedBy")
-  recipeBookEntries RecipeBookEntry[]
-  favourites        RecipeFavourite[]
+  recipeBookMembers       RecipeBookMember[]   @relation("BookMember")
+  invitedMembers          RecipeBookMember[]   @relation("BookInvitedBy")
+  recipeBookEntries       RecipeBookEntry[]
+  favourites              RecipeFavourite[]
+  shoppingListMembers     ShoppingListMember[] @relation("ShoppingListMember")
+  shoppingListsInvited    ShoppingListMember[] @relation("ShoppingListInvitedBy")
 }
 
 model Recipe {
@@ -89,6 +91,7 @@ model Recipe {
   recipeBookEntries RecipeBookEntry[]
   categories    RecipeCategory[]
   favouritedBy  RecipeFavourite[]
+  shoppingListItems ShoppingListItem[]
 }
 
 enum CategoryGroup {
@@ -171,6 +174,65 @@ model RecipeFavourite {
   recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
   @@unique([userId, recipeId])
+}
+
+enum ShoppingListRole {
+  OWNER
+  COLLABORATOR
+}
+
+model ShoppingList {
+  id        String                @id @default(cuid())
+  title     String
+  createdAt DateTime              @default(now())
+  updatedAt DateTime              @updatedAt
+  members   ShoppingListMember[]
+  sections  ShoppingListSection[]
+  items     ShoppingListItem[]
+}
+
+model ShoppingListMember {
+  id              String           @id @default(cuid())
+  shoppingListId  String
+  userId          String
+  role            ShoppingListRole
+  acceptedAt      DateTime?
+  invitedByUserId String
+  createdAt       DateTime         @default(now())
+  shoppingList    ShoppingList     @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  user            User             @relation("ShoppingListMember", fields: [userId], references: [id], onDelete: Cascade)
+  invitedBy       User             @relation("ShoppingListInvitedBy", fields: [invitedByUserId], references: [id])
+
+  @@unique([shoppingListId, userId])
+}
+
+model ShoppingListSection {
+  id             String             @id @default(cuid())
+  shoppingListId String
+  title          String
+  orderIndex     Int
+  createdAt      DateTime           @default(now())
+  shoppingList   ShoppingList       @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  items          ShoppingListItem[]
+}
+
+model ShoppingListItem {
+  id             String              @id @default(cuid())
+  sectionId      String
+  shoppingListId String
+  name           String
+  checked        Boolean             @default(false)
+  orderIndex     Int
+  recipeId       String?
+  recipeTitle    String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  section        ShoppingListSection @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  shoppingList   ShoppingList        @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  recipe         Recipe?             @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+
+  @@index([sectionId])
+  @@index([shoppingListId])
 }
 
 enum UnitType {

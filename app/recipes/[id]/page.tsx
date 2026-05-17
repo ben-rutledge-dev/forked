@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 // Components
 import { AddToBookButton } from './components/AddToBookButton';
 import { ForkButton } from './components/ForkButton';
+import { AddToShoppingListButton } from '@/components/AddToShoppingListModal';
 import { RecipeDetail } from '@/components/RecipeDetail';
 // Lib
 import { prisma } from '@/lib/prisma';
@@ -65,6 +66,7 @@ const RecipePage = async ({ params }: Props) => {
           <ForkButton recipeId={id} />
         </div>
       )}
+      ingredientsAction={<AddToShoppingListButton recipeId={id} recipeTitle={recipe.title} />}
       metaBadge={(
         <span>
           {t('forkedBy', { count: recipe.forkCount })}
