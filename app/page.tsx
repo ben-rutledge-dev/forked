@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
 // Components
 import { SignInButton } from './components/SignInButton';
+import { PageLayout } from '@/components/PageLayout';
 // Lib
 import { auth } from '@/lib/auth';
 
@@ -10,13 +11,15 @@ const Home = async () => {
   const t = await getTranslations('home');
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-24 text-center">
-      <h1 className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
-        {t('heading')}
-      </h1>
-      <p className="mt-6 text-lg text-stone-500 leading-relaxed">
-        {t('description')}
-      </p>
+    <PageLayout width="narrow" py="spacious">
+      <div className="text-center">
+        <h1 className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
+          {t('heading')}
+        </h1>
+        <p className="mt-6 text-lg text-stone-500 leading-relaxed">
+          {t('description')}
+        </p>
+      </div>
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
         <Link
           href="/pool"
@@ -37,7 +40,7 @@ const Home = async () => {
               <SignInButton />
             )}
       </div>
-    </div>
+    </PageLayout>
   );
 };
 

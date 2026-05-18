@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useEffect, useState } from 'react';
 // Data
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
@@ -26,6 +27,7 @@ export const AddToShoppingListModal = ({
   recipeTitle,
   onConfirm,
 }: AddToShoppingListModalProps) => {
+  const t = useTranslations('addToShoppingList');
   const [stage, setStage] = useState<Stage>(1);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [ingredientsLoading, setIngredientsLoading] = useState(true);
@@ -97,7 +99,7 @@ export const AddToShoppingListModal = ({
       onConfirm({ success: true, count: items.length, listName });
     }
     catch {
-      setError('Something went wrong. Please try again.');
+      setError(t('errorMessage'));
     }
     finally {
       setSubmitting(false);
@@ -110,14 +112,14 @@ export const AddToShoppingListModal = ({
       {/* Stage 1: Select ingredients */}
       {stage === 1 && (
         <>
-          <h2 className="text-lg font-semibold text-stone-800 mb-1">Add to shopping list</h2>
+          <h2 className="text-lg font-semibold text-stone-800 mb-1">{t('modalHeading')}</h2>
           <p className="text-sm text-stone-500 mb-4">{recipeTitle}</p>
 
           <div className="flex justify-between items-center mb-3">
-            <span className="text-sm font-medium text-stone-600">Ingredients</span>
+            <span className="text-sm font-medium text-stone-600">{t('ingredientsLabel')}</span>
             {!ingredientsLoading && (
               <button className="text-xs text-primary-500 hover:underline" onClick={handleToggleAll}>
-                {selected.size === ingredients.length ? 'Deselect all' : 'Select all'}
+                {selected.size === ingredients.length ? t('deselectAll') : t('selectAll')}
               </button>
             )}
           </div>
@@ -154,7 +156,7 @@ export const AddToShoppingListModal = ({
 
           <div className="flex justify-end gap-2">
             <Button variant="secondary" size="sm" shape="pill" onClick={() => onConfirm(null)}>
-              Cancel
+              {t('cancel')}
             </Button>
             <Button
               variant="primary"
@@ -163,7 +165,7 @@ export const AddToShoppingListModal = ({
               disabled={ingredientsLoading || selected.size === 0}
               onClick={() => setStage(2)}
             >
-              Next →
+              {t('next')}
             </Button>
           </div>
         </>
@@ -172,7 +174,7 @@ export const AddToShoppingListModal = ({
       {/* Stage 2: Select list and submit */}
       {stage === 2 && (
         <>
-          <h2 className="text-lg font-semibold text-stone-800 mb-4">Choose a list</h2>
+          <h2 className="text-lg font-semibold text-stone-800 mb-4">{t('chooseListHeading')}</h2>
 
           <ul className="space-y-2 max-h-72 overflow-y-auto mb-4">
             {lists.map(list => (
@@ -187,9 +189,7 @@ export const AddToShoppingListModal = ({
                 >
                   <span className="font-medium">{list.title}</span>
                   <span className="ml-2 text-stone-400">
-                    {list.uncheckedCount}
-                    {' '}
-                    items
+                    {t('itemCount', { count: list.uncheckedCount })}
                   </span>
                 </button>
               </li>
@@ -202,12 +202,12 @@ export const AddToShoppingListModal = ({
                   <input
                     autoFocus
                     className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-                    placeholder="New list name…"
+                    placeholder={t('newListPlaceholder')}
                     value={newListTitle}
                     onChange={e => setNewListTitle(e.target.value)}
                   />
                   <Button type="submit" variant="primary" size="sm" shape="pill" disabled={creatingListPending}>
-                    {creatingListPending ? 'Creating…' : 'Create'}
+                    {creatingListPending ? t('creating') : t('create')}
                   </Button>
                 </form>
               )
@@ -216,7 +216,7 @@ export const AddToShoppingListModal = ({
                   className="text-sm text-primary-500 hover:underline mb-4"
                   onClick={() => setCreatingList(true)}
                 >
-                  + New list
+                  {t('newList')}
                 </button>
               )}
 
@@ -224,7 +224,7 @@ export const AddToShoppingListModal = ({
 
           <div className="flex justify-between">
             <Button variant="secondary" size="sm" shape="pill" onClick={() => setStage(1)}>
-              ← Back
+              {t('back')}
             </Button>
             <Button
               variant="primary"
@@ -233,7 +233,7 @@ export const AddToShoppingListModal = ({
               disabled={!chosenListId || !firstSectionId || submitting}
               onClick={handleSubmit}
             >
-              {submitting ? 'Adding…' : `Add ${selectedIngredients.length} item${selectedIngredients.length !== 1 ? 's' : ''}`}
+              {submitting ? t('adding') : t('addItems', { count: selectedIngredients.length })}
             </Button>
           </div>
         </>

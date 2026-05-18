@@ -42,6 +42,8 @@ import { SectionBlock } from './components/SectionBlock';
 import { Button } from '@/components/Button';
 import { InviteModal } from '@/components/Invites';
 import { MembersSection } from '@/components/MembersSection';
+import { PageHeader } from '@/components/PageHeader';
+import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
 import { PageHeading } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
@@ -54,7 +56,8 @@ type Props = {
 
 // ─── Main client ──────────────────────────────────────────────────────────────
 
-export const ShoppingListDetailClient = ({ list: initialList, currentUserId, isPremium }: Props) => {
+export const ShoppingListDetailClient: React.FC<Props> = (props) => {
+  const { list: initialList, currentUserId, isPremium } = props;
   const router = useRouter();
   const queryClient = useQueryClient();
   const { confirm } = useConfirm();
@@ -332,42 +335,38 @@ export const ShoppingListDetailClient = ({ list: initialList, currentUserId, isP
   const [unsortedSection, ...namedSections] = localSections;
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <PageLayout width="narrow">
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
       {/* Header */}
-      <div className="mb-6">
-        <div className="flex items-start justify-between gap-4">
-          <div className="flex-1">
-            {editingTitle && isOwner
-              ? (
-                  <input
-                    autoFocus
-                    className="text-2xl font-bold text-stone-800 outline-none border-b-2 border-primary-400 w-full"
-                    value={titleDraft}
-                    onChange={e => setTitleDraft(e.target.value)}
-                    onBlur={handleTitleBlur}
-                    onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
-                  />
-                )
-              : (
-                  <div
-                    className={isOwner ? 'cursor-pointer hover:opacity-75' : ''}
-                    onClick={() => isOwner && setEditingTitle(true)}
-                    role={isOwner ? 'button' : undefined}
-                    tabIndex={isOwner ? 0 : undefined}
-                    onKeyDown={isOwner ? (e) => { if (e.key === 'Enter') setEditingTitle(true); } : undefined}
-                  >
-                    <PageHeading>{list.title}</PageHeading>
-                  </div>
-                )}
-          </div>
-          {list.currentUserRole && (
-            <UserBadge role={list.currentUserRole} className="shrink-0 mt-1" />
-          )}
-        </div>
-
-      </div>
+      <PageHeader
+        backHref="/shopping-lists"
+        titleContent={
+          editingTitle && isOwner
+            ? (
+                <input
+                  autoFocus
+                  className="text-2xl font-bold text-stone-800 outline-none border-b-2 border-primary-400 w-full"
+                  value={titleDraft}
+                  onChange={e => setTitleDraft(e.target.value)}
+                  onBlur={handleTitleBlur}
+                  onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur(); }}
+                />
+              )
+            : (
+                <div
+                  className={isOwner ? 'cursor-pointer hover:opacity-75' : ''}
+                  onClick={() => isOwner && setEditingTitle(true)}
+                  role={isOwner ? 'button' : undefined}
+                  tabIndex={isOwner ? 0 : undefined}
+                  onKeyDown={isOwner ? (e) => { if (e.key === 'Enter') setEditingTitle(true); } : undefined}
+                >
+                  <PageHeading>{list.title}</PageHeading>
+                </div>
+              )
+        }
+        action={list.currentUserRole ? <UserBadge role={list.currentUserRole} /> : undefined}
+      />
 
       <DragOverContext.Provider value={{ overId, activeType, dropSide }}>
         <DndContext
@@ -465,6 +464,6 @@ export const ShoppingListDetailClient = ({ list: initialList, currentUserId, isP
           {isOwner ? t('deleteList') : t('leaveList')}
         </button>
       </div>
-    </main>
+    </PageLayout>
   );
 };

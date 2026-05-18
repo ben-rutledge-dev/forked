@@ -5,7 +5,8 @@ import { ReactNode } from 'react';
 // Components
 import { CategoryPill } from '@/components/CategoryPill';
 import { IngredientsDisplay } from '@/components/IngredientsDisplay';
-import { PageHeading, SectionHeading } from '@/components/Typography';
+import { PageHeader } from '@/components/PageHeader';
+import { SectionHeading } from '@/components/Typography';
 // Types
 import { RecipeWithRelations } from '@/types';
 
@@ -16,6 +17,7 @@ type Props = {
   headerAction?: ReactNode
   ingredientsAction?: ReactNode
   metaBadge?: ReactNode
+  backHref?: string
 };
 
 export const RecipeDetail = async ({
@@ -25,10 +27,11 @@ export const RecipeDetail = async ({
   headerAction,
   ingredientsAction,
   metaBadge,
+  backHref,
 }: Props) => {
   const t = await getTranslations('recipeDetail');
   return (
-    <div className="mx-auto max-w-2xl px-4 pb-6 sm:py-10">
+    <div>
       {recipe.coverImageUrl && (
         <div className="mb-8 -mx-4 sm:mx-0 relative h-64">
           <Image
@@ -42,10 +45,7 @@ export const RecipeDetail = async ({
       )}
 
       <div className="mb-8">
-        <div className="flex flex-col gap-3 flex-row items-start justify-between">
-          <PageHeading>{recipe.title}</PageHeading>
-          {headerAction && <div className="flex items-center gap-2 shrink-0">{headerAction}</div>}
-        </div>
+        <PageHeader title={recipe.title} action={headerAction} backHref={backHref} />
 
         {recipe.description && (
           <p className="mt-3 text-stone-600 leading-relaxed">{recipe.description}</p>

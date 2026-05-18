@@ -46,7 +46,7 @@ export const usePutItemsReorder = (params?: Params) => {
         const applyOrder = (item: Item) =>
           idToOrder.has(item.id) ? { ...item, orderIndex: idToOrder.get(item.id)! } : item;
         const byOrder = (a: Item, b: Item) => a.orderIndex - b.orderIndex;
-        queryClient.setQueryData<ShoppingListDetail>(queryKey, old => {
+        queryClient.setQueryData<ShoppingListDetail>(queryKey, (old) => {
           if (!old) return old;
           return {
             ...old,

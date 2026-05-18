@@ -5,11 +5,19 @@ import { notFound } from 'next/navigation';
 import { AddToBookButton } from './components/AddToBookButton';
 import { ForkButton } from './components/ForkButton';
 import { AddToShoppingListButton } from '@/components/AddToShoppingListModal';
+import { PageLayout } from '@/components/PageLayout';
 import { RecipeDetail } from '@/components/RecipeDetail';
 // Lib
 import { prisma } from '@/lib/prisma';
 
 type Props = { params: Promise<{ id: string }> };
+
+const RecipeHeaderAction = ({ recipeId }: { recipeId: string }) => (
+  <div className="flex items-center gap-2">
+    <AddToBookButton recipeId={recipeId} />
+    <ForkButton recipeId={recipeId} />
+  </div>
+);
 
 export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
   const { id } = await params;
@@ -57,22 +65,20 @@ const RecipePage = async ({ params }: Props) => {
   };
 
   return (
-    <RecipeDetail
-      recipe={JSON.parse(JSON.stringify(recipeWithCategories))}
-      cookHref={`/recipes/${id}/cook`}
-      headerAction={(
-        <div className="flex items-center gap-2">
-          <AddToBookButton recipeId={id} />
-          <ForkButton recipeId={id} />
-        </div>
-      )}
-      ingredientsAction={<AddToShoppingListButton recipeId={id} recipeTitle={recipe.title} />}
-      metaBadge={(
-        <span>
-          {t('forkedBy', { count: recipe.forkCount })}
-        </span>
-      )}
-    />
+    <PageLayout width="narrow" py="sm">
+      <RecipeDetail
+        recipe={JSON.parse(JSON.stringify(recipeWithCategories))}
+        cookHref={`/recipes/${id}/cook`}
+        backHref="/pool"
+        headerAction={<RecipeHeaderAction recipeId={id} />}
+        ingredientsAction={<AddToShoppingListButton recipeId={id} recipeTitle={recipe.title} />}
+        metaBadge={(
+          <span>
+            {t('forkedBy', { count: recipe.forkCount })}
+          </span>
+        )}
+      />
+    </PageLayout>
   );
 };
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Suspense } from 'react';
 // Components
 import { PoolClient } from './components/PoolClient';
+import { PageLayout } from '@/components/PageLayout';
 // Lib
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -64,7 +65,7 @@ const PoolPage = async ({
   const favouritedIds = favourites.map((f: { recipeId: string }) => f.recipeId);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
+    <PageLayout>
       <Suspense>
         <PoolClient
           initialRecipes={recipes}
@@ -76,7 +77,7 @@ const PoolPage = async ({
           initialFavourites={favouritedIds}
         />
       </Suspense>
-    </div>
+    </PageLayout>
   );
 };
 

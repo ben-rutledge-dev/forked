@@ -58,7 +58,6 @@ const ShoppingListsPage = async () => {
     <ShoppingListsClient
       initialLists={accepted}
       initialPending={pending}
-      isPremium={user?.isPremium ?? false}
     />
   );
 };

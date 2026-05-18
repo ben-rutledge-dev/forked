@@ -19,8 +19,9 @@ import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { InviteModal } from '@/components/Invites';
 import { MembersSection } from '@/components/MembersSection';
+import { PageHeader } from '@/components/PageHeader';
+import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
-import { PageHeading } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
 // Types
 import type { Recipe } from '@/types';
@@ -34,7 +35,8 @@ type Props = {
   userRecipes: Pick<Recipe, 'id' | 'title' | 'coverImageUrl'>[]
 };
 
-export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPremium, userRecipes }: Props) => {
+export const RecipeBookDetailClient: React.FC<Props> = (props) => {
+  const { book: initialBook, currentUserId, isPremium, userRecipes } = props;
   const router = useRouter();
   const t = useTranslations('recipeBooks');
   const [book, setBook] = useState<RecipeBookDetail>(initialBook);
@@ -162,37 +164,21 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
   };
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
+    <PageLayout>
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
-      {/* Header */}
       {book.coverImageUrl && (
         <div className="w-full h-48 rounded-xl overflow-hidden mb-6 relative">
           <Image src={book.coverImageUrl} alt="" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 896px" />
         </div>
       )}
 
-      <div className="flex items-start justify-between gap-4 mb-2">
-        <div>
-          <PageHeading>{book.title}</PageHeading>
-          {book.description && (
-            <p className="mt-1 text-stone-500 text-sm">{book.description}</p>
-          )}
-        </div>
-        <div className="flex items-center gap-2 shrink-0">
-          <Badge variant={book.isPublic ? 'success' : 'neutral'} className="text-xs font-medium">
-            {book.isPublic ? t('public') : t('private')}
-          </Badge>
-          {book.currentUserRole && (
-            <UserBadge role={book.currentUserRole} />
-          )}
-          {isOwner && (
-            <Button variant="secondary" size="sm" shape="pill" onClick={() => setShowEditForm(v => !v)}>
-              {t('edit')}
-            </Button>
-          )}
-        </div>
-      </div>
+      <PageHeader
+        title={book.title}
+        backHref="/my/recipes?tab=books"
+        subtitle={book.description ?? undefined}
+        action={<BookHeaderAction book={book} isOwner={isOwner} onEditToggle={() => setShowEditForm(v => !v)} />}
+      />
 
       {showEditForm && isOwner && (
         <RecipeBookEditForm
@@ -236,6 +222,32 @@ export const RecipeBookDetailClient = ({ book: initialBook, currentUserId, isPre
               </Button>
             )}
       </div>
+    </PageLayout>
+  );
+};
+
+type BookHeaderActionProps = {
+  book: RecipeBookDetail
+  isOwner: boolean
+  onEditToggle: () => void
+};
+
+const BookHeaderAction: React.FC<BookHeaderActionProps> = (props) => {
+  const { book, isOwner, onEditToggle } = props;
+  const t = useTranslations('recipeBooks');
+  return (
+    <div className="flex items-center gap-2">
+      <Badge variant={book.isPublic ? 'success' : 'neutral'} className="text-xs font-medium">
+        {book.isPublic ? t('public') : t('private')}
+      </Badge>
+      {book.currentUserRole && (
+        <UserBadge role={book.currentUserRole} />
+      )}
+      {isOwner && (
+        <Button variant="secondary" size="sm" shape="pill" onClick={onEditToggle}>
+          {t('edit')}
+        </Button>
+      )}
     </div>
   );
 };

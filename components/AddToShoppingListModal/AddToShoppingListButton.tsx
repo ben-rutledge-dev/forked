@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useState } from 'react';
 // Hooks
 import { useModal } from '@/hooks/useModal';
@@ -15,6 +16,7 @@ type Props = {
 
 export const AddToShoppingListButton = ({ recipeId, recipeTitle }: Props) => {
   const { modal } = useModal();
+  const t = useTranslations('addToShoppingList');
   const [toast, setToast] = useState<string | null>(null);
 
   const handleClick = async () => {
@@ -25,7 +27,7 @@ export const AddToShoppingListButton = ({ recipeId, recipeTitle }: Props) => {
     });
 
     if (result?.success) {
-      setToast(`Added ${result.count} item${result.count !== 1 ? 's' : ''} to ${result.listName}`);
+      setToast(t('addedToast', { count: result.count, listName: result.listName }));
     }
   };
 
@@ -38,7 +40,7 @@ export const AddToShoppingListButton = ({ recipeId, recipeTitle }: Props) => {
         shape="pill"
         onClick={handleClick}
       >
-        + Shopping list
+        {t('buttonLabel')}
       </Button>
     </>
   );

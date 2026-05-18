@@ -28,7 +28,7 @@ export const usePutSectionReorder = (params?: Params) => {
         await queryClient.cancelQueries({ queryKey });
         const previous = queryClient.getQueryData(queryKey);
         const idToOrder = new Map(payload.sections.map(s => [s.id, s.orderIndex]));
-        queryClient.setQueryData<ShoppingListDetail>(queryKey, old => {
+        queryClient.setQueryData<ShoppingListDetail>(queryKey, (old) => {
           if (!old) return old;
           return {
             ...old,

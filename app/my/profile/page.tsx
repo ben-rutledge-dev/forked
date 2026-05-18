@@ -3,7 +3,8 @@ import { getTranslations } from 'next-intl/server';
 // Components
 import { ProfileForm } from './components/ProfileForm';
 import { Button } from '@/components/Button';
-import { PageHeading } from '@/components/Typography';
+import { PageHeader } from '@/components/PageHeader';
+import { PageLayout } from '@/components/PageLayout';
 // Lib
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -35,17 +36,21 @@ const ProfilePage = async () => {
   });
 
   return (
-    <div className="mx-auto max-w-2xl px-4 py-10">
-      <div className="flex items-center justify-between mb-8">
-        <PageHeading>{t('heading')}</PageHeading>
-        {user?.username && user.isPublic && (
-          <Button href={`/u/${user.username}`} variant="primary" size="md" shape="pill">
-            {t('viewProfile')}
-          </Button>
-        )}
-      </div>
+    <PageLayout width="narrow">
+      <PageHeader
+        title={t('heading')}
+        action={
+          user?.username && user.isPublic
+            ? (
+                <Button href={`/u/${user.username}`} variant="primary" size="md" shape="pill">
+                  {t('viewProfile')}
+                </Button>
+              )
+            : undefined
+        }
+      />
       <ProfileForm user={user!} />
-    </div>
+    </PageLayout>
   );
 };
 

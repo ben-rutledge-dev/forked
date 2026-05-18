@@ -5,6 +5,7 @@ import { notFound } from 'next/navigation';
 // Components
 import { ProfileRecipesGrid } from './components/ProfileRecipesGrid';
 import { GlobeIcon, InstagramIcon, TwitterXIcon, UserIcon, YouTubeIcon } from '@/components/Icons';
+import { PageLayout } from '@/components/PageLayout';
 import { SectionHeading } from '@/components/Typography';
 // Lib
 import { prisma } from '@/lib/prisma';
@@ -77,7 +78,7 @@ const PublicProfilePage = async ({ params }: Props) => {
             <div className="w-full h-24 bg-primary-50" />
           )}
 
-      <div className="mx-auto max-w-4xl px-4">
+      <PageLayout py="none">
         {/* Profile header */}
         <div className="flex items-end gap-4 -mt-8 mb-6 px-0">
           <div className="shrink-0 rounded-full border-4 border-white overflow-hidden bg-stone-100 w-20 h-20 relative">
@@ -166,7 +167,7 @@ const PublicProfilePage = async ({ params }: Props) => {
               }))}
               />
             )}
-      </div>
+      </PageLayout>
     </div>
   );
 };

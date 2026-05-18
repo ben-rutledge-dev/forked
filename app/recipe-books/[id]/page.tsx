@@ -4,7 +4,8 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 // Components
-import { PageHeading } from '@/components/Typography';
+import { PageHeader } from '@/components/PageHeader';
+import { PageLayout } from '@/components/PageLayout';
 // Lib
 import { prisma } from '@/lib/prisma';
 // Utils
@@ -49,14 +50,14 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
   const publicEntries = book.entries.filter(e => e.recipe.isPublic);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
+    <PageLayout>
       {book.coverImageUrl && (
         <div className="w-full h-48 rounded-xl overflow-hidden mb-6 relative">
           <Image src={book.coverImageUrl} alt="" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 896px" />
         </div>
       )}
 
-      <PageHeading>{book.title}</PageHeading>
+      <PageHeader title={book.title} backHref="/my/recipes?tab=books" />
       {book.description && <p className="mt-2 text-stone-500">{book.description}</p>}
 
       <div className="mt-3 flex flex-wrap gap-2">
@@ -107,7 +108,7 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
               </div>
             )}
       </div>
-    </div>
+    </PageLayout>
   );
 };
 

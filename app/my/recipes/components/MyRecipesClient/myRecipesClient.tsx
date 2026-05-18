@@ -12,13 +12,15 @@ import type { BookWithStats, PendingInvite } from '@/data/recipe-books/types';
 import { useFavouriteRecipes, useMyRecipes } from '@/data/recipes';
 // Components
 import { Button } from '@/components/Button';
+import { PageHeader } from '@/components/PageHeader';
+import { PageLayout } from '@/components/PageLayout';
 import { Pagination } from '@/components/Pagination';
 import { RecipeBookCard } from '@/components/RecipeBookCard';
 import { RecipeCard } from '@/components/RecipeCard';
 import { ResultCount } from '@/components/ResultCount';
 import { SearchFilterBar } from '@/components/SearchFilterBar';
 import type { TokenOption } from '@/components/TokenInput';
-import { PageHeading, SectionLabel } from '@/components/Typography';
+import { SectionLabel } from '@/components/Typography';
 // Types
 import type { Recipe } from '@/types';
 // Lib
@@ -44,16 +46,17 @@ type Props = {
 const PAGE_SIZE = 12;
 const TAB_KEYS = ['recipes', 'favourites', 'books'] as Array<'recipes' | 'favourites' | 'books'>;
 
-export const MyRecipesClient = ({
-  initialRecipes,
-  allRecipes,
-  initialBooks,
-  initialPending,
-  defaultTab = 'recipes',
-  initialTagFilter = [],
-  initialCategories = [],
-  initialFavourites = [],
-}: Props) => {
+export const MyRecipesClient: React.FC<Props> = (props) => {
+  const {
+    initialRecipes,
+    allRecipes,
+    initialBooks,
+    initialPending,
+    defaultTab = 'recipes',
+    initialTagFilter = [],
+    initialCategories = [],
+    initialFavourites = [],
+  } = props;
   const router = useRouter();
   const searchParams = useSearchParams();
   const t = useTranslations('myRecipes');
@@ -169,29 +172,8 @@ export const MyRecipesClient = ({
   const visible = recipes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-10">
-      <div className="flex items-center justify-between mb-6">
-        <PageHeading>{t('heading')}</PageHeading>
-        {tab === 'recipes'
-          ? (
-              <Link
-                href="/my/recipes/new"
-                className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
-              >
-                {t('newRecipe')}
-              </Link>
-            )
-          : tab === 'books'
-            ? (
-                <Link
-                  href="/my/recipe-books/new"
-                  className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
-                >
-                  {t('newRecipeBook')}
-                </Link>
-              )
-            : null}
-      </div>
+    <PageLayout>
+      <PageHeader title={t('heading')} action={<HeaderAction tab={tab} />} />
 
       {/* Tabs */}
       <div className="flex gap-1 mb-8 border-b border-stone-200">
@@ -343,7 +325,7 @@ export const MyRecipesClient = ({
               )}
         </>
       )}
-    </div>
+    </PageLayout>
   );
 };
 
@@ -351,7 +333,8 @@ type InviteRowProps = {
   invite: PendingInvite
 };
 
-const InviteRow = ({ invite }: InviteRowProps) => {
+const InviteRow: React.FC<InviteRowProps> = (props) => {
+  const { invite } = props;
   const { mutate: accept, isPending: accepting } = usePostAcceptInvite({ recipeBookId: invite.recipeBook.id });
   const { mutate: decline, isPending: declining } = usePostDeclineInvite({ recipeBookId: invite.recipeBook.id });
   const isPending = accepting || declining;
@@ -373,4 +356,34 @@ const InviteRow = ({ invite }: InviteRowProps) => {
       </div>
     </div>
   );
+};
+
+type HeaderActionProps = {
+  tab: 'recipes' | 'books' | 'favourites'
+};
+
+const HeaderAction: React.FC<HeaderActionProps> = (props) => {
+  const { tab } = props;
+  const t = useTranslations('myRecipes');
+  if (tab === 'recipes') {
+    return (
+      <Link
+        href="/my/recipes/new"
+        className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
+      >
+        {t('newRecipe')}
+      </Link>
+    );
+  }
+  if (tab === 'books') {
+    return (
+      <Link
+        href="/my/recipe-books/new"
+        className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
+      >
+        {t('newRecipeBook')}
+      </Link>
+    );
+  }
+  return null;
 };

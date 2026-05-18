@@ -6,12 +6,12 @@ import { useEffect, useState } from 'react';
 // Data
 import { usePoolRecipes } from '@/data/recipes';
 // Components
+import { PageHeader } from '@/components/PageHeader';
 import { Pagination } from '@/components/Pagination';
 import { RecipeCard } from '@/components/RecipeCard';
 import { ResultCount } from '@/components/ResultCount';
 import { SearchFilterBar } from '@/components/SearchFilterBar';
 import type { TokenOption } from '@/components/TokenInput';
-import { PageHeading } from '@/components/Typography';
 // Lib
 import { GROUP_LABELS, GROUP_ORDER } from '@/lib/categories';
 
@@ -117,7 +117,7 @@ export const PoolClient = ({
 
   return (
     <div>
-      <PageHeading className="mb-4">{t('heading')}</PageHeading>
+      <PageHeader title={t('heading')} />
 
       <div className="mb-6">
         <SearchFilterBar

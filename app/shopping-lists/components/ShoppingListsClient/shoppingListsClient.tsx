@@ -10,14 +10,25 @@ import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
 import type { ShoppingListWithStats, PendingShoppingListInvite } from '@/data/shopping-lists/types';
 // Components
 import { Button } from '@/components/Button';
+import { PageHeader } from '@/components/PageHeader';
+import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
-import { PageHeading, SectionLabel } from '@/components/Typography';
+import { SectionLabel } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
 
 type Props = {
   initialLists: ShoppingListWithStats[]
   initialPending: PendingShoppingListInvite[]
 
+};
+
+const NewListAction = ({ onNew }: { onNew: () => void }) => {
+  const t = useTranslations('shoppingLists');
+  return (
+    <Button variant="primary" size="md" shape="pill" onClick={onNew}>
+      {t('newList')}
+    </Button>
+  );
 };
 
 export const ShoppingListsClient = ({ initialLists, initialPending }: Props) => {
@@ -56,15 +67,13 @@ export const ShoppingListsClient = ({ initialLists, initialPending }: Props) => 
   };
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-8">
+    <PageLayout>
       {toast && <Toast message={toast} onDismiss={() => setToast(null)} />}
 
-      <div className="flex items-center justify-between mb-6">
-        <PageHeading>{t('heading')}</PageHeading>
-        <Button variant="primary" size="md" shape="pill" onClick={() => setCreating(c => !c)}>
-          {t('newList')}
-        </Button>
-      </div>
+      <PageHeader
+        title={t('heading')}
+        action={<NewListAction onNew={() => setCreating(c => !c)} />}
+      />
 
       {creating && (
         <form onSubmit={handleCreate} className="mb-6 flex gap-2">
@@ -144,6 +153,6 @@ export const ShoppingListsClient = ({ initialLists, initialPending }: Props) => 
               ))}
             </ul>
           )}
-    </main>
+    </PageLayout>
   );
 };

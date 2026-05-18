@@ -10,6 +10,7 @@
     "deleting": "Deleting…",
     "uploading": "Uploading…",
     "addCoverPhoto": "Add cover photo",
+    "back": "Back",
     "closeDialog": "Close dialog",
     "loading": "Loading…",
     "noItems": "No items.",
@@ -190,9 +191,9 @@
     "heading": "My Recipes",
     "newRecipe": "+ New recipe",
     "newRecipeBook": "+ New recipe book",
-    "tabRecipes": "My Recipes",
+    "tabRecipes": "Recipes",
     "tabBooks": "Recipe Books",
-    "tabFavourites": "Favourited Recipes",
+    "tabFavourites": "Favourites",
     "searchPlaceholder": "Search recipes…",
     "noResults": "No recipes match your filters.",
     "noRecipesYet": "No recipes yet.",
@@ -256,6 +257,7 @@
     "unknownUser": "Unknown",
     "anonymous": "Anonymous",
     "noPublicRecipes": "No public recipes yet.",
+    "recipesHeading": "Recipes",
     "profileNotFound": "Profile not found"
   },
   "recipeBooks": {
@@ -351,6 +353,7 @@
     "unknownUser": "Unknown"
   },
   "shoppingList": {
+    "back": "Back",
     "backToLists": "← Lists",
     "unsorted": "Unsorted",
     "dragToReorder": "Drag to reorder",
@@ -400,5 +403,25 @@
     "ownerBadge": "owner",
     "inviteAccepted": "Invite accepted",
     "inviteDeclined": "Invite declined"
+  },
+  "addToShoppingList": {
+    "buttonLabel": "+ Shopping list",
+    "addedToast": "Added {count, plural, one {# item} other {# items}} to {listName}",
+    "modalHeading": "Add to shopping list",
+    "ingredientsLabel": "Ingredients",
+    "deselectAll": "Deselect all",
+    "selectAll": "Select all",
+    "cancel": "Cancel",
+    "next": "Next →",
+    "chooseListHeading": "Choose a list",
+    "itemCount": "{count, plural, one {# item} other {# items}}",
+    "newListPlaceholder": "New list name…",
+    "creating": "Creating…",
+    "create": "Create",
+    "newList": "+ New list",
+    "back": "← Back",
+    "adding": "Adding…",
+    "addItems": "Add {count, plural, one {# item} other {# items}}",
+    "errorMessage": "Something went wrong. Please try again."
   }
 }
