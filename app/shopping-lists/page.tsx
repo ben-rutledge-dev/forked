@@ -1,11 +1,14 @@
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 // Data
+import { queryKeys } from '@/data/queryKeys';
 import type { ShoppingListRole } from '@/data/shopping-lists/types';
 // Components
 import { ShoppingListsClient } from './components/ShoppingListsClient';
 // Lib
 import { auth } from '@/lib/auth';
+import { getQueryClient } from '@/lib/getQueryClient';
 import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = { title: 'Shopping Lists' };
@@ -16,23 +19,20 @@ const ShoppingListsPage = async () => {
 
   const userId = session.user.id;
 
-  const [members, user] = await Promise.all([
-    prisma.shoppingListMember.findMany({
-      where: { userId },
-      include: {
-        shoppingList: {
-          include: {
-            members: { where: { acceptedAt: { not: null } } },
-            items: true,
-          },
+  const members = await prisma.shoppingListMember.findMany({
+    where: { userId },
+    include: {
+      shoppingList: {
+        include: {
+          members: { where: { acceptedAt: { not: null } } },
+          items: true,
         },
       },
-      orderBy: { createdAt: 'asc' },
-    }),
-    prisma.user.findUnique({ where: { id: userId }, select: { isPremium: true } }),
-  ]);
+    },
+    orderBy: { createdAt: 'asc' },
+  });
 
-  const accepted = members
+  const lists = members
     .filter(m => m.acceptedAt !== null)
     .map(m => ({
       id: m.shoppingList.id,
@@ -54,11 +54,13 @@ const ShoppingListsPage = async () => {
       invitedByUserId: m.invitedByUserId,
     }));
 
+  const queryClient = getQueryClient();
+  queryClient.setQueryData(queryKeys.shoppingLists.mine(), { lists, pending });
+
   return (
-    <ShoppingListsClient
-      initialLists={accepted}
-      initialPending={pending}
-    />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ShoppingListsClient />
+    </HydrationBoundary>
   );
 };
 

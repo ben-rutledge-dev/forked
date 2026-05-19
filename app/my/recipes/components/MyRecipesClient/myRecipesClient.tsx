@@ -8,7 +8,7 @@ import { useEffect, useState } from 'react';
 import { useRecipeBooks } from '@/data/recipe-books';
 import { usePostAcceptInvite } from '@/data/recipe-books/[recipeBookId]/invites/accept';
 import { usePostDeclineInvite } from '@/data/recipe-books/[recipeBookId]/invites/decline';
-import type { BookWithStats, PendingInvite } from '@/data/recipe-books/types';
+import type { PendingInvite } from '@/data/recipe-books/types';
 import { useFavouriteRecipes, useMyRecipes } from '@/data/recipes';
 // Components
 import { Button } from '@/components/Button';
@@ -21,8 +21,6 @@ import { ResultCount } from '@/components/ResultCount';
 import { SearchFilterBar } from '@/components/SearchFilterBar';
 import type { TokenOption } from '@/components/TokenInput';
 import { SectionLabel } from '@/components/Typography';
-// Types
-import type { Recipe } from '@/types';
 // Lib
 import { GROUP_LABELS, GROUP_ORDER } from '@/lib/categories';
 
@@ -33,14 +31,10 @@ type RecipeFilterMeta = {
 };
 
 type Props = {
-  initialRecipes: Recipe[]
   allRecipes: RecipeFilterMeta[]
-  initialBooks: BookWithStats[]
-  initialPending: PendingInvite[]
   defaultTab?: 'recipes' | 'books' | 'favourites'
   initialTagFilter?: string[]
   initialCategories?: string[]
-  initialFavourites?: Recipe[]
 };
 
 const PAGE_SIZE = 12;
@@ -48,14 +42,10 @@ const TAB_KEYS = ['recipes', 'favourites', 'books'] as Array<'recipes' | 'favour
 
 export const MyRecipesClient: React.FC<Props> = (props) => {
   const {
-    initialRecipes,
     allRecipes,
-    initialBooks,
-    initialPending,
     defaultTab = 'recipes',
     initialTagFilter = [],
     initialCategories = [],
-    initialFavourites = [],
   } = props;
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -113,13 +103,10 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
   }, [selectedFilters, page]);
 
   // Always fetch all recipes; apply filters client-side for instant, reliable results
-  const { data: allRecipeData = initialRecipes, isFetching } = useMyRecipes({
-    initialData: initialRecipes,
-  });
-
-  const { data: favouriteRecipes = initialFavourites } = useFavouriteRecipes({
-    initialData: initialFavourites,
-  });
+  const { data: allRecipeData = [], isFetching } = useMyRecipes();
+  const { data: favouriteRecipes = [] } = useFavouriteRecipes();
+  const { data: booksData = { books: [], pending: [] } } = useRecipeBooks();
+  const { books, pending } = booksData;
 
   let recipes = allRecipeData;
   if (query) {
@@ -136,14 +123,9 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
   }
   if (activeTags.length > 0) {
     recipes = recipes.filter(r =>
-      r.tags.some(t => activeTags.includes(t)),
+      r.tags.some(tag => activeTags.includes(tag)),
     );
   }
-
-  const { data: booksData = { books: initialBooks, pending: initialPending } } = useRecipeBooks({
-    initialData: { books: initialBooks, pending: initialPending },
-  });
-  const { books, pending } = booksData;
 
   const handleTabChange = (t: 'recipes' | 'books' | 'favourites') => {
     setTab(t);

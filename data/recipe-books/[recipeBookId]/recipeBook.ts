@@ -9,10 +9,7 @@ export const useRecipeBook = (params?: Params) =>
   useApiQuery<RecipeBookDetail>(
     queryKeys.recipeBooks.detail(params?.recipeBookId ?? ''),
     url(params?.recipeBookId ?? ''),
-    {
-      enabled: !!params?.recipeBookId,
-      initialData: params?.initialData,
-    },
+    { enabled: !!params?.recipeBookId },
   );
 
 export const usePutRecipeBook = (params?: Params) => {

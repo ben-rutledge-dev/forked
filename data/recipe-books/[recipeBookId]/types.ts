@@ -56,5 +56,4 @@ export type PutRecipeBookResponse = RecipeBook;
 
 export type Params = {
   recipeBookId?: string
-  initialData?: RecipeBookDetail
 };

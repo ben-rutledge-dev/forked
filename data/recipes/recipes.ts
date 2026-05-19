@@ -3,7 +3,7 @@ import { queryKeys } from '@/data/queryKeys';
 import { useApiQuery, useApiPost, useQueryClient } from '@/data/shared/hooks';
 // Types
 import type { Recipe } from '@/types';
-import type { FavouriteRecipesParams, MyRecipesParams, PostRecipePayload, PostRecipeResponse, PoolParams, PoolRecipesResponse } from './types';
+import type { MyRecipesParams, PostRecipePayload, PostRecipeResponse, PoolParams, PoolRecipesResponse } from './types';
 
 export const useMyRecipes = (params?: MyRecipesParams) => {
   const searchParams = new URLSearchParams();
@@ -13,15 +13,13 @@ export const useMyRecipes = (params?: MyRecipesParams) => {
   return useApiQuery<Recipe[]>(
     queryKeys.recipes.mine(params?.tags, params?.categories),
     `/api/recipes?${searchParams.toString()}`,
-    { initialData: params?.initialData },
   );
 };
 
-export const useFavouriteRecipes = (params?: FavouriteRecipesParams) =>
+export const useFavouriteRecipes = () =>
   useApiQuery<Recipe[]>(
     queryKeys.recipes.favourites(),
     '/api/recipes/favourites',
-    { initialData: params?.initialData },
   );
 
 export const usePoolRecipes = (params?: PoolParams) => {
@@ -36,7 +34,6 @@ export const usePoolRecipes = (params?: PoolParams) => {
     queryKeys.recipes.pool(params?.categories, params?.q, params?.page),
     `/api/pool?${searchParams.toString()}`,
     {
-      initialData: params?.initialData,
       staleTime: 0,
       placeholderData: (prev: PoolRecipesResponse | undefined) => prev,
     },

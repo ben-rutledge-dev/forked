@@ -22,21 +22,7 @@ type Category = {
   group: string
 };
 
-type PoolRecipe = {
-  id: string
-  title: string
-  description: string | null
-  coverImageUrl: string | null
-  forkCount: number
-  authorId: string | null
-  isPublic: boolean
-  forkedFromId: string | null
-  tags: string[]
-};
-
 type Props = {
-  initialRecipes: PoolRecipe[]
-  initialTotal: number
   initialPage: number
   initialQuery: string
   initialCategories: string[]
@@ -52,8 +38,6 @@ type Filters = {
 const PAGE_SIZE = 24;
 
 export const PoolClient = ({
-  initialRecipes,
-  initialTotal,
   initialPage,
   initialQuery,
   initialCategories,
@@ -96,14 +80,10 @@ export const PoolClient = ({
     categories: debouncedFilters.categories,
     q: debouncedFilters.query,
     page,
-    initialData:
-      initialCategories.length === 0 && !initialQuery
-        ? { recipes: initialRecipes, total: initialTotal }
-        : undefined,
   });
 
-  const recipes = data?.recipes ?? initialRecipes;
-  const total = data?.total ?? initialTotal;
+  const recipes = data?.recipes ?? [];
+  const total = data?.total ?? 0;
 
   const categoryOptions: TokenOption[] = allCategories.map(cat => ({
     id: cat.slug,

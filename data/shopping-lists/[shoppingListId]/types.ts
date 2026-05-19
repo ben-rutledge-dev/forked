@@ -64,5 +64,4 @@ export type PutShoppingListResponse = {
 
 export type Params = {
   shoppingListId?: string
-  initialData?: ShoppingListDetail
 };

@@ -7,7 +7,6 @@ import { useState } from 'react';
 import { queryKeys } from '@/data/queryKeys';
 import { useQueryClient } from '@/data/shared/hooks';
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
-import type { ShoppingListWithStats, PendingShoppingListInvite } from '@/data/shopping-lists/types';
 // Components
 import { Button } from '@/components/Button';
 import { PageHeader } from '@/components/PageHeader';
@@ -15,12 +14,6 @@ import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
 import { SectionLabel } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
-
-type Props = {
-  initialLists: ShoppingListWithStats[]
-  initialPending: PendingShoppingListInvite[]
-
-};
 
 const NewListAction = ({ onNew }: { onNew: () => void }) => {
   const t = useTranslations('shoppingLists');
@@ -31,7 +24,7 @@ const NewListAction = ({ onNew }: { onNew: () => void }) => {
   );
 };
 
-export const ShoppingListsClient = ({ initialLists, initialPending }: Props) => {
+export const ShoppingListsClient = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [newTitle, setNewTitle] = useState('');
@@ -39,9 +32,9 @@ export const ShoppingListsClient = ({ initialLists, initialPending }: Props) => 
   const [toast, setToast] = useState<string | null>(null);
   const t = useTranslations('shoppingLists');
 
-  const { data } = useShoppingLists({ initialData: { lists: initialLists, pending: initialPending } });
-  const lists = data?.lists ?? initialLists;
-  const pending = data?.pending ?? initialPending;
+  const { data } = useShoppingLists();
+  const lists = data?.lists ?? [];
+  const pending = data?.pending ?? [];
 
   const { mutateAsync: createList, isPending: isCreating } = usePostShoppingList();
 

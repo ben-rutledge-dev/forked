@@ -1,10 +1,14 @@
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
+// Data
+import { queryKeys } from '@/data/queryKeys';
 // Components
 import { PoolClient } from './components/PoolClient';
 import { PageLayout } from '@/components/PageLayout';
 // Lib
 import { auth } from '@/lib/auth';
+import { getQueryClient } from '@/lib/getQueryClient';
 import { prisma } from '@/lib/prisma';
 
 export const metadata: Metadata = { title: 'Recipe Pool' };
@@ -64,19 +68,25 @@ const PoolPage = async ({
 
   const favouritedIds = favourites.map((f: { recipeId: string }) => f.recipeId);
 
+  const queryClient = getQueryClient();
+  queryClient.setQueryData(
+    queryKeys.recipes.pool(categorySlugs, q, page),
+    { recipes, total },
+  );
+
   return (
     <PageLayout>
-      <Suspense>
-        <PoolClient
-          initialRecipes={recipes}
-          initialTotal={total}
-          initialPage={page}
-          initialQuery={q}
-          initialCategories={categorySlugs}
-          allCategories={allCategories}
-          initialFavourites={favouritedIds}
-        />
-      </Suspense>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <Suspense>
+          <PoolClient
+            initialPage={page}
+            initialQuery={q}
+            initialCategories={categorySlugs}
+            allCategories={allCategories}
+            initialFavourites={favouritedIds}
+          />
+        </Suspense>
+      </HydrationBoundary>
     </PageLayout>
   );
 };

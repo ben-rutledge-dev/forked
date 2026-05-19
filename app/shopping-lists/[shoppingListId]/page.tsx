@@ -1,11 +1,14 @@
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import type { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 // Data
+import { queryKeys } from '@/data/queryKeys';
 import type { ShoppingListRole } from '@/data/shopping-lists/types';
 // Components
 import { ShoppingListDetailClient } from './components/ShoppingListDetailClient';
 // Lib
 import { auth } from '@/lib/auth';
+import { getQueryClient } from '@/lib/getQueryClient';
 import { prisma } from '@/lib/prisma';
 
 type Props = { params: Promise<{ shoppingListId: string }> };
@@ -89,12 +92,17 @@ const ShoppingListDetailPage = async ({ params }: Props) => {
     })),
   };
 
+  const queryClient = getQueryClient();
+  queryClient.setQueryData(queryKeys.shoppingLists.detail(shoppingListId), listData);
+
   return (
-    <ShoppingListDetailClient
-      list={listData}
-      currentUserId={userId}
-      isPremium={user?.isPremium ?? false}
-    />
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <ShoppingListDetailClient
+        shoppingListId={shoppingListId}
+        currentUserId={userId}
+        isPremium={user?.isPremium ?? false}
+      />
+    </HydrationBoundary>
   );
 };
 

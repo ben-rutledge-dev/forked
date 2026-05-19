@@ -1,11 +1,14 @@
+import { dehydrate, HydrationBoundary } from '@tanstack/react-query';
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
 // Data
+import { queryKeys } from '@/data/queryKeys';
 import type { BookWithStats, PendingInvite } from '@/data/recipe-books/types';
 // Components
 import { MyRecipesClient } from './components/MyRecipesClient';
 // Lib
 import { auth } from '@/lib/auth';
+import { getQueryClient } from '@/lib/getQueryClient';
 import { prisma } from '@/lib/prisma';
 // Utils
 import { type Role } from '@/utils/roles';
@@ -127,33 +130,45 @@ const MyRecipesPage = async ({
       invitedByUserId: m.invitedByUserId,
     }));
 
+  const queryClient = getQueryClient();
+
+  queryClient.setQueryData(
+    queryKeys.recipes.mine(),
+    filteredRecipes.map(({ categories, ...r }) => ({
+      ...r,
+      description: r.description ?? null,
+      coverImageUrl: r.coverImageUrl ?? null,
+      forkedFromId: r.forkedFromId ?? null,
+      categories: categories.map(rc => rc.category),
+    })),
+  );
+
+  queryClient.setQueryData(
+    queryKeys.recipes.favourites(),
+    favouriteRecords.map(({ recipe: { categories, ...r } }) => ({
+      ...r,
+      description: r.description ?? null,
+      coverImageUrl: r.coverImageUrl ?? null,
+      forkedFromId: r.forkedFromId ?? null,
+      categories: categories.map(rc => rc.category),
+    })),
+  );
+
+  queryClient.setQueryData(queryKeys.recipeBooks.mine(), { books, pending });
+
   return (
-    <Suspense>
-      <MyRecipesClient
-        initialRecipes={filteredRecipes.map(({ categories, ...r }) => ({
-          ...r,
-          description: r.description ?? null,
-          coverImageUrl: r.coverImageUrl ?? null,
-          forkedFromId: r.forkedFromId ?? null,
-          categories: categories.map(rc => rc.category),
-        }))}
-        allRecipes={allRecipes.map(({ categories, ...r }) => ({
-          ...r,
-          categories: categories.map(rc => rc.category),
-        }))}
-        initialBooks={books}
-        initialPending={pending}
-        initialTagFilter={tags}
-        initialCategories={categorySlugs}
-        initialFavourites={favouriteRecords.map(({ recipe: { categories, ...r } }) => ({
-          ...r,
-          description: r.description ?? null,
-          coverImageUrl: r.coverImageUrl ?? null,
-          forkedFromId: r.forkedFromId ?? null,
-          categories: categories.map(rc => rc.category),
-        }))}
-      />
-    </Suspense>
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <Suspense>
+        <MyRecipesClient
+          allRecipes={allRecipes.map(({ categories, ...r }) => ({
+            ...r,
+            categories: categories.map(rc => rc.category),
+          }))}
+          initialTagFilter={tags}
+          initialCategories={categorySlugs}
+        />
+      </Suspense>
+    </HydrationBoundary>
   );
 };
 

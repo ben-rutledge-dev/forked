@@ -9,10 +9,7 @@ export const useShoppingList = (params?: Params) =>
   useApiQuery<ShoppingListDetail>(
     queryKeys.shoppingLists.detail(params?.shoppingListId ?? ''),
     url(params?.shoppingListId ?? ''),
-    {
-      enabled: !!params?.shoppingListId,
-      initialData: params?.initialData,
-    },
+    { enabled: !!params?.shoppingListId },
   );
 
 export const usePutShoppingList = (params?: Params) => {

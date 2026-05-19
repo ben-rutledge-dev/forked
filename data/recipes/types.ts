@@ -1,14 +1,6 @@
-// Types
-import type { Recipe } from '@/types';
-
 export type MyRecipesParams = {
-  initialData?: Recipe[]
   tags?: string[]
   categories?: string[]
-};
-
-export type FavouriteRecipesParams = {
-  initialData?: Recipe[]
 };
 
 export type RecipeIngredientPayload = {
@@ -65,5 +57,4 @@ export type PoolParams = {
   categories?: string[]
   q?: string
   page?: number
-  initialData?: PoolRecipesResponse
 };

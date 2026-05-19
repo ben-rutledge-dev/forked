@@ -3,15 +3,10 @@ import { queryKeys } from '@/data/queryKeys';
 import { useApiQuery, useApiPost, useQueryClient } from '@/data/shared/hooks';
 import type { RecipeBooksResponse, PostRecipeBookPayload, PostRecipeBookResponse } from './types';
 
-export type Params = {
-  initialData?: RecipeBooksResponse
-};
-
-export const useRecipeBooks = (params?: Params) =>
+export const useRecipeBooks = () =>
   useApiQuery<RecipeBooksResponse>(
     queryKeys.recipeBooks.mine(),
     '/api/recipe-books',
-    { initialData: params?.initialData },
   );
 
 export const usePostRecipeBook = () => {

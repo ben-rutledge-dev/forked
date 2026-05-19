@@ -29,7 +29,7 @@ import { usePostShoppingListInvite } from '@/data/shopping-lists/[shoppingListId
 import { useDeleteCheckedItems, usePutItemSection, usePutItemsReorder } from '@/data/shopping-lists/[shoppingListId]/items';
 import { useDeleteShoppingListMember } from '@/data/shopping-lists/[shoppingListId]/members/[memberId]';
 import { usePostSection, usePutSectionReorder } from '@/data/shopping-lists/[shoppingListId]/sections';
-import type { ShoppingListDetail, ShoppingListItem } from '@/data/shopping-lists/[shoppingListId]/types';
+import type { ShoppingListItem } from '@/data/shopping-lists/[shoppingListId]/types';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 import { useModal } from '@/hooks/useModal';
@@ -49,7 +49,7 @@ import { PageHeading } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
 
 type Props = {
-  list: ShoppingListDetail
+  shoppingListId: string
   currentUserId: string
   isPremium: boolean
 };
@@ -57,21 +57,21 @@ type Props = {
 // ─── Main client ──────────────────────────────────────────────────────────────
 
 export const ShoppingListDetailClient: React.FC<Props> = (props) => {
-  const { list: initialList, currentUserId, isPremium } = props;
+  const { shoppingListId, currentUserId, isPremium } = props;
   const router = useRouter();
   const queryClient = useQueryClient();
   const { confirm } = useConfirm();
   const t = useTranslations('shoppingList');
+
+  const { data: list } = useShoppingList({ shoppingListId });
+
   const [toast, setToast] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState(false);
-  const [titleDraft, setTitleDraft] = useState(initialList.title);
+  const [titleDraft, setTitleDraft] = useState(() => list?.title ?? '');
   const [newSectionTitle, setNewSectionTitle] = useState('');
   const [addingSection, setAddingSection] = useState(false);
 
-  const { data } = useShoppingList({ shoppingListId: initialList.id, initialData: initialList });
-  const list = data ?? initialList;
-
-  useShoppingListRealtime(list.id);
+  useShoppingListRealtime(shoppingListId);
 
   // ── Unified drag state ─────────────────────────────────────────────────────
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -80,37 +80,39 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
   const [dropSide, setDropSide] = useState<'top' | 'bottom' | null>(null);
 
   // dragSections carries optimistic item order during an active drag
-  const [dragSections, setDragSections] = useState(
-    list.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) })),
+  const [dragSections, setDragSections] = useState(() =>
+    list?.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) })) ?? [],
   );
-
-  // When not dragging, always derive from server data; during drag use optimistic state
-  const localSections = activeId
-    ? dragSections
-    : list.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) }));
 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  const detailKey = queryKeys.shoppingLists.detail(list.id);
+  const { mutate: putList } = usePutShoppingList({ shoppingListId });
+  const { mutateAsync: deleteList } = useDeleteShoppingList({ shoppingListId });
+  const { mutate: postSection } = usePostSection({ shoppingListId });
+  const { mutate: reorderSections } = usePutSectionReorder({ shoppingListId });
+  const { mutate: clearChecked } = useDeleteCheckedItems({ shoppingListId });
+  const { mutate: reorderItems } = usePutItemsReorder({ shoppingListId });
+  const { mutateAsync: moveItemSection } = usePutItemSection({ shoppingListId });
+  const { mutateAsync: invite } = usePostShoppingListInvite({ shoppingListId });
+  const { mutateAsync: deleteMember } = useDeleteShoppingListMember({ shoppingListId });
+
+  const { modal } = useModal();
+
+  const detailKey = queryKeys.shoppingLists.detail(shoppingListId);
   const invalidateDetail = useCallback(() =>
     queryClient.invalidateQueries({ queryKey: detailKey }), [queryClient, detailKey]);
 
-  const { mutate: putList } = usePutShoppingList({ shoppingListId: list.id });
-  const { mutateAsync: deleteList } = useDeleteShoppingList({ shoppingListId: list.id });
-  const { mutate: postSection } = usePostSection({ shoppingListId: list.id });
-  const { mutate: reorderSections } = usePutSectionReorder({ shoppingListId: list.id });
-  const { mutate: clearChecked } = useDeleteCheckedItems({ shoppingListId: list.id });
-  const { mutate: reorderItems } = usePutItemsReorder({ shoppingListId: list.id });
-  const { mutateAsync: moveItemSection } = usePutItemSection({ shoppingListId: list.id });
-  const { mutateAsync: invite } = usePostShoppingListInvite({ shoppingListId: list.id });
-  const { mutateAsync: deleteMember } = useDeleteShoppingListMember({ shoppingListId: list.id });
+  if (!list) return null;
 
   const isOwner = list.currentUserRole === 'OWNER';
 
-  const { modal } = useModal();
+  // When not dragging, always derive from server data; during drag use optimistic state
+  const localSections = activeId
+    ? dragSections
+    : list.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) }));
 
   const handleInvite = async () => {
     const result = await modal<true | null, React.ComponentProps<typeof InviteModal>>({
