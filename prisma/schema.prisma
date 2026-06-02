@@ -69,6 +69,8 @@ model User {
   favourites              RecipeFavourite[]
   shoppingListMembers     ShoppingListMember[] @relation("ShoppingListMember")
   shoppingListsInvited    ShoppingListMember[] @relation("ShoppingListInvitedBy")
+  mealPlanMembers         MealPlanMember[]     @relation("MealPlanMember")
+  mealPlanInvitations     MealPlanMember[]     @relation("MealPlanInvitedBy")
 }
 
 model Recipe {
@@ -92,6 +94,7 @@ model Recipe {
   categories    RecipeCategory[]
   favouritedBy  RecipeFavourite[]
   shoppingListItems ShoppingListItem[]
+  mealPlanEntries   MealPlanEntry[]
 }
 
 enum CategoryGroup {
@@ -233,6 +236,63 @@ model ShoppingListItem {
 
   @@index([sectionId])
   @@index([shoppingListId])
+}
+
+enum MealPlanRole {
+  OWNER
+  COLLABORATOR
+  VIEWER
+}
+
+model MealPlan {
+  id        String           @id @default(cuid())
+  title     String           @default("My Meal Plan")
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
+  members   MealPlanMember[]
+  slots     MealPlanSlot[]
+  entries   MealPlanEntry[]
+}
+
+model MealPlanMember {
+  id              String       @id @default(cuid())
+  mealPlanId      String
+  userId          String
+  role            MealPlanRole
+  acceptedAt      DateTime?
+  invitedByUserId String
+  createdAt       DateTime     @default(now())
+  mealPlan        MealPlan     @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  user            User         @relation("MealPlanMember", fields: [userId], references: [id], onDelete: Cascade)
+  invitedBy       User         @relation("MealPlanInvitedBy", fields: [invitedByUserId], references: [id])
+
+  @@unique([mealPlanId, userId])
+}
+
+model MealPlanSlot {
+  id         String          @id @default(cuid())
+  mealPlanId String
+  label      String
+  isDefault  Boolean         @default(false)
+  orderIndex Int
+  createdAt  DateTime        @default(now())
+  mealPlan   MealPlan        @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  entries    MealPlanEntry[]
+}
+
+model MealPlanEntry {
+  id         String       @id @default(cuid())
+  mealPlanId String
+  slotId     String
+  recipeId   String?
+  date       DateTime     @db.Date
+  orderIndex Int
+  createdAt  DateTime     @default(now())
+  mealPlan   MealPlan     @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  slot       MealPlanSlot @relation(fields: [slotId], references: [id], onDelete: Cascade)
+  recipe     Recipe?      @relation(fields: [recipeId], references: [id], onDelete: SetNull)
+
+  @@index([mealPlanId, date])
 }
 
 enum UnitType {

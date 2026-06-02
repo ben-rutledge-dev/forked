@@ -59,4 +59,14 @@ export const queryKeys = {
     items: (id: string) =>
       [...queryKeys.shoppingLists.detail(id), 'items'] as const,
   },
+
+  mealPlans: {
+    all: ['mealPlans'] as const,
+    mine: () => [...queryKeys.mealPlans.all, 'mine'] as const,
+    detail: (id: string) => [...queryKeys.mealPlans.all, id] as const,
+    week: (id: string, startDate: string) =>
+      [...queryKeys.mealPlans.detail(id), 'week', startDate] as const,
+    savedRecipes: (q?: string) =>
+      [...queryKeys.mealPlans.all, 'savedRecipes', q ?? ''] as const,
+  },
 };

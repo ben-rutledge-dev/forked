@@ -17,7 +17,7 @@ import { BookRecipesSection } from './components/BookRecipesSection';
 import { RecipeBookEditForm } from './components/RecipeBookEditForm';
 import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
-import { InviteModal } from '@/components/Invites';
+import { InviteModal, type InviteModalProps } from '@/components/Invites';
 import { MembersSection } from '@/components/MembersSection';
 import { PageHeader } from '@/components/PageHeader';
 import { PageLayout } from '@/components/PageLayout';
@@ -119,12 +119,15 @@ export const RecipeBookDetailClient: React.FC<Props> = (props) => {
   };
 
   const handleInvite = async () => {
-    const result = await modal<true | null, React.ComponentProps<typeof InviteModal>>({
+    const result = await modal<true | null, InviteModalProps<'Owner' | 'Collaborator'>>({
       Component: InviteModal,
       props: {
         heading: t('inviteHeading'),
-        isPremium,
-        onSubmit: async (username: string, role: 'OWNER' | 'COLLABORATOR') => {
+        roles: isPremium
+          ? [{ value: 'Collaborator' as const, label: 'Collaborator' }, { value: 'Owner' as const, label: 'Owner' }]
+          : [{ value: 'Collaborator' as const, label: 'Collaborator' }],
+        defaultRole: 'Collaborator' as const,
+        onSubmit: async (username: string, role: 'Owner' | 'Collaborator') => {
           const res = await fetch(`/api/recipe-books/${book.id}/invites`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

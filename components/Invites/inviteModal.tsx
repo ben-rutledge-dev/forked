@@ -1,21 +1,21 @@
 'use client';
 
-import { InviteForm } from './invites';
+import { InviteForm, type RoleOption } from './invites';
 
-type Role = 'OWNER' | 'COLLABORATOR';
-
-type Props = {
+export type InviteModalProps<TRole extends string> = {
   heading: string
-  isPremium: boolean
-  onSubmit: (username: string, role: Role) => Promise<void>
+  roles: RoleOption<TRole>[]
+  defaultRole: TRole
+  onSubmit: (username: string, role: TRole) => Promise<void>
   onConfirm: (value: true | null) => void
 };
 
-export const InviteModal = ({ heading, isPremium, onSubmit, onConfirm }: Props) => (
+export const InviteModal = <TRole extends string>({ heading, roles, defaultRole, onSubmit, onConfirm }: InviteModalProps<TRole>) => (
   <div className="p-6 space-y-4">
     <h2 className="text-lg font-semibold text-stone-900">{heading}</h2>
     <InviteForm
-      isPremium={isPremium}
+      roles={roles}
+      defaultRole={defaultRole}
       onSubmit={async (username, role) => {
         await onSubmit(username, role);
         onConfirm(true);

@@ -40,7 +40,7 @@ import { DragOverContext } from './components/DragOverContext';
 import { ItemRowGhost } from './components/ItemRow';
 import { SectionBlock } from './components/SectionBlock';
 import { Button } from '@/components/Button';
-import { InviteModal } from '@/components/Invites';
+import { InviteModal, type InviteModalProps } from '@/components/Invites';
 import { MembersSection } from '@/components/MembersSection';
 import { PageHeader } from '@/components/PageHeader';
 import { PageLayout } from '@/components/PageLayout';
@@ -115,11 +115,14 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
     : list.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) }));
 
   const handleInvite = async () => {
-    const result = await modal<true | null, React.ComponentProps<typeof InviteModal>>({
+    const result = await modal<true | null, InviteModalProps<'OWNER' | 'COLLABORATOR'>>({
       Component: InviteModal,
       props: {
         heading: t('invite'),
-        isPremium,
+        roles: isPremium
+          ? [{ value: 'COLLABORATOR' as const, label: 'Collaborator' }, { value: 'OWNER' as const, label: 'Owner' }]
+          : [{ value: 'COLLABORATOR' as const, label: 'Collaborator' }],
+        defaultRole: 'COLLABORATOR' as const,
         onSubmit: async (username: string, role: 'OWNER' | 'COLLABORATOR') => {
           await invite({ username, role });
         },

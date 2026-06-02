@@ -17,7 +17,12 @@ export const InviteModal = ({ bookId, isPremium, onConfirm }: Props) => {
     <div className="p-6 space-y-4">
       <h2 className="text-lg font-semibold text-stone-900">{t('inviteHeading')}</h2>
       <InviteForm
-        isPremium={isPremium}
+        roles={
+          isPremium
+            ? [{ value: 'Collaborator' as const, label: 'Collaborator' }, { value: 'Owner' as const, label: 'Owner' }]
+            : [{ value: 'Collaborator' as const, label: 'Collaborator' }]
+        }
+        defaultRole={'Collaborator' as const}
         onSubmit={async (username, role) => {
           const res = await fetch(`/api/recipe-books/${bookId}/invites`, {
             method: 'POST',

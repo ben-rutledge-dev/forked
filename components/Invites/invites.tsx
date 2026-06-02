@@ -8,18 +8,22 @@ import { FormBanner } from '@/components/FormBanner';
 import { FormField } from '@/components/FormField';
 import { TextInput } from '@/components/TextInput';
 
-type Role = 'OWNER' | 'COLLABORATOR';
+export type RoleOption<TRole extends string> = {
+  value: TRole
+  label: string
+};
 
-type Props = {
-  isPremium: boolean
-  onSubmit: (username: string, role: Role) => Promise<void>
+type Props<TRole extends string> = {
+  roles: RoleOption<TRole>[]
+  defaultRole: TRole
+  onSubmit: (username: string, role: TRole) => Promise<void>
   onCancel?: () => void
 };
 
-export const InviteForm = ({ isPremium, onSubmit, onCancel }: Props) => {
+export const InviteForm = <TRole extends string>({ roles, defaultRole, onSubmit, onCancel }: Props<TRole>) => {
   const t = useTranslations('inviteForm');
   const [username, setUsername] = useState('');
-  const [role, setRole] = useState<Role>('COLLABORATOR');
+  const [role, setRole] = useState<TRole>(defaultRole);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
 
@@ -50,15 +54,16 @@ export const InviteForm = ({ isPremium, onSubmit, onCancel }: Props) => {
           placeholder={t('usernamePlaceholder')}
         />
       </FormField>
-      {isPremium && (
+      {roles.length > 1 && (
         <FormField label={t('roleLabel')}>
           <select
             className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-500"
             value={role}
-            onChange={e => setRole(e.target.value as Role)}
+            onChange={e => setRole(e.target.value as TRole)}
           >
-            <option value="COLLABORATOR">{t('collaboratorLabel')}</option>
-            <option value="OWNER">{t('ownerLabel')}</option>
+            {roles.map(r => (
+              <option key={r.value} value={r.value}>{r.label}</option>
+            ))}
           </select>
         </FormField>
       )}
