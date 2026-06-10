@@ -64,7 +64,7 @@ export const RecipeDetail = async ({
         {(recipe.tags?.length ?? 0) > 0 && (
           <div className="mt-2 flex flex-wrap gap-1.5">
             {recipe.tags!.map(tag => (
-              <CategoryPill key={tag} href={`/my/recipes?tags=${encodeURIComponent(tag)}`}>
+              <CategoryPill key={tag} href={`/recipes?tags=${encodeURIComponent(tag)}`}>
                 {tag}
               </CategoryPill>
             ))}

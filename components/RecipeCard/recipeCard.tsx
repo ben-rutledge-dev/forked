@@ -87,7 +87,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
   const handleAnimationDone = () => {
     setIconAnimating(false);
     if (pendingForkId.current) {
-      router.push(`/my/recipes/${pendingForkId.current}/edit`);
+      router.push(`/recipes/${pendingForkId.current}/edit`);
       pendingForkId.current = null;
     }
   };
@@ -163,7 +163,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
     }
   };
 
-  const href = isOwned ? `/my/recipes/${id}` : `/recipes/${id}`;
+  const href = `/recipes/${id}`;
   const PlaceholderIcon = <RecipeIcon className="w-10 h-10 text-stone-300" />;
 
   const cardActions: CardAction[] = [
@@ -185,7 +185,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
       ? [{
           title: t('editRecipe'),
           Icon: <EditIcon className="w-3.5 h-3.5" />,
-          onClick: () => router.push(`/my/recipes/${id}/edit`),
+          onClick: () => router.push(`/recipes/${id}/edit`),
         }]
       : []),
     // Owned or in-book: more actions (add to book / remove / delete)

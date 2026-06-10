@@ -45,7 +45,7 @@ export const useModal = () => {
         maxWidth,
         allowClose,
         backgroundScroll,
-        Component,
+        Component: Component as React.FC<Record<string, unknown>>,
         cancelValue,
         props,
       },

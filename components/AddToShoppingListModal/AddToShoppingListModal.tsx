@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 // Data
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
 import { usePostItems } from '@/data/shopping-lists/[shoppingListId]/items';
@@ -14,26 +14,34 @@ type Ingredient = {
   name: string
 };
 
-export type AddToShoppingListModalProps = {
+type RecipeFlowProps = {
   recipeId: string
   recipeTitle: string
   onConfirm: (value: unknown) => void
 };
 
+type SuggestionFlowProps = {
+  ingredients: Array<{ name: string }>
+  onConfirm: (value: unknown) => void
+};
+
+export type AddToShoppingListModalProps = RecipeFlowProps | SuggestionFlowProps;
+
+const isRecipeFlow = (props: AddToShoppingListModalProps): props is RecipeFlowProps =>
+  'recipeId' in props;
+
 type Stage = 1 | 2;
 
-export const AddToShoppingListModal = ({
-  recipeId,
-  recipeTitle,
-  onConfirm,
-}: AddToShoppingListModalProps) => {
+export const AddToShoppingListModal = (props: AddToShoppingListModalProps) => {
   const t = useTranslations('addToShoppingList');
-  const [stage, setStage] = useState<Stage>(1);
+  const { onConfirm } = props;
+  const [stage, setStage] = useState<Stage>(isRecipeFlow(props) ? 1 : 2);
   const [ingredients, setIngredients] = useState<Ingredient[]>([]);
-  const [ingredientsLoading, setIngredientsLoading] = useState(true);
+  const [ingredientsLoading, setIngredientsLoading] = useState(isRecipeFlow(props));
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [chosenListId, setChosenListId] = useState<string | null>(null);
   const [firstSectionId, setFirstSectionId] = useState<string | null>(null);
+  const pendingSectionFetch = useRef<Promise<string | null>>(Promise.resolve(null));
   const [newListTitle, setNewListTitle] = useState('');
   const [creatingList, setCreatingList] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -45,9 +53,10 @@ export const AddToShoppingListModal = ({
   const { mutateAsync: createList, isPending: creatingListPending } = usePostShoppingList();
   const { mutateAsync: postItems } = usePostItems({ shoppingListId: chosenListId ?? undefined });
 
-  // Fetch ingredients when modal mounts
+  // Recipe flow: fetch ingredients from the API
   useEffect(() => {
-    fetch(`/api/recipes/${recipeId}`)
+    if (!isRecipeFlow(props)) return;
+    fetch(`/api/recipes/${props.recipeId}`)
       .then(r => r.json())
       .then((data) => {
         const ings: Ingredient[] = (data.ingredients ?? []).map((i: Ingredient) => ({ id: i.id, name: i.name }));
@@ -55,7 +64,17 @@ export const AddToShoppingListModal = ({
         setSelected(new Set(ings.map(i => i.id)));
       })
       .finally(() => setIngredientsLoading(false));
-  }, [recipeId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Suggestion flow: seed ingredients from props immediately
+  useEffect(() => {
+    if (isRecipeFlow(props)) return;
+    const ings: Ingredient[] = props.ingredients.map(i => ({ id: i.name, name: i.name }));
+    setIngredients(ings);
+    setSelected(new Set(ings.map(i => i.id)));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const selectedIngredients = ingredients.filter(i => selected.has(i.id));
 
@@ -64,17 +83,20 @@ export const AddToShoppingListModal = ({
     else setSelected(new Set(ingredients.map(i => i.id)));
   };
 
-  const handleSelectList = async (listId: string) => {
+  const handleSelectList = (listId: string) => {
     setChosenListId(listId);
-    const res = await fetch(`/api/shopping-lists/${listId}`);
-    if (res.ok) {
-      const data = await res.json();
-      const sections: Array<{ id: string }> = data.sections ?? [];
-      setFirstSectionId(sections[0]?.id ?? null);
-    }
+    setFirstSectionId(null);
+    pendingSectionFetch.current = fetch(`/api/shopping-lists/${listId}`)
+      .then(r => r.json())
+      .then((data) => {
+        const sections: Array<{ id: string }> = data.sections ?? [];
+        const id = sections[0]?.id ?? null;
+        setFirstSectionId(id);
+        return id;
+      });
   };
 
-  const handleCreateList = async (e: React.FormEvent) => {
+  const handleCreateList = async (e: React.SyntheticEvent) => {
     e.preventDefault();
     if (!newListTitle.trim()) return;
     const newList = await createList({ title: newListTitle.trim() });
@@ -84,15 +106,19 @@ export const AddToShoppingListModal = ({
   };
 
   const handleSubmit = async () => {
-    if (!chosenListId || !firstSectionId) return;
+    if (!chosenListId) return;
+    const sectionId = firstSectionId ?? await pendingSectionFetch.current;
+    if (!sectionId) return;
     setError(null);
     setSubmitting(true);
     try {
+      const recipeContext = isRecipeFlow(props)
+        ? { recipeId: props.recipeId, recipeTitle: props.recipeTitle }
+        : {};
       const items = selectedIngredients.map(ing => ({
         name: ing.name,
-        sectionId: firstSectionId,
-        recipeId,
-        recipeTitle,
+        sectionId,
+        ...recipeContext,
       }));
       await postItems({ items });
       const listName = lists.find(l => l.id === chosenListId)?.title ?? 'list';
@@ -106,6 +132,8 @@ export const AddToShoppingListModal = ({
     }
   };
 
+  const recipeTitle = isRecipeFlow(props) ? props.recipeTitle : null;
+
   return (
     <div className="p-6">
 
@@ -113,7 +141,7 @@ export const AddToShoppingListModal = ({
       {stage === 1 && (
         <>
           <h2 className="text-lg font-semibold text-stone-800 mb-1">{t('modalHeading')}</h2>
-          <p className="text-sm text-stone-500 mb-4">{recipeTitle}</p>
+          {recipeTitle && <p className="text-sm text-stone-500 mb-4">{recipeTitle}</p>}
 
           <div className="flex justify-between items-center mb-3">
             <span className="text-sm font-medium text-stone-600">{t('ingredientsLabel')}</span>
@@ -230,7 +258,7 @@ export const AddToShoppingListModal = ({
               variant="primary"
               size="sm"
               shape="pill"
-              disabled={!chosenListId || !firstSectionId || submitting}
+              disabled={!chosenListId || submitting}
               onClick={handleSubmit}
             >
               {submitting ? t('adding') : t('addItems', { count: selectedIngredients.length })}

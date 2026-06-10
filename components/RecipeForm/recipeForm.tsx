@@ -205,7 +205,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
         router.refresh();
       }
       else {
-        router.push(`/my/recipes/${recipe.id}`);
+        router.push(`/recipes/${recipe.id}`);
       }
     }
     catch {

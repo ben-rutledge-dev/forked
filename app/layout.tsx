@@ -32,12 +32,12 @@ const RootLayout = async ({
 
   return (
     <html lang="en-GB" suppressHydrationWarning>
-      <body className="antialiased min-h-screen text-stone-900" suppressHydrationWarning>
+      <body className="antialiased min-h-screen flex flex-col text-stone-900" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <Providers session={session}>
               <Nav />
-              <main>{children}</main>
+              <main className="flex-1">{children}</main>
               <footer className="mt-16 border-t border-stone-100 py-8 text-center text-xs text-stone-400">
                 {t('footer', { year: new Date().getFullYear() })}
               </footer>

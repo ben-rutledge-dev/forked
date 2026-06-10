@@ -9,15 +9,10 @@ import { useTranslations } from 'next-intl';
 import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]/types';
 // App
 import { SlotRow } from '@/app/meal-planner/components/MealPlannerClient/components/SlotRow';
+// Utils
+import { formatDateStrLabel } from '@/utils/dates';
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
-const formatDate = (dateStr: string) => {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const date = new Date(Date.UTC(y, m - 1, d));
-  return `${DAY_NAMES[date.getUTCDay()]} ${d} ${MONTH_NAMES[date.getUTCMonth()]}`;
-};
+const formatDate = formatDateStrLabel;
 
 type Props = {
   date: string

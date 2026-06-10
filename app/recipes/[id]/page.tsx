@@ -5,24 +5,20 @@ import { notFound } from 'next/navigation';
 import { AddToBookButton } from './components/AddToBookButton';
 import { ForkButton } from './components/ForkButton';
 import { AddToShoppingListButton } from '@/components/AddToShoppingListModal';
+import { Badge } from '@/components/Badge';
+import { Button } from '@/components/Button';
 import { PageLayout } from '@/components/PageLayout';
 import { RecipeDetail } from '@/components/RecipeDetail';
 // Lib
+import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
 
 type Props = { params: Promise<{ id: string }> };
 
-const RecipeHeaderAction = ({ recipeId }: { recipeId: string }) => (
-  <div className="flex items-center gap-2">
-    <AddToBookButton recipeId={recipeId} />
-    <ForkButton recipeId={recipeId} />
-  </div>
-);
-
 export const generateMetadata = async ({ params }: Props): Promise<Metadata> => {
   const { id } = await params;
   const recipe = await prisma.recipe.findUnique({
-    where: { id, isPublic: true },
+    where: { id },
     select: { title: true },
   });
   return { title: recipe?.title ?? 'Recipe' };
@@ -30,10 +26,16 @@ export const generateMetadata = async ({ params }: Props): Promise<Metadata> => 
 
 const RecipePage = async ({ params }: Props) => {
   const { id } = await params;
-  const t = await getTranslations('recipe');
+  const session = await auth();
+  const userId = session?.user?.id;
+  const t = await getTranslations('myRecipes');
+  const tRecipe = await getTranslations('recipe');
 
   const recipe = await prisma.recipe.findUnique({
-    where: { id, isPublic: true },
+    where: {
+      id,
+      ...(userId ? { OR: [{ isPublic: true }, { authorId: userId }] } : { isPublic: true }),
+    },
     include: {
       author: { select: { id: true, name: true, username: true, isPublic: true } },
       forkedFrom: { select: { id: true, title: true, isPublic: true } },
@@ -57,26 +59,48 @@ const RecipePage = async ({ params }: Props) => {
 
   if (!recipe) notFound();
 
+  const isOwner = userId === recipe.authorId;
   const { categories: rawCategories, ...rest } = recipe;
   const recipeWithCategories = {
     ...rest,
     categories: rawCategories.map(rc => rc.category),
-    tags: [],
+    tags: recipe.tags ?? [],
   };
+
+  const headerAction = isOwner
+    ? (
+        <div className="flex items-center gap-2">
+          <Badge variant={recipe.isPublic ? 'success' : 'neutral'} className="text-xs">
+            {recipe.isPublic ? t('publicBadge') : t('privateBadge')}
+          </Badge>
+          <Button href={`/recipes/${id}/edit`} variant="secondary" size="sm" shape="pill">
+            {t('editLabel')}
+          </Button>
+        </div>
+      )
+    : (
+        <div className="flex items-center gap-2">
+          <AddToBookButton recipeId={id} />
+          <ForkButton recipeId={id} />
+        </div>
+      );
 
   return (
     <PageLayout width="narrow" py="sm">
       <RecipeDetail
         recipe={JSON.parse(JSON.stringify(recipeWithCategories))}
         cookHref={`/recipes/${id}/cook`}
-        backHref="/pool"
-        headerAction={<RecipeHeaderAction recipeId={id} />}
+        cookVariant={isOwner ? 'primary' : undefined}
+        backHref={isOwner ? '/recipes' : '/pool'}
+        headerAction={headerAction}
         ingredientsAction={<AddToShoppingListButton recipeId={id} recipeTitle={recipe.title} />}
-        metaBadge={(
-          <span>
-            {t('forkedBy', { count: recipe.forkCount })}
-          </span>
-        )}
+        metaBadge={!isOwner
+          ? (
+              <span>
+                {tRecipe('forkedBy', { count: recipe.forkCount })}
+              </span>
+            )
+          : undefined}
       />
     </PageLayout>
   );

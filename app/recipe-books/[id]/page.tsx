@@ -57,7 +57,7 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
         </div>
       )}
 
-      <PageHeader title={book.title} backHref="/my/recipes?tab=books" />
+      <PageHeader title={book.title} backHref="/recipes?tab=books" />
       {book.description && <p className="mt-2 text-stone-500">{book.description}</p>}
 
       <div className="mt-3 flex flex-wrap gap-2">

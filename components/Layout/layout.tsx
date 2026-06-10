@@ -32,7 +32,7 @@ export const Layout = ({ children, title = 'Forked' }: Props) => {
             </Link>
             <div className="flex items-center gap-6 text-sm">
               <Link
-                href="/pool"
+                href="/recipes"
                 className="text-orange-100 hover:text-white transition-colors"
               >
                 {t('pool')}
@@ -41,7 +41,7 @@ export const Layout = ({ children, title = 'Forked' }: Props) => {
                 ? (
                     <>
                       <Link
-                        href="/my/recipes"
+                        href="/recipes"
                         className="text-orange-100 hover:text-white transition-colors"
                       >
                         {t('myRecipes')}

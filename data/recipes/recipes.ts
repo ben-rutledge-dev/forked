@@ -47,6 +47,7 @@ export const usePostRecipe = () => {
       queryClient.invalidateQueries({
         queryKey: [...queryKeys.recipes.all, 'mine'],
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboard', 'recipes'] });
     },
   });
 };

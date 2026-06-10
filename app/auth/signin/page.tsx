@@ -53,7 +53,7 @@ const SignInPage = () => {
               variant="secondary"
               size="lg"
               shape="rounded"
-              onClick={() => signIn(provider.id, { callbackUrl: '/my/recipes' })}
+              onClick={() => signIn(provider.id, { callbackUrl: '/recipes' })}
               className="w-full"
             >
               {t('continueWith', { provider: provider.name })}

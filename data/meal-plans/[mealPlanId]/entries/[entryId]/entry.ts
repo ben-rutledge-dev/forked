@@ -32,6 +32,7 @@ export const useDeleteEntry = (params?: Params) => {
           });
         }
         queryClient.invalidateQueries({ queryKey: queryKeys.mealPlans.detail(params?.mealPlanId ?? '') });
+        queryClient.invalidateQueries({ queryKey: ['dashboard', 'suggestions'] });
       },
     },
   );

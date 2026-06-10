@@ -71,7 +71,7 @@ export type IngredientFormData = {
   id?: string
   name: string
   quantity: string
-  unit: string
+  unit: string | null
   unitKey: string | null
 };
 

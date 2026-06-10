@@ -71,6 +71,7 @@ model User {
   shoppingListsInvited    ShoppingListMember[] @relation("ShoppingListInvitedBy")
   mealPlanMembers         MealPlanMember[]     @relation("MealPlanMember")
   mealPlanInvitations     MealPlanMember[]     @relation("MealPlanInvitedBy")
+  suggestionDismissals    MealPlanSuggestionDismissal[]
 }
 
 model Recipe {
@@ -313,6 +314,18 @@ enum UnitType {
   // Weight — imperial
   OZ
   LB
+}
+
+model MealPlanSuggestionDismissal {
+  id             String    @id @default(cuid())
+  userId         String
+  ingredientName String
+  expiresAt      DateTime?
+  createdAt      DateTime  @default(now())
+  user           User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, ingredientName])
+  @@index([userId])
 }
 
 model Ingredient {

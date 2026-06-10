@@ -178,7 +178,7 @@ export const RecipeBookDetailClient: React.FC<Props> = (props) => {
 
       <PageHeader
         title={book.title}
-        backHref="/my/recipes?tab=books"
+        backHref="/recipes?tab=books"
         subtitle={book.description ?? undefined}
         action={<BookHeaderAction book={book} isOwner={isOwner} onEditToggle={() => setShowEditForm(v => !v)} />}
       />

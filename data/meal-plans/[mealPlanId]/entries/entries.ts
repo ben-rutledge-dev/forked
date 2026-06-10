@@ -15,6 +15,7 @@ export const usePostEntry = (params?: Params) => {
           });
         }
         queryClient.invalidateQueries({ queryKey: queryKeys.mealPlans.detail(params?.mealPlanId ?? '') });
+        queryClient.invalidateQueries({ queryKey: ['dashboard', 'suggestions'] });
       },
     },
   );

@@ -50,6 +50,8 @@ import { PageHeader } from '@/components/PageHeader';
 import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
 import { UserBadge } from '@/components/UserBadge';
+// Utils
+import { formatDateStrLabel } from '@/utils/dates';
 
 // All date helpers work on YYYY-MM-DD strings using UTC arithmetic to avoid
 // local-timezone offset errors when Date.toISOString() converts to UTC.
@@ -229,11 +231,7 @@ export const MealPlannerClient = ({ planId, isPremium, currentUserId, initialDat
   };
 
   const handleAddRecipe = async (slotId: string, slotLabel: string, date: string) => {
-    const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const [year, month, day] = date.split('-').map(Number);
-    const d = new Date(Date.UTC(year, month - 1, day));
-    const dayLabel = `${DAY_NAMES[d.getUTCDay()]} ${day} ${MONTH_NAMES[d.getUTCMonth()]}`;
+    const dayLabel = formatDateStrLabel(date);
 
     const recipe = await modal<SavedRecipe | null, React.ComponentProps<typeof AddRecipeModal>>({
       Component: AddRecipeModal,

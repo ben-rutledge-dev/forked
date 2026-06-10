@@ -30,31 +30,25 @@ export const Nav = () => {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-6 text-sm">
           <Link
-            href="/pool"
+            href="/recipes"
             className="text-primary-100 hover:text-white transition-colors"
           >
-            {t('pool')}
+            {t('myRecipes')}
           </Link>
           {session
             ? (
                 <>
                   <Link
-                    href="/my/recipes"
+                    href="/meal-planner"
                     className="text-primary-100 hover:text-white transition-colors"
                   >
-                    {t('myRecipes')}
+                    {t('mealPlanner')}
                   </Link>
                   <Link
                     href="/shopping-lists"
                     className="text-primary-100 hover:text-white transition-colors"
                   >
                     {t('shoppingLists')}
-                  </Link>
-                  <Link
-                    href="/meal-planner"
-                    className="text-primary-100 hover:text-white transition-colors"
-                  >
-                    {t('mealPlanner')}
                   </Link>
                   <Link
                     href="/my/profile"
@@ -97,21 +91,21 @@ export const Nav = () => {
         <div className="md:hidden border-t border-white/20 bg-primary-600">
           <div className="mx-auto max-w-4xl flex flex-col px-4 py-3 gap-1 text-sm">
             <Link
-              href="/pool"
+              href="/recipes"
               className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
               onClick={closeMenu}
             >
-              {t('pool')}
+              {t('myRecipes')}
             </Link>
             {session
               ? (
                   <>
                     <Link
-                      href="/my/recipes"
+                      href="/meal-planner"
                       className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
                       onClick={closeMenu}
                     >
-                      {t('myRecipes')}
+                      {t('mealPlanner')}
                     </Link>
                     <Link
                       href="/shopping-lists"
@@ -119,13 +113,6 @@ export const Nav = () => {
                       onClick={closeMenu}
                     >
                       {t('shoppingLists')}
-                    </Link>
-                    <Link
-                      href="/meal-planner"
-                      className="px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
-                      onClick={closeMenu}
-                    >
-                      {t('mealPlanner')}
                     </Link>
                     <Link
                       href="/my/profile"

@@ -27,6 +27,7 @@ export const usePutRecipe = (params?: Params) => {
         queryClient.invalidateQueries({
           queryKey: queryKeys.recipes.mine(),
         });
+        queryClient.invalidateQueries({ queryKey: ['dashboard', 'recipes'] });
       },
     },
   );
@@ -39,6 +40,7 @@ export const useDeleteRecipe = (params?: Params) => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.recipes.all,
       });
+      queryClient.invalidateQueries({ queryKey: ['dashboard', 'recipes'] });
     },
   });
 };

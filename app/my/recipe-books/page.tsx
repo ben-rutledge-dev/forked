@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 
 const RecipeBooksPage = () => {
-  redirect('/my/recipes');
+  redirect('/recipes');
 };
 
 export default RecipeBooksPage;

@@ -38,7 +38,7 @@ export const ForkButton = ({ recipeId }: { recipeId: string }) => {
   const handleAnimationDone = () => {
     setIconAnimating(false);
     if (pendingForkId.current) {
-      router.push(`/my/recipes/${pendingForkId.current}/edit`);
+      router.push(`/recipes/${pendingForkId.current}/edit`);
       pendingForkId.current = null;
     }
   };

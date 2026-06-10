@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 // Components
 import { SignInButton } from './components/SignInButton';
 import { PageLayout } from '@/components/PageLayout';
@@ -8,6 +9,9 @@ import { auth } from '@/lib/auth';
 
 const Home = async () => {
   const session = await auth();
+
+  if (session) redirect('/dashboard');
+
   const t = await getTranslations('home');
 
   return (
@@ -22,23 +26,12 @@ const Home = async () => {
       </div>
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
         <Link
-          href="/pool"
+          href="/recipes"
           className="w-full rounded-full bg-primary-500 px-8 py-3 text-sm font-medium text-white hover:bg-primary-600 transition-colors sm:w-auto"
         >
           {t('browsePool')}
         </Link>
-        {session
-          ? (
-              <Link
-                href="/my/recipes"
-                className="w-full rounded-full border border-stone-300 px-8 py-3 text-sm font-medium text-stone-700 hover:bg-stone-100 transition-colors sm:w-auto"
-              >
-                {t('myRecipes')}
-              </Link>
-            )
-          : (
-              <SignInButton />
-            )}
+        <SignInButton />
       </div>
     </PageLayout>
   );

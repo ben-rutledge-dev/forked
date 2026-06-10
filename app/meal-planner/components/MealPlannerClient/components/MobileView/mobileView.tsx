@@ -8,14 +8,9 @@ import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]
 import { DayColumn } from '@/app/meal-planner/components/MealPlannerClient/components/DayColumn';
 import { addDays } from '@/app/meal-planner/components/MealPlannerClient/mealPlannerClient';
 
-const DAY_NAMES = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+import { formatDateStrLabel } from '@/utils/dates';
 
-const formatDate = (dateStr: string) => {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const date = new Date(Date.UTC(y, m - 1, d));
-  return `${DAY_NAMES[date.getUTCDay()]} ${d} ${MONTH_NAMES[date.getUTCMonth()]}`;
-};
+const formatDate = formatDateStrLabel;
 
 type Props = {
   startDate: string

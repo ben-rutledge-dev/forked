@@ -22,7 +22,7 @@
   "nav": {
     "brand": "Forked",
     "pool": "Pool",
-    "myRecipes": "My Recipes",
+    "myRecipes": "Recipes",
     "shoppingLists": "Shopping Lists",
     "mealPlanner": "Meal Planner",
     "profile": "Profile",
@@ -189,12 +189,13 @@
     "switchToImperial": "Switch to imperial"
   },
   "myRecipes": {
-    "heading": "My Recipes",
+    "heading": "Recipes",
     "newRecipe": "+ New recipe",
     "newRecipeBook": "+ New recipe book",
-    "tabRecipes": "Recipes",
+    "tabRecipes": "My Recipes",
     "tabBooks": "Recipe Books",
     "tabFavourites": "Favourites",
+    "tabBrowse": "Browse",
     "searchPlaceholder": "Search recipes…",
     "noResults": "No recipes match your filters.",
     "noRecipesYet": "No recipes yet.",
@@ -424,6 +425,57 @@
     "adding": "Adding…",
     "addItems": "Add {count, plural, one {# item} other {# items}}",
     "errorMessage": "Something went wrong. Please try again."
+  },
+  "dashboard": {
+    "thisWeek": "This week",
+    "myRecipes": "My recipes",
+    "seeAll": "See all",
+    "recipes": {
+      "noRecipesYet": "You haven't created any recipes yet.",
+      "createRecipe": "Create a recipe",
+      "browsePool": "Browse the pool"
+    },
+    "spotlight": {
+      "nothingPlanned": "Nothing planned tonight",
+      "addMealCta": "Add a meal to see your spotlight",
+      "openPlanner": "Open planner",
+      "tonight": "Tonight · {date}",
+      "alsoToday": "Also today",
+      "startCooking": "Start cooking",
+      "viewRecipe": "View recipe"
+    },
+    "mealPlanStrip": {
+      "planYourWeek": "Plan your week",
+      "addMealsCta": "Add meals to see them here.",
+      "goToPlanner": "Go to Meal Planner"
+    },
+    "suggestions": {
+      "heading": "What to buy this week",
+      "tagline": "Select ingredients from your plan, then add to a list",
+      "addButton": "Add to a list",
+      "addButtonCount": "Add {count} to {listName}",
+      "addButtonCountGeneric": "Add {count} to a list",
+      "adding": "Adding…",
+      "emptyPantry": "Nothing to buy this week — your pantry must be well stocked.",
+      "noPlanTagline": "Add meals to your planner to see ingredient suggestions",
+      "noPlanPrompt": "Add meals to your planner to get ingredient suggestions.",
+      "couldNotReach": "Could not reach that list. Please try again.",
+      "failedToAdd": "Failed to add items. Please try again.",
+      "addedToast": "Added to your shopping list",
+      "skipToast": "Skipped {ingredient} for a week.",
+      "alwaysSkipToast": "Got it — {ingredient} won't be suggested again",
+      "neverSuggestConfirm": "Never suggest {ingredient}? You can manage this in settings.",
+      "neverSuggestConfirmLabel": "Yes, never suggest"
+    },
+    "shoppingLists": {
+      "noListsYet": "No shopping lists yet.",
+      "createList": "Create a list",
+      "newList": "+ New shopping list",
+      "seeAll": "See all lists",
+      "empty": "Empty",
+      "items": "{count, plural, one {# item} other {# items}}",
+      "members": "{count, plural, one {# member} other {# members}}"
+    }
   },
   "mealPlanner": {
     "heading": "Meal Planner",

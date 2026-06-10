@@ -69,4 +69,15 @@ export const queryKeys = {
     savedRecipes: (q?: string) =>
       [...queryKeys.mealPlans.all, 'savedRecipes', q ?? ''] as const,
   },
+
+  dashboard: {
+    mealPlanStrip: (userId: string) =>
+      ['dashboard', 'mealPlanStrip', userId] as const,
+    recipes: (userId: string) =>
+      ['dashboard', 'recipes', userId] as const,
+    suggestions: (userId: string) =>
+      ['dashboard', 'suggestions', userId] as const,
+    shoppingLists: (userId: string) =>
+      ['dashboard', 'shoppingLists', userId] as const,
+  },
 };
