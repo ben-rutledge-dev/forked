@@ -3,6 +3,8 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
+// Components
+import { PlannerDayLabel } from '@/components/PlannerDayLabel';
 // Utils
 
 export type DashboardEntry = {
@@ -19,7 +21,7 @@ type Props = {
   startDateStr: string
 };
 
-const buildDays = (entries: DashboardEntry[], startDateStr: string): Array<{ dateStr: string, weekday: string, dayNum: number, entries: DashboardEntry[], isToday: boolean, isPast: boolean }> => {
+const buildDays = (entries: DashboardEntry[], startDateStr: string): Array<{ dateStr: string, entries: DashboardEntry[], isToday: boolean, isPast: boolean }> => {
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
   const [sy, sm, sd] = startDateStr.split('-').map(Number);
@@ -27,11 +29,8 @@ const buildDays = (entries: DashboardEntry[], startDateStr: string): Array<{ dat
   return Array.from({ length: 7 }, (_, i) => {
     const date = new Date(Date.UTC(sy, sm - 1, sd + i));
     const dateStr = date.toISOString().split('T')[0];
-    const weekday = new Intl.DateTimeFormat(undefined, { weekday: 'short', timeZone: 'UTC' }).format(date);
     return {
       dateStr,
-      weekday: weekday.toUpperCase(),
-      dayNum: date.getUTCDate(),
       entries: entries.filter(e => e.date === dateStr),
       isToday: dateStr === todayStr,
       isPast: dateStr < todayStr,
@@ -45,17 +44,14 @@ export const MealPlanStrip = ({ data, startDateStr }: Props) => {
 
   return (
     <div className="rounded-xl squircle shadow-sm bg-white divide-y divide-stone-100 px-5 overflow-hidden">
-      {days.map(({ dateStr, weekday, dayNum, entries, isToday, isPast }) => {
+      {days.map(({ dateStr, entries, isToday, isPast }) => {
         const overflow = entries.length - 3;
         const visible = entries.slice(0, 3);
         return (
           <div key={dateStr} className={`py-3 -mx-5 px-5 ${isToday ? 'bg-primary-50' : ''}`}>
             <div className={`flex gap-5 ${isPast ? 'opacity-40' : ''}`}>
               {/* Date label */}
-              <div className="w-10 shrink-0 pt-0.5 text-center">
-                <p className={`text-[10px] font-semibold uppercase tracking-wide ${isToday ? 'text-primary-500' : 'text-stone-400'}`}>{weekday}</p>
-                <p className={`text-base font-semibold leading-tight ${isToday ? 'text-primary-600' : 'text-stone-700'}`}>{dayNum}</p>
-              </div>
+              <PlannerDayLabel dateStr={dateStr} isToday={isToday} />
 
               {/* Entries */}
               <div className="flex-1 min-w-0 flex items-center">

@@ -539,11 +539,11 @@ export const MealPlannerClient = ({ planId, isPremium, currentUserId, initialDat
           {t('prevWeek')}
         </Button>
 
-        <div className="text-center">
+        <div className="relative text-center">
           <div className="text-sm font-medium text-stone-600">
             {formatWeekRange(currentStartDate, endDate)}
           </div>
-          <div className={`text-xs mt-0.5 ${isPastWeek || !isPremium ? 'text-stone-400' : 'invisible'}`}>
+          <div className={`absolute left-1/2 -translate-x-1/2 whitespace-nowrap text-xs mt-0.5 z-10 ${isPastWeek || !isPremium ? 'text-stone-400' : 'invisible'}`}>
             {isPastWeek ? t('pastWeekBanner') : t('upgradeToNavigate')}
           </div>
         </div>

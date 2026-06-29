@@ -7,12 +7,10 @@ import {
 import { useTranslations } from 'next-intl';
 // Data
 import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]/types';
+// Components
+import { PlannerDayLabel } from '@/components/PlannerDayLabel';
 // App
 import { SlotRow } from '@/app/meal-planner/components/MealPlannerClient/components/SlotRow';
-// Utils
-import { formatDateStrLabel } from '@/utils/dates';
-
-const formatDate = formatDateStrLabel;
 
 type Props = {
   date: string
@@ -28,15 +26,21 @@ type Props = {
   onAddSlot: () => void
 };
 
+const todayStr = (): string => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 export const DayColumn = ({ date, slots, entries, canEditSlots, canEditEntries, overEntryId, overEntrySide, overSlotKey, onAddRecipe, onRemoveEntry, onAddSlot }: Props) => {
   const t = useTranslations('mealPlanner');
+  const isToday = date === todayStr();
 
   const entriesForDate = entries.filter(e => e.date === date);
 
   return (
     <div className="min-w-0 flex flex-col">
       <div className="mb-3">
-        <p className="text-xs font-semibold text-stone-500">{formatDate(date)}</p>
+        <PlannerDayLabel dateStr={date} isToday={isToday} />
       </div>
 
       <SortableContext

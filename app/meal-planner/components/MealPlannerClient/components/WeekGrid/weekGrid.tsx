@@ -13,13 +13,10 @@ import { useTranslations } from 'next-intl';
 import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]/types';
 // Components
 import { PlusIcon } from '@/components/Icons';
+import { PlannerDayLabel } from '@/components/PlannerDayLabel';
 // App
 import { EntryCard } from '@/app/meal-planner/components/MealPlannerClient/components/EntryCard';
 import { addDays, type SlotDropTarget } from '@/app/meal-planner/components/MealPlannerClient/mealPlannerClient';
-// Utils
-import { formatDateStrLabel } from '@/utils/dates';
-
-const formatDayHeader = formatDateStrLabel;
 
 // ─── Slot header (sortable for custom slots) ────────────────────────────────
 
@@ -203,6 +200,11 @@ type Props = {
   onDeleteSlot: (slotId: string) => void
 };
 
+const todayStr = (): string => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
+
 export const WeekGrid = ({
   startDate,
   slots,
@@ -218,6 +220,7 @@ export const WeekGrid = ({
   onAddSlotAt,
   onDeleteSlot,
 }: Props) => {
+  const today = todayStr();
   const dates = Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
 
   // Columns: day label + one per slot + (when slots are editable) a trailing add column.
@@ -257,8 +260,8 @@ export const WeekGrid = ({
       {/* ── Day rows ── */}
       {dates.map(date => (
         <div key={date} className="contents">
-          <div className="p-2 border-b border-r border-stone-100 text-xs font-medium text-stone-600 bg-stone-50 flex items-start pt-3">
-            {formatDayHeader(date)}
+          <div className={`p-2 border-b border-r border-stone-100 flex items-start pt-3 ${date === today ? 'bg-primary-50' : 'bg-stone-50'}`}>
+            <PlannerDayLabel dateStr={date} isToday={date === today} />
           </div>
           {slots.map(slot => (
             <SlotCell
