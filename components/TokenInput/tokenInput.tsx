@@ -314,7 +314,6 @@ const PillSelect = ({
     <CategoryPillButton
       key={opt.id}
       active={value.includes(opt.id)}
-      showTick
       onClick={() => toggle(opt.id)}
     >
       {opt.label}

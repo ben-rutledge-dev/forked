@@ -20,18 +20,17 @@ export const CategoryPill = ({ href, children }: CategoryPillProps) => (
 type CategoryPillButtonProps = {
   children: ReactNode
   active?: boolean
-  showTick?: boolean
   onClick?: () => void
 };
 
-export const CategoryPillButton = ({ children, active = false, showTick = false, onClick }: CategoryPillButtonProps) => (
+export const CategoryPillButton = ({ children, active = false, onClick }: CategoryPillButtonProps) => (
   <button
     type="button"
     onClick={onClick}
     className={active ? CHIP_ACTIVE_CLASS : CHIP_INACTIVE_CLASS}
   >
     {children}
-    {active && showTick && (
+    {active && (
       <SmallCheckIcon className="inline ml-1.5 w-2.5 h-2.5" />
     )}
   </button>

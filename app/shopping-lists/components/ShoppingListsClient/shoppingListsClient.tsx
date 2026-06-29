@@ -1,8 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Data
 import { queryKeys } from '@/data/queryKeys';
 import { useQueryClient } from '@/data/shared/hooks';
@@ -14,6 +17,11 @@ import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
 import { SectionLabel } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
+
+const createListSchema = z.object({
+  title: z.string().min(1, 'List name is required').max(100),
+});
+type CreateListForm = z.infer<typeof createListSchema>;
 
 const NewListAction = ({ onNew }: { onNew: () => void }) => {
   const t = useTranslations('shoppingLists');
@@ -27,7 +35,6 @@ const NewListAction = ({ onNew }: { onNew: () => void }) => {
 export const ShoppingListsClient = () => {
   const router = useRouter();
   const queryClient = useQueryClient();
-  const [newTitle, setNewTitle] = useState('');
   const [creating, setCreating] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const t = useTranslations('shoppingLists');
@@ -38,11 +45,13 @@ export const ShoppingListsClient = () => {
 
   const { mutateAsync: createList, isPending: isCreating } = usePostShoppingList();
 
-  const handleCreate = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    if (!newTitle.trim()) return;
-    const list = await createList({ title: newTitle.trim() });
-    setNewTitle('');
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateListForm>({
+    resolver: zodResolver(createListSchema),
+  });
+
+  const onSubmit = async (data: CreateListForm) => {
+    const list = await createList({ title: data.title.trim() });
+    reset();
     setCreating(false);
     router.push(`/shopping-lists/${list.id}`);
   };
@@ -69,20 +78,22 @@ export const ShoppingListsClient = () => {
       />
 
       {creating && (
-        <form onSubmit={handleCreate} className="mb-6 flex gap-2">
-          <input
-            autoFocus
-            className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
-            placeholder={t('listNamePlaceholder')}
-            value={newTitle}
-            onChange={e => setNewTitle(e.target.value)}
-          />
-          <Button type="submit" variant="primary" size="sm" disabled={isCreating || !newTitle.trim()}>
-            {isCreating ? t('creating') : t('create')}
-          </Button>
-          <Button type="button" variant="secondary" size="sm" onClick={() => setCreating(false)}>
-            {t('cancel')}
-          </Button>
+        <form onSubmit={handleSubmit(onSubmit)} className="mb-6 space-y-1">
+          <div className="flex gap-2">
+            <input
+              autoFocus
+              className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+              placeholder={t('listNamePlaceholder')}
+              {...register('title')}
+            />
+            <Button type="submit" variant="primary" size="sm" disabled={isCreating}>
+              {isCreating ? t('creating') : t('create')}
+            </Button>
+            <Button type="button" variant="secondary" size="sm" onClick={() => { setCreating(false); reset(); }}>
+              {t('cancel')}
+            </Button>
+          </div>
+          {errors.title && <p className="text-xs text-danger-500">{errors.title.message}</p>}
         </form>
       )}
 

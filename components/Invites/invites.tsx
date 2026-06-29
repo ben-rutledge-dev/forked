@@ -1,7 +1,9 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Components
 import { Button } from '@/components/Button';
 import { FormBanner } from '@/components/FormBanner';
@@ -20,46 +22,45 @@ type Props<TRole extends string> = {
   onCancel?: () => void
 };
 
+const inviteSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  role: z.string(),
+});
+type InviteFormValues = z.infer<typeof inviteSchema>;
+
 export const InviteForm = <TRole extends string>({ roles, defaultRole, onSubmit, onCancel }: Props<TRole>) => {
   const t = useTranslations('inviteForm');
-  const [username, setUsername] = useState('');
-  const [role, setRole] = useState<TRole>(defaultRole);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
+  const { register, handleSubmit, reset, setError, formState: { errors, isSubmitting } } = useForm<InviteFormValues>({
+    resolver: zodResolver(inviteSchema),
+    defaultValues: { username: '', role: defaultRole },
+  });
 
-  const handleSubmit = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    if (!username.trim()) return;
-    setError('');
-    setIsSubmitting(true);
+  const onValid = async (data: InviteFormValues) => {
     try {
-      await onSubmit(username.trim(), role);
-      setUsername('');
+      await onSubmit(data.username.trim(), data.role as TRole);
+      reset();
     }
     catch (err) {
-      setError(err instanceof Error ? err.message : 'Something went wrong');
-    }
-    finally {
-      setIsSubmitting(false);
+      setError('root', { message: err instanceof Error ? err.message : 'Something went wrong' });
     }
   };
 
+  const registerUsername = register('username');
+  const registerRole = register('role');
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-3">
-      {error && <FormBanner type="error" message={error} />}
-      <FormField label={t('usernameLabel')}>
+    <form onSubmit={handleSubmit(onValid)} className="space-y-3">
+      <FormField label={t('usernameLabel')} error={errors.username?.message}>
         <TextInput
-          value={username}
-          onChange={e => setUsername(e.target.value)}
           placeholder={t('usernamePlaceholder')}
+          {...registerUsername}
         />
       </FormField>
       {roles.length > 1 && (
         <FormField label={t('roleLabel')}>
           <select
             className="w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 focus:outline-none focus:ring-1 focus:ring-stone-500"
-            value={role}
-            onChange={e => setRole(e.target.value as TRole)}
+            {...registerRole}
           >
             {roles.map(r => (
               <option key={r.value} value={r.value}>{r.label}</option>
@@ -67,14 +68,9 @@ export const InviteForm = <TRole extends string>({ roles, defaultRole, onSubmit,
           </select>
         </FormField>
       )}
+      {errors.root && <FormBanner type="error" message={errors.root.message ?? ''} />}
       <div className="flex gap-2">
-        <Button
-          type="submit"
-          variant="primary"
-          size="sm"
-
-          disabled={isSubmitting || !username.trim()}
-        >
+        <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
           {isSubmitting ? t('submittingLabel') : t('submitLabel')}
         </Button>
         {onCancel && (

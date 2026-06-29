@@ -1,8 +1,11 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Data
 import { useCategories } from '@/data/categories';
 import type { Category } from '@/data/categories/types';
@@ -34,14 +37,13 @@ type Props = {
   forkedFrom?: { id: string, title: string, isPublic: boolean } | null
 };
 
-type Status = 'idle' | 'saving' | 'saved' | 'error';
-
-type RecipeFields = {
-  title: string
-  description: string
-  isPublic: boolean
-  coverImageUrl: string
-};
+const recipeSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string(),
+  isPublic: z.boolean(),
+  coverImageUrl: z.string(),
+});
+type RecipeFormValues = z.infer<typeof recipeSchema>;
 
 export type IngredientItem = IngredientFormData & { _id: string };
 export type StepItem = StepFormData & { _id: string };
@@ -71,11 +73,20 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
   const t = useTranslations('recipeForm');
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
 
-  const [fields, setFields] = useState<RecipeFields>({
-    title: initialData?.title ?? '',
-    description: initialData?.description ?? '',
-    isPublic: initialData?.isPublic ?? false,
-    coverImageUrl: initialData?.coverImageUrl ?? '',
+  const {
+    register,
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<RecipeFormValues>({
+    resolver: zodResolver(recipeSchema),
+    defaultValues: {
+      title: initialData?.title ?? '',
+      description: initialData?.description ?? '',
+      isPublic: initialData?.isPublic ?? false,
+      coverImageUrl: initialData?.coverImageUrl ?? '',
+    },
   });
 
   const [selectedCategoryIds, setSelectedCategoryIds] = useState<Set<string>>(
@@ -85,22 +96,19 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
   const [addedTags, setAddedTags] = useState<string[]>([]);
   const [removedFromPool, setRemovedFromPool] = useState<Set<string>>(new Set());
   const [tagInput, setTagInput] = useState('');
+  const [saved, setSaved] = useState(false);
 
   const { data: myTagsData } = useMyTags();
 
-  // Derive the pool from initial recipe tags + user's all-time tags + locally added, minus removed
   const tagPool = useMemo(() => {
     const pool = new Set([
       ...(initialData?.tags ?? []),
       ...(myTagsData?.tags ?? []),
       ...addedTags,
     ]);
-    removedFromPool.forEach(t => pool.delete(t));
+    removedFromPool.forEach(tag => pool.delete(tag));
     return Array.from(pool);
   }, [initialData?.tags, myTagsData?.tags, addedTags, removedFromPool]);
-
-  const [status, setStatus] = useState<Status>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
 
   const [ingredients, setIngredients] = useState<IngredientItem[]>(
     initialData?.ingredients?.length
@@ -113,9 +121,6 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
       ? withIds(initialData.steps)
       : [emptyStep()],
   );
-
-  const setField = <K extends keyof RecipeFields>(key: K, value: RecipeFields[K]) =>
-    setFields(prev => ({ ...prev, [key]: value }));
 
   const toggleCategory = (id: string) => {
     setSelectedCategoryIds((prev) => {
@@ -150,21 +155,12 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
     setTagInput('');
   };
 
-  const handleIsPublicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setField('isPublic', e.target.checked);
-  };
-
   const ingredientActions = useListField(setIngredients);
   const stepActions = useListField(setSteps);
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setErrorMessage('');
-    setStatus('saving');
-
-    if (fields.isPublic && selectedCategoryIds.size === 0) {
-      setErrorMessage(t('categoryRequired'));
-      setStatus('error');
+  const onSubmit = async (data: RecipeFormValues) => {
+    if (data.isPublic && selectedCategoryIds.size === 0) {
+      setError('root', { message: t('categoryRequired') });
       return;
     }
 
@@ -174,50 +170,46 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
     const validSteps = steps
       .map(s => ({ id: s.id, instruction: s.instruction, timerSeconds: s.timerSeconds, imageUrl: s.imageUrl }));
 
-    try {
-      const url = recipeId ? `/api/recipes/${recipeId}` : '/api/recipes';
-      const method = recipeId ? 'PUT' : 'POST';
-      const res = await fetch(url, {
-        method,
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          ...fields,
-          coverImageUrl: fields.coverImageUrl || null,
-          ingredients: validIngredients,
-          steps: validSteps,
-          categoryIds: Array.from(selectedCategoryIds),
-          tags,
-        }),
-      });
+    const url = recipeId ? `/api/recipes/${recipeId}` : '/api/recipes';
+    const method = recipeId ? 'PUT' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        ...data,
+        coverImageUrl: data.coverImageUrl || null,
+        ingredients: validIngredients,
+        steps: validSteps,
+        categoryIds: Array.from(selectedCategoryIds),
+        tags,
+      }),
+    });
 
-      if (!res.ok) {
-        const data = await res.json();
-        setErrorMessage(data.error ?? t('somethingWentWrong'));
-        setStatus('error');
-        return;
-      }
-
-      const recipe = await res.json();
-
-      if (recipeId) {
-        setStatus('saved');
-        setTimeout(() => setStatus('idle'), 4000);
-        router.refresh();
-      }
-      else {
-        router.push(`/recipes/${recipe.id}`);
-      }
+    if (!res.ok) {
+      const d = await res.json();
+      setError('root', { message: d.error ?? t('somethingWentWrong') });
+      return;
     }
-    catch {
-      setErrorMessage(t('somethingWentWrong'));
-      setStatus('error');
+
+    const recipe = await res.json();
+
+    if (recipeId) {
+      setSaved(true);
+      setTimeout(() => setSaved(false), 4000);
+      router.refresh();
+    }
+    else {
+      router.push(`/recipes/${recipe.id}`);
     }
   };
 
   const noCategoriesSelected = selectedCategoryIds.size === 0;
 
+  const registerTitle = register('title');
+  const registerDescription = register('description');
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-8">
+    <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {forkedFrom && (
         <p className="text-sm text-stone-500">
           {t('forkedFrom')}
@@ -234,26 +226,22 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
         </p>
       )}
 
-      {status === 'error' && <FormBanner type="error" message={errorMessage} />}
-      {status === 'saved' && <Toast message={t('saved')} />}
+      {saved && <Toast message={t('saved')} />}
 
       <div className="space-y-4">
-        <FormField label={t('titleLabel')}>
+        <FormField label={t('titleLabel')} error={errors.title?.message}>
           <TextInput
             type="text"
-            value={fields.title}
-            onChange={e => setField('title', e.target.value)}
-            required
             placeholder={t('titlePlaceholder')}
+            {...registerTitle}
           />
         </FormField>
 
         <FormField label={t('descriptionLabel')}>
           <Textarea
-            value={fields.description}
-            onChange={e => setField('description', e.target.value)}
             rows={2}
             placeholder={t('descriptionPlaceholder')}
+            {...registerDescription}
           />
         </FormField>
 
@@ -318,27 +306,39 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
 
         <div>
           <label className="block text-sm font-medium text-stone-700 mb-2">{t('coverPhotoLabel')}</label>
-          <ImageUpload
-            value={fields.coverImageUrl}
-            onChange={url => setField('coverImageUrl', url)}
-            onError={msg => setErrorMessage(msg)}
-            label={t('coverPhotoLabel')}
+          <Controller
+            name="coverImageUrl"
+            control={control}
+            render={({ field: { value, onChange } }) => (
+              <ImageUpload
+                value={value}
+                onChange={onChange}
+                onError={msg => setError('root', { message: msg })}
+                label={t('coverPhotoLabel')}
+              />
+            )}
           />
         </div>
 
-        <div>
-          <Checkbox
-            checked={fields.isPublic}
-            onChange={handleIsPublicChange}
-            label={t('makePublicLabel')}
-            disabled={noCategoriesSelected && !fields.isPublic}
-          />
-          {noCategoriesSelected && !fields.isPublic && (
-            <p className="mt-1 text-xs text-stone-400">
-              {t('categoryRequired')}
-            </p>
+        <Controller
+          name="isPublic"
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <div>
+              <Checkbox
+                checked={value}
+                onChange={e => onChange(e.target.checked)}
+                label={t('makePublicLabel')}
+                disabled={noCategoriesSelected && !value}
+              />
+              {noCategoriesSelected && !value && (
+                <p className="mt-1 text-xs text-stone-400">
+                  {t('categoryRequired')}
+                </p>
+              )}
+            </div>
           )}
-        </div>
+        />
       </div>
 
       <FormIngredients
@@ -351,24 +351,23 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
         steps={steps}
         actions={stepActions}
         emptyStep={emptyStep}
-        onError={msg => setErrorMessage(msg)}
+        onError={msg => setError('root', { message: msg })}
       />
 
+      {errors.root && <FormBanner type="error" message={errors.root.message ?? ''} />}
       <div className="flex gap-3 pt-2">
         <Button
           type="submit"
           variant="neutral"
           size="lg"
-
-          disabled={status === 'saving'}
+          disabled={isSubmitting}
         >
-          {status === 'saving' ? t('saving') : recipeId ? t('saveChanges') : t('createRecipe')}
+          {isSubmitting ? t('saving') : recipeId ? t('saveChanges') : t('createRecipe')}
         </Button>
         <Button
           type="button"
           variant="secondary"
           size="lg"
-
           onClick={() => router.back()}
         >
           {t('cancel')}

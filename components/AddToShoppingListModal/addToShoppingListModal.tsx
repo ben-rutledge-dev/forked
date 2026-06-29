@@ -1,7 +1,10 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Data
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
 import { usePostItems } from '@/data/shopping-lists/[shoppingListId]/items';
@@ -51,15 +54,13 @@ export const AddToShoppingListModal = (props: AddToShoppingListModalProps) => {
   const [chosenListId, setChosenListId] = useState<string | null>(null);
   const [firstSectionId, setFirstSectionId] = useState<string | null>(null);
   const pendingSectionFetch = useRef<Promise<string | null>>(Promise.resolve(null));
-  const [newListTitle, setNewListTitle] = useState('');
-  const [creatingList, setCreatingList] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const { data: listsData } = useShoppingLists();
   const lists = listsData?.lists ?? [];
 
-  const { mutateAsync: createList, isPending: creatingListPending } = usePostShoppingList();
+  const { mutateAsync: createList } = usePostShoppingList();
   const { mutateAsync: postItems } = usePostItems({ shoppingListId: chosenListId ?? undefined });
 
   useEffect(() => {
@@ -104,12 +105,8 @@ export const AddToShoppingListModal = (props: AddToShoppingListModalProps) => {
       });
   };
 
-  const handleCreateList = async (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    if (!newListTitle.trim()) return;
-    const newList = await createList({ title: newListTitle.trim() });
-    setNewListTitle('');
-    setCreatingList(false);
+  const handleCreateList = async (title: string) => {
+    const newList = await createList({ title: title.trim() });
     handleSelectList(newList.id);
   };
 
@@ -159,12 +156,7 @@ export const AddToShoppingListModal = (props: AddToShoppingListModalProps) => {
           lists={lists}
           chosenListId={chosenListId}
           onSelectList={handleSelectList}
-          creatingList={creatingList}
-          onSetCreatingList={setCreatingList}
-          newListTitle={newListTitle}
-          onNewListTitleChange={setNewListTitle}
           onCreateList={handleCreateList}
-          creatingListPending={creatingListPending}
           error={error}
           submitting={submitting}
           selectedCount={selectedIngredients.length}
@@ -256,18 +248,18 @@ const StageOne = ({
 
 // ─── Stage 2: Select list ─────────────────────────────────────────────────────
 
+const newListSchema = z.object({
+  title: z.string().min(1, 'List name is required').max(100),
+});
+type NewListForm = z.infer<typeof newListSchema>;
+
 type ListItem = { id: string, title: string, uncheckedCount: number };
 
 type StageTwoProps = {
   lists: ListItem[]
   chosenListId: string | null
   onSelectList: (id: string) => void
-  creatingList: boolean
-  onSetCreatingList: (v: boolean) => void
-  newListTitle: string
-  onNewListTitleChange: (v: string) => void
-  onCreateList: (e: React.SyntheticEvent) => void
-  creatingListPending: boolean
+  onCreateList: (title: string) => Promise<void>
   error: string | null
   submitting: boolean
   selectedCount: number
@@ -279,12 +271,7 @@ const StageTwo = ({
   lists,
   chosenListId,
   onSelectList,
-  creatingList,
-  onSetCreatingList,
-  newListTitle,
-  onNewListTitleChange,
   onCreateList,
-  creatingListPending,
   error,
   submitting,
   selectedCount,
@@ -292,6 +279,20 @@ const StageTwo = ({
   onSubmit,
 }: StageTwoProps) => {
   const t = useTranslations('addToShoppingList');
+  const [creatingList, setCreatingList] = useState(false);
+
+  const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm<NewListForm>({
+    resolver: zodResolver(newListSchema),
+  });
+
+  const registerTitle = register('title');
+
+  const onNewList = async (data: NewListForm) => {
+    await onCreateList(data.title);
+    reset();
+    setCreatingList(false);
+  };
+
   return (
     <>
       <ModalHeading className="mb-4">{t('chooseListHeading')}</ModalHeading>
@@ -318,23 +319,22 @@ const StageTwo = ({
 
       {creatingList
         ? (
-            <form onSubmit={onCreateList} className="flex gap-2 mb-4">
+            <form onSubmit={handleSubmit(onNewList)} className="flex gap-2 mb-4">
               <input
                 autoFocus
                 className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                 placeholder={t('newListPlaceholder')}
-                value={newListTitle}
-                onChange={e => onNewListTitleChange(e.target.value)}
+                {...registerTitle}
               />
-              <Button type="submit" variant="primary" size="sm" disabled={creatingListPending}>
-                {creatingListPending ? t('creating') : t('create')}
+              <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+                {isSubmitting ? t('creating') : t('create')}
               </Button>
             </form>
           )
         : (
             <button
               className="text-sm text-primary-500 hover:underline mb-4"
-              onClick={() => onSetCreatingList(true)}
+              onClick={() => setCreatingList(true)}
             >
               {t('newList')}
             </button>

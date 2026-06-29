@@ -1,7 +1,9 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Data
 import type { RecipeBookDetail } from '@/data/recipe-books/[recipeBookId]/types';
 // Components
@@ -13,14 +15,13 @@ import { ImageUpload } from '@/components/ImageUpload';
 import { Textarea } from '@/components/Textarea';
 import { TextInput } from '@/components/TextInput';
 
-type EditFields = {
-  title: string
-  description: string
-  isPublic: boolean
-  coverImageUrl: string
-};
-
-type EditStatus = 'idle' | 'saving' | 'error';
+const schema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string(),
+  isPublic: z.boolean(),
+  coverImageUrl: z.string(),
+});
+type FormValues = z.infer<typeof schema>;
 
 type Props = {
   book: RecipeBookDetail
@@ -29,73 +30,88 @@ type Props = {
 };
 
 export const RecipeBookEditForm = ({ book, onSaved, onCancel }: Props) => {
-  const [fields, setFields] = useState<EditFields>({
-    title: book.title,
-    description: book.description ?? '',
-    isPublic: book.isPublic,
-    coverImageUrl: book.coverImageUrl ?? '',
-  });
-  const [status, setStatus] = useState<EditStatus>('idle');
-  const [errorMessage, setErrorMessage] = useState('');
   const t = useTranslations('recipeBooks');
 
-  const setField = <K extends keyof EditFields>(key: K, value: EditFields[K]) =>
-    setFields(prev => ({ ...prev, [key]: value }));
+  const {
+    register,
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors, isSubmitting },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
+    defaultValues: {
+      title: book.title,
+      description: book.description ?? '',
+      isPublic: book.isPublic,
+      coverImageUrl: book.coverImageUrl ?? '',
+    },
+  });
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setStatus('saving');
-    setErrorMessage('');
-    try {
-      const res = await fetch(`/api/recipe-books/${book.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ...fields, coverImageUrl: fields.coverImageUrl || null }),
-      });
-      if (!res.ok) {
-        const d = await res.json();
-        setErrorMessage(d.error ?? 'Something went wrong');
-        setStatus('error');
-        return;
-      }
-      onSaved({
-        title: fields.title,
-        description: fields.description || null,
-        isPublic: fields.isPublic,
-        coverImageUrl: fields.coverImageUrl || null,
-      });
+  const onSubmit = async (data: FormValues) => {
+    const res = await fetch(`/api/recipe-books/${book.id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ...data, coverImageUrl: data.coverImageUrl || null }),
+    });
+    if (!res.ok) {
+      const d = await res.json();
+      setError('root', { message: d.error ?? 'Something went wrong' });
+      return;
     }
-    catch {
-      setErrorMessage('Something went wrong');
-      setStatus('error');
-    }
+    onSaved({
+      title: data.title,
+      description: data.description || null,
+      isPublic: data.isPublic,
+      coverImageUrl: data.coverImageUrl || null,
+    });
   };
 
+  const registerTitle = register('title');
+  const registerDescription = register('description');
+
   return (
-    <form onSubmit={handleSubmit} className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-5 space-y-4 mb-6">
-      {status === 'error' && <FormBanner type="error" message={errorMessage} />}
-      <FormField label={t('editTitleLabel')}>
-        <TextInput value={fields.title} onChange={e => setField('title', e.target.value)} required />
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-5 space-y-4 mb-6">
+
+      <FormField label={t('editTitleLabel')} error={errors.title?.message}>
+        <TextInput {...registerTitle} />
       </FormField>
+
       <FormField label={t('editDescriptionLabel')}>
-        <Textarea value={fields.description} onChange={e => setField('description', e.target.value)} rows={2} />
+        <Textarea rows={2} {...registerDescription} />
       </FormField>
+
       <FormField label={t('editCoverPhotoLabel')}>
-        <ImageUpload
-          value={fields.coverImageUrl}
-          onChange={url => setField('coverImageUrl', url)}
-          onError={msg => setErrorMessage(msg)}
-          label={t('editAddCoverPhoto')}
+        <Controller
+          name="coverImageUrl"
+          control={control}
+          render={({ field: { value, onChange } }) => (
+            <ImageUpload
+              value={value}
+              onChange={onChange}
+              onError={msg => setError('root', { message: msg })}
+              label={t('editAddCoverPhoto')}
+            />
+          )}
         />
       </FormField>
-      <Checkbox
-        checked={fields.isPublic}
-        onChange={e => setField('isPublic', e.target.checked)}
-        label={t('editMakePublicLabel')}
+
+      <Controller
+        name="isPublic"
+        control={control}
+        render={({ field: { value, onChange } }) => (
+          <Checkbox
+            checked={value}
+            onChange={e => onChange(e.target.checked)}
+            label={t('editMakePublicLabel')}
+          />
+        )}
       />
+
+      {errors.root && <FormBanner type="error" message={errors.root.message ?? ''} />}
       <div className="flex gap-2">
-        <Button type="submit" variant="primary" size="sm" disabled={status === 'saving'}>
-          {status === 'saving' ? t('editSaving') : t('editSave')}
+        <Button type="submit" variant="primary" size="sm" disabled={isSubmitting}>
+          {isSubmitting ? t('editSaving') : t('editSave')}
         </Button>
         <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
           {t('editCancel')}

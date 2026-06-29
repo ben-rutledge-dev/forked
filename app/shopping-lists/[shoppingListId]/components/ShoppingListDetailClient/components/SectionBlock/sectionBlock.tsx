@@ -1,8 +1,11 @@
 'use client';
 
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { useContext, useRef, useState } from 'react';
+import { useContext, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Data
 import { usePostItems } from '@/data/shopping-lists/[shoppingListId]/items';
 import { usePutSection, useDeleteSection } from '@/data/shopping-lists/[shoppingListId]/sections/[sectionId]';
@@ -28,10 +31,8 @@ export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: Sec
     disabled: isUnsorted,
   });
 
-  const [newItemName, setNewItemName] = useState('');
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(section.title);
-  const newItemInputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: postItems } = usePostItems({ shoppingListId });
   const { mutate: putSection } = usePutSection({ shoppingListId, sectionId: section.id });
@@ -39,14 +40,18 @@ export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: Sec
   const { confirm } = useConfirm();
   const t = useTranslations('shoppingList');
 
-  const focusAddInput = () => newItemInputRef.current?.focus();
+  const addItemSchema = z.object({ name: z.string().min(1) });
+  type AddItemForm = z.infer<typeof addItemSchema>;
 
-  const handleAddItem = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const name = newItemName.trim();
-    if (!name) return;
-    postItems({ items: [{ name, sectionId: section.id }] });
-    setNewItemName('');
+  const { register, handleSubmit, reset, setFocus } = useForm<AddItemForm>({
+    resolver: zodResolver(addItemSchema),
+  });
+
+  const focusAddInput = () => setFocus('name');
+
+  const onAddItem = (data: AddItemForm) => {
+    postItems({ items: [{ name: data.name.trim(), sectionId: section.id }] });
+    reset();
   };
 
   const handleTitleBlur = () => {
@@ -136,13 +141,11 @@ export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: Sec
         </ul>
       </SortableContext>
 
-      <form onSubmit={handleAddItem} className="mt-1">
+      <form onSubmit={handleSubmit(onAddItem)} className="mt-1">
         <input
-          ref={newItemInputRef}
           className="w-full text-sm text-stone-500 placeholder-stone-300 outline-none py-1 border-b border-transparent focus:border-stone-200"
           placeholder={t('addItemPlaceholder')}
-          value={newItemName}
-          onChange={e => setNewItemName(e.target.value)}
+          {...register('name')}
         />
       </form>
     </div>

@@ -1,10 +1,17 @@
 'use client';
 
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Components
 import { Button } from '@/components/Button';
 import { TextInput } from '@/components/TextInput';
+
+const schema = z.object({
+  label: z.string().min(1, 'Slot name is required'),
+});
+type AddSlotForm = z.infer<typeof schema>;
 
 type Props = {
   onConfirm: (label: string | null) => void
@@ -12,27 +19,26 @@ type Props = {
 
 export const AddSlotModal = ({ onConfirm }: Props) => {
   const t = useTranslations('mealPlanner');
-  const [label, setLabel] = useState('');
+  const { register, handleSubmit, formState: { errors } } = useForm<AddSlotForm>({
+    resolver: zodResolver(schema),
+  });
 
-  const handleSubmit = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const trimmed = label.trim();
-    if (!trimmed) return;
-    onConfirm(trimmed);
-  };
+  const onSubmit = (data: AddSlotForm) => onConfirm(data.label.trim());
 
   return (
-    <form onSubmit={handleSubmit} className="p-6 space-y-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
       <h2 className="text-lg font-semibold text-stone-900">{t('addSlotHeading')}</h2>
       <p className="text-sm text-stone-500">{t('addSlotHint')}</p>
-      <TextInput
-        autoFocus
-        value={label}
-        onChange={e => setLabel(e.target.value)}
-        placeholder={t('customSlotPlaceholder')}
-      />
+      <div>
+        <TextInput
+          autoFocus
+          placeholder={t('customSlotPlaceholder')}
+          {...register('label')}
+        />
+        {errors.label && <p className="mt-1 text-xs text-danger-500">{errors.label.message}</p>}
+      </div>
       <div className="flex gap-2">
-        <Button type="submit" variant="primary" size="sm" disabled={!label.trim()}>
+        <Button type="submit" variant="primary" size="sm">
           {t('addSlotSubmit')}
         </Button>
         <Button type="button" variant="secondary" size="sm" onClick={() => onConfirm(null)}>

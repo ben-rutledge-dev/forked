@@ -18,9 +18,12 @@ import {
   verticalListSortingStrategy,
   arrayMove,
 } from '@dnd-kit/sortable';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
 // Data
 import { queryKeys } from '@/data/queryKeys';
 import { useQueryClient } from '@/data/shared/hooks';
@@ -68,8 +71,13 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
   const [toast, setToast] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState(() => list?.title ?? '');
-  const [newSectionTitle, setNewSectionTitle] = useState('');
   const [addingSection, setAddingSection] = useState(false);
+
+  const addSectionSchema = z.object({ title: z.string().min(1, 'Section name is required') });
+  type AddSectionForm = z.infer<typeof addSectionSchema>;
+  const { register: registerSection, handleSubmit: handleSectionSubmit, reset: resetSection } = useForm<AddSectionForm>({
+    resolver: zodResolver(addSectionSchema),
+  });
 
   useShoppingListRealtime(shoppingListId);
 
@@ -287,13 +295,10 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
 
   // ── Section / list handlers ────────────────────────────────────────────────
 
-  const handleAddSection = (e: React.SyntheticEvent) => {
-    e.preventDefault();
-    const title = newSectionTitle.trim();
-    if (!title) return;
-    postSection({ title }, {
+  const onAddSection = (data: AddSectionForm) => {
+    postSection({ title: data.title.trim() }, {
       onSuccess: () => {
-        setNewSectionTitle('');
+        resetSection();
         setAddingSection(false);
       },
     });
@@ -425,16 +430,15 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
 
       {addingSection
         ? (
-            <form onSubmit={handleAddSection} className="flex gap-2 mt-2">
+            <form onSubmit={handleSectionSubmit(onAddSection)} className="flex gap-2 mt-2">
               <input
                 autoFocus
                 className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
                 placeholder={t('sectionNamePlaceholder')}
-                value={newSectionTitle}
-                onChange={e => setNewSectionTitle(e.target.value)}
+                {...registerSection('title')}
               />
               <Button type="submit" variant="primary" size="sm">{t('add')}</Button>
-              <Button type="button" variant="secondary" size="sm" onClick={() => setAddingSection(false)}>{t('cancel')}</Button>
+              <Button type="button" variant="secondary" size="sm" onClick={() => { setAddingSection(false); resetSection(); }}>{t('cancel')}</Button>
             </form>
           )
         : (
