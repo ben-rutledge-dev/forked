@@ -7,7 +7,7 @@ type Props = Omit<React.TextareaHTMLAttributes<HTMLTextAreaElement>, 'size'> & {
   size?: Size
 };
 
-const baseClass = 'w-full rounded-lg border border-stone-300 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 resize-none';
+const baseClass = 'w-full rounded-lg squircle bg-white border border-stone-300 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 resize-none';
 
 const sizeClasses: Record<Size, string> = {
   md: 'px-3 py-2 text-sm',

@@ -37,7 +37,7 @@ export const AddToShoppingListButton = ({ recipeId, recipeTitle }: Props) => {
       <Button
         variant="secondary"
         size="sm"
-        shape="pill"
+
         onClick={handleClick}
       >
         {t('buttonLabel')}

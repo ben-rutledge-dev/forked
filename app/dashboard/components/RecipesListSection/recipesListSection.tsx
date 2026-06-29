@@ -19,6 +19,8 @@ export const RecipesListSection = async ({ userId }: Props) => {
     isPublic: r.isPublic,
     forkedFromId: r.forkedFromId,
     forkCount: r.forkCount,
+    tags: r.tags,
+    categories: r.categories.map(rc => rc.category.label),
     createdAt: r.createdAt.toISOString(),
     updatedAt: r.updatedAt.toISOString(),
   }));

@@ -247,7 +247,7 @@ const BookHeaderAction: React.FC<BookHeaderActionProps> = (props) => {
         <UserBadge role={book.currentUserRole} />
       )}
       {isOwner && (
-        <Button variant="secondary" size="sm" shape="pill" onClick={onEditToggle}>
+        <Button variant="secondary" size="sm" onClick={onEditToggle}>
           {t('edit')}
         </Button>
       )}

@@ -4,11 +4,11 @@ import { notFound } from 'next/navigation';
 // Components
 import { AddToBookButton } from './components/AddToBookButton';
 import { ForkButton } from './components/ForkButton';
-import { AddToShoppingListButton } from '@/components/AddToShoppingListModal';
-import { Badge } from '@/components/Badge';
+import { AddToShoppingListButton } from '@/components/AddToShoppingListButton';
 import { Button } from '@/components/Button';
 import { PageLayout } from '@/components/PageLayout';
 import { RecipeDetail } from '@/components/RecipeDetail';
+import { VisibilityBadge } from '@/components/VisibilityBadge';
 // Lib
 import { auth } from '@/lib/auth';
 import { prisma } from '@/lib/prisma';
@@ -70,10 +70,8 @@ const RecipePage = async ({ params }: Props) => {
   const headerAction = isOwner
     ? (
         <div className="flex items-center gap-2">
-          <Badge variant={recipe.isPublic ? 'success' : 'neutral'} className="text-xs">
-            {recipe.isPublic ? t('publicBadge') : t('privateBadge')}
-          </Badge>
-          <Button href={`/recipes/${id}/edit`} variant="secondary" size="sm" shape="pill">
+          <VisibilityBadge isPublic={recipe.isPublic} className="text-xs" />
+          <Button href={`/recipes/${id}/edit`} variant="secondary" size="sm">
             {t('editLabel')}
           </Button>
         </div>

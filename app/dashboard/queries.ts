@@ -22,8 +22,8 @@ export const getIsPremium = cache(async (userId: string) => {
 export const getMealPlanEntries = cache(async (mealPlanId: string, fromStr: string, toStr: string) =>
   prisma.mealPlanEntry.findMany({
     where: { mealPlanId, date: { gte: new Date(fromStr), lte: new Date(toStr) } },
-    include: { recipe: { select: { id: true, title: true, coverImageUrl: true } } },
-    orderBy: { orderIndex: 'asc' },
+    include: { recipe: { select: { id: true, title: true, coverImageUrl: true, tags: true, categories: { include: { category: { select: { label: true } } } } } }, slot: { select: { label: true } } },
+    orderBy: [{ slot: { orderIndex: 'asc' } }, { orderIndex: 'asc' }],
   }),
 );
 
@@ -32,7 +32,7 @@ export const getUserRecipes = cache(async (userId: string) =>
     where: { authorId: userId },
     orderBy: { updatedAt: 'desc' },
     take: 10,
-    select: { id: true, title: true, description: true, coverImageUrl: true, authorId: true, isPublic: true, forkedFromId: true, forkCount: true, createdAt: true, updatedAt: true },
+    select: { id: true, title: true, description: true, coverImageUrl: true, authorId: true, isPublic: true, forkedFromId: true, forkCount: true, tags: true, categories: { include: { category: { select: { label: true } } } }, createdAt: true, updatedAt: true },
   }),
 );
 

@@ -3,90 +3,125 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
-// Data
-import type { MealPlanEntry } from '@/data/meal-plans/[mealPlanId]/types';
 // Utils
-import { formatDayLabel } from '@/utils/dates';
 
-type Props = {
-  data: { entries: MealPlanEntry[] }
+export type DashboardEntry = {
+  id: string
+  slotId: string
+  slotLabel: string
+  date: string
+  orderIndex: number
+  recipe: { id: string, title: string, coverImageUrl: string | null } | null
 };
 
-const buildDays = (entries: MealPlanEntry[]): Array<{ dateStr: string, label: string, entries: MealPlanEntry[], isToday: boolean }> => {
+type Props = {
+  data: { entries: DashboardEntry[] }
+  startDateStr: string
+};
+
+const buildDays = (entries: DashboardEntry[], startDateStr: string): Array<{ dateStr: string, weekday: string, dayNum: number, entries: DashboardEntry[], isToday: boolean, isPast: boolean }> => {
   const today = new Date();
   const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const [sy, sm, sd] = startDateStr.split('-').map(Number);
 
   return Array.from({ length: 7 }, (_, i) => {
-    const [y, m, d] = todayStr.split('-').map(Number);
-    const date = new Date(Date.UTC(y, m - 1, d + i));
+    const date = new Date(Date.UTC(sy, sm - 1, sd + i));
     const dateStr = date.toISOString().split('T')[0];
-    const dayEntries = entries.filter(e => e.date === dateStr);
-    return { dateStr, label: formatDayLabel(date, true), entries: dayEntries, isToday: i === 0 };
+    const weekday = new Intl.DateTimeFormat(undefined, { weekday: 'short', timeZone: 'UTC' }).format(date);
+    return {
+      dateStr,
+      weekday: weekday.toUpperCase(),
+      dayNum: date.getUTCDate(),
+      entries: entries.filter(e => e.date === dateStr),
+      isToday: dateStr === todayStr,
+      isPast: dateStr < todayStr,
+    };
   });
 };
 
-export const MealPlanStrip = ({ data }: Props) => {
-  const days = buildDays(data.entries);
+export const MealPlanStrip = ({ data, startDateStr }: Props) => {
+  const t = useTranslations('dashboard.mealPlanStrip');
+  const days = buildDays(data.entries, startDateStr);
 
   return (
-    <Link href="/meal-planner" className="block">
-      <div className="flex gap-3 overflow-x-auto pb-2 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {days.map(({ dateStr, label, entries, isToday }) => {
-          const visible = entries.slice(0, 3);
-          const overflow = entries.length - 3;
-          return (
-            <div
-              key={dateStr}
-              className={`flex-none w-44 rounded-xl p-3 snap-start border ${isToday ? 'border-primary-500 bg-primary-50' : 'border-stone-200 bg-white'}`}
-            >
-              <p className="text-xs font-medium text-stone-500 mb-2 truncate">{label}</p>
-              {visible.length === 0
-                ? <span className="text-stone-300 text-sm">—</span>
-                : (
-                    <div className="space-y-1.5">
-                      {visible.map(e => (
-                        <div
-                          key={e.id}
-                          className="flex items-center gap-2 rounded-lg border border-stone-200 bg-white px-2 py-1.5"
-                        >
-                          {e.recipe?.coverImageUrl
+    <div className="rounded-xl squircle shadow-sm bg-white divide-y divide-stone-100 px-5 overflow-hidden">
+      {days.map(({ dateStr, weekday, dayNum, entries, isToday, isPast }) => {
+        const overflow = entries.length - 3;
+        const visible = entries.slice(0, 3);
+        return (
+          <div key={dateStr} className={`py-3 -mx-5 px-5 ${isToday ? 'bg-primary-50' : ''}`}>
+            <div className={`flex gap-5 ${isPast ? 'opacity-40' : ''}`}>
+              {/* Date label */}
+              <div className="w-10 shrink-0 pt-0.5 text-center">
+                <p className={`text-[10px] font-semibold uppercase tracking-wide ${isToday ? 'text-primary-500' : 'text-stone-400'}`}>{weekday}</p>
+                <p className={`text-base font-semibold leading-tight ${isToday ? 'text-primary-600' : 'text-stone-700'}`}>{dayNum}</p>
+              </div>
+
+              {/* Entries */}
+              <div className="flex-1 min-w-0 flex items-center">
+                {visible.length === 0
+                  ? <span className="text-sm text-stone-300">—</span>
+                  : (
+                      <div className="flex gap-2 flex-wrap">
+                        {visible.map(e => (
+                          e.recipe
                             ? (
-                                <Image
-                                  src={e.recipe.coverImageUrl}
-                                  alt={e.recipe.title ?? ''}
-                                  width={32}
-                                  height={32}
-                                  className="rounded object-cover h-8 w-8 shrink-0"
-                                />
+                                <Link
+                                  key={e.id}
+                                  href={`/recipes/${e.recipe.id}`}
+                                  className="flex items-end gap-2 rounded-lg squircle shadow-sm bg-white p-2 hover:shadow-md transition-shadow"
+                                >
+                                  {e.recipe.coverImageUrl
+                                    ? (
+                                        <Image
+                                          src={e.recipe.coverImageUrl}
+                                          alt={e.recipe.title}
+                                          width={28}
+                                          height={28}
+                                          className="rounded object-cover h-7 w-7 shrink-0"
+                                        />
+                                      )
+                                    : <div className="h-7 w-7 shrink-0 rounded bg-stone-100" />}
+                                  <div className="flex flex-col min-w-0">
+                                    <span className="text-[10px] font-semibold uppercase tracking-wide text-stone-400 truncate">
+                                      {e.slotLabel}
+                                    </span>
+                                    <span className="text-xs font-medium text-stone-800 truncate leading-tight">
+                                      {e.recipe.title}
+                                    </span>
+                                  </div>
+                                </Link>
                               )
-                            : <div className="h-8 w-8 shrink-0 rounded bg-stone-100" />}
-                          <span className="text-xs font-medium text-stone-800 truncate flex-1 min-w-0">
-                            {e.recipe?.title ?? '—'}
-                          </span>
-                        </div>
-                      ))}
-                      {overflow > 0 && (
-                        <p className="text-xs text-stone-400 pl-1">
-                          +
-                          {overflow}
-                          {' '}
-                          more
-                        </p>
-                      )}
-                    </div>
-                  )}
+                            : (
+                                <div key={e.id} className="flex items-end gap-2 rounded-lg squircle shadow-sm bg-white p-2">
+                                  <div className="h-7 w-7 shrink-0 rounded bg-stone-100" />
+                                  <div className="flex flex-col min-w-0">
+                                    <span className="text-[10px] font-semibold uppercase tracking-wide text-stone-400 truncate">
+                                      {e.slotLabel}
+                                    </span>
+                                    <span className="text-xs font-medium text-stone-300 truncate">—</span>
+                                  </div>
+                                </div>
+                              )
+                        ))}
+                        {overflow > 0 && (
+                          <p className="text-xs text-stone-400 self-center">{t('overflow', { count: overflow })}</p>
+                        )}
+                      </div>
+                    )}
+              </div>
             </div>
-          );
-        })}
-      </div>
-    </Link>
+          </div>
+        );
+      })}
+    </div>
   );
 };
 
 export const MealPlanStripEmpty = () => {
   const t = useTranslations('dashboard.mealPlanStrip');
   return (
-    <div className="rounded-xl border border-stone-200 bg-white px-5 py-6 text-center">
+    <div className="rounded-xl squircle shadow-sm bg-white px-5 py-6 text-center">
       <p className="text-sm font-medium text-stone-700 mb-1">{t('planYourWeek')}</p>
       <p className="text-xs text-stone-400 mb-3">{t('addMealsCta')}</p>
       <Link href="/meal-planner" className="text-xs font-medium text-primary-500 hover:underline">

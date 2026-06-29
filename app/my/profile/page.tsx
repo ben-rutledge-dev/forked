@@ -42,7 +42,7 @@ const ProfilePage = async () => {
         action={
           user?.username && user.isPublic
             ? (
-                <Button href={`/u/${user.username}`} variant="primary" size="md" shape="pill">
+                <Button href={`/u/${user.username}`} variant="primary" size="md">
                   {t('viewProfile')}
                 </Button>
               )

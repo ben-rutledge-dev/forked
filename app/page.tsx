@@ -1,8 +1,8 @@
 import { getTranslations } from 'next-intl/server';
-import Link from 'next/link';
 import { redirect } from 'next/navigation';
 // Components
 import { SignInButton } from './components/SignInButton';
+import { Button } from '@/components/Button';
 import { PageLayout } from '@/components/PageLayout';
 // Lib
 import { auth } from '@/lib/auth';
@@ -25,12 +25,9 @@ const Home = async () => {
         </p>
       </div>
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <Link
-          href="/recipes"
-          className="w-full rounded-full bg-primary-500 px-8 py-3 text-sm font-medium text-white hover:bg-primary-600 transition-colors sm:w-auto"
-        >
+        <Button variant="primary" size="lg" shape="pill" href="/recipes">
           {t('browsePool')}
-        </Link>
+        </Button>
         <SignInButton />
       </div>
     </PageLayout>

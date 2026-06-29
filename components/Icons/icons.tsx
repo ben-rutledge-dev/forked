@@ -89,6 +89,30 @@ export const ChevronLeftIcon = ({ className }: IconProps) => (
   </svg>
 );
 
+export const ChevronRightIcon = ({ className }: IconProps) => (
+  <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+  </svg>
+);
+
+export const GripIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 8 14" fill="currentColor" className={className} aria-hidden="true">
+    <circle cx="2" cy="2" r="1.25" />
+    <circle cx="2" cy="7" r="1.25" />
+    <circle cx="2" cy="12" r="1.25" />
+    <circle cx="6" cy="2" r="1.25" />
+    <circle cx="6" cy="7" r="1.25" />
+    <circle cx="6" cy="12" r="1.25" />
+  </svg>
+);
+
+export const PlusIcon = ({ className }: IconProps) => (
+  <svg viewBox="0 0 10 10" className={className} fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true">
+    <line x1="5" y1="1" x2="5" y2="9" />
+    <line x1="1" y1="5" x2="9" y2="5" />
+  </svg>
+);
+
 export const ChevronDownIcon = ({ className }: IconProps) => (
   <svg className={className} viewBox="0 0 16 16" fill="none" aria-hidden="true">
     <path d="M4 6l4 4 4-4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

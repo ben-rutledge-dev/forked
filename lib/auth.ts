@@ -35,6 +35,8 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     session: ({ session, user }) => {
       if (session.user) {
         session.user.id = user.id;
+        // Prefer the user-uploaded avatar over the OAuth provider image
+        session.user.avatarUrl = (user as { avatarUrl?: string | null }).avatarUrl ?? null;
       }
       return session;
     },

@@ -359,7 +359,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
           type="submit"
           variant="neutral"
           size="lg"
-          shape="pill"
+
           disabled={status === 'saving'}
         >
           {status === 'saving' ? t('saving') : recipeId ? t('saveChanges') : t('createRecipe')}
@@ -368,7 +368,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
           type="button"
           variant="secondary"
           size="lg"
-          shape="pill"
+
           onClick={() => router.back()}
         >
           {t('cancel')}

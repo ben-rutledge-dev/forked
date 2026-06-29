@@ -55,7 +55,7 @@ export const Layout = ({ children, title = 'Forked' }: Props) => {
                     <Button
                       variant="nav-pill"
                       size="md"
-                      shape="pill"
+
                       disabled={status === 'loading'}
                       onClick={() => signIn()}
                     >

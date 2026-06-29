@@ -2,6 +2,7 @@
 
 :root {
   /* Brand / primary */
+  --primary-10:  #fef9f6;
   --primary-50:  #fdf3ed;
   --primary-100: #ffedd5;
   --primary-200: #fed7aa;
@@ -26,11 +27,25 @@
 }
 
 body {
-  font-family: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-hanken), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  background-color: var(--primary-10);
+}
+
+h1 {
+  font-family: var(--font-fraunces), Georgia, serif;
 }
 
 @layer utilities {
+  .font-fraunces { font-family: var(--font-fraunces), Georgia, serif; }
+
+  .squircle { border-radius: 0.5rem; }
+
+  @supports (corner-shape: squircle) {
+    /* stylelint-disable-next-line property-no-unknown */
+    .squircle { corner-shape: squircle; border-radius: 1.5rem; }
+  }
+
   /* Primary backgrounds */
   .bg-primary-50  { background-color: var(--primary-50); }
   .bg-primary-400 { background-color: var(--primary-400); }
@@ -50,6 +65,8 @@ body {
   .text-primary-600 { color: var(--primary-600); }
   /* Primary borders */
   .border-primary-500 { border-color: var(--primary-500); }
+  /* Primary rings */
+  .ring-primary-500 { --tw-ring-color: var(--primary-500); }
 
   /* Danger backgrounds */
   .bg-danger-50  { background-color: var(--danger-50); }

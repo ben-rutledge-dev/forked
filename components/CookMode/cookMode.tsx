@@ -191,7 +191,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                   <Button
                     variant="secondary"
                     size="md"
-                    shape="pill"
+
                     onClick={speakInstruction}
                     className="flex items-center gap-2"
                   >
@@ -203,7 +203,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                   <Button
                     variant="secondary"
                     size="md"
-                    shape="pill"
+
                     onClick={stopSpeaking}
                     className="flex items-center gap-2 bg-stone-100 text-stone-700 hover:bg-stone-200"
                   >
@@ -227,7 +227,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                     <Button
                       variant="primary"
                       size="md"
-                      shape="pill"
+
                       onClick={startTimer}
                       disabled={timerRemaining === 0}
                     >
@@ -238,7 +238,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                     <Button
                       variant="secondary"
                       size="md"
-                      shape="pill"
+
                       onClick={stopTimer}
                     >
                       {t('pause')}
@@ -248,7 +248,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                 <Button
                   variant="secondary"
                   size="md"
-                  shape="pill"
+
                   onClick={resetTimer}
                 >
                   {t('reset')}
@@ -263,7 +263,6 @@ export const CookMode = ({ recipe, backHref }: Props) => {
         <Button
           variant="secondary"
           size="xl"
-          shape="square"
           onClick={() => goTo(stepIndex - 1)}
           disabled={stepIndex === 0}
           className="flex-1"

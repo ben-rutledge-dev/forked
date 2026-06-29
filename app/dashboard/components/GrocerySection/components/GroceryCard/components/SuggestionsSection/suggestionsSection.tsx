@@ -128,9 +128,8 @@ export const SuggestionsSection = ({ suggestions: initialSuggestions, userId, se
 
   const addButton = (
     <Button
-      variant="secondary"
+      variant="primary"
       size="md"
-      shape="pill"
       disabled={selected.size === 0 || !selectedListId || submitting}
       onClick={handleAddSelected}
     >

@@ -72,13 +72,13 @@ export const InviteForm = <TRole extends string>({ roles, defaultRole, onSubmit,
           type="submit"
           variant="primary"
           size="sm"
-          shape="pill"
+
           disabled={isSubmitting || !username.trim()}
         >
           {isSubmitting ? t('submittingLabel') : t('submitLabel')}
         </Button>
         {onCancel && (
-          <Button type="button" variant="secondary" size="sm" shape="pill" onClick={onCancel}>
+          <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
             {t('cancelLabel')}
           </Button>
         )}

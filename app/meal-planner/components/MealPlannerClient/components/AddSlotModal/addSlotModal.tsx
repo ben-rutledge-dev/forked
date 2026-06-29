@@ -32,10 +32,10 @@ export const AddSlotModal = ({ onConfirm }: Props) => {
         placeholder={t('customSlotPlaceholder')}
       />
       <div className="flex gap-2">
-        <Button type="submit" variant="primary" size="sm" shape="pill" disabled={!label.trim()}>
+        <Button type="submit" variant="primary" size="sm" disabled={!label.trim()}>
           {t('addSlotSubmit')}
         </Button>
-        <Button type="button" variant="secondary" size="sm" shape="pill" onClick={() => onConfirm(null)}>
+        <Button type="button" variant="secondary" size="sm" onClick={() => onConfirm(null)}>
           {t('back')}
         </Button>
       </div>

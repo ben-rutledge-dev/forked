@@ -35,7 +35,7 @@ export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectL
       );
     }
     return (
-      <div className="rounded-xl border border-stone-200 bg-white px-5 py-6 text-center">
+      <div className="rounded-xl squircle shadow-sm bg-white px-5 py-6 text-center">
         <p className="text-sm text-stone-500 mb-2">{t('noListsYet')}</p>
         <Link href="/shopping-lists" className="text-xs text-primary-500 hover:underline">
           {t('createList')}
@@ -53,7 +53,7 @@ export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectL
             ? (
                 <button
                   key={list.id}
-                  className={`w-full text-left rounded-xl border px-4 py-3 transition-colors cursor-pointer ${isActive ? 'border-primary-500' : 'border-stone-200 hover:border-stone-300'}`}
+                  className={`w-full text-left rounded-xl squircle px-4 py-3 transition-all cursor-pointer ${isActive ? 'shadow-md ring-2 ring-primary-500' : 'shadow-sm hover:shadow-md'}`}
                   onClick={() => onSelectList(list.id)}
                 >
                   <p className={`text-sm font-medium truncate ${isActive ? 'text-stone-900' : 'text-stone-500'}`}>
@@ -65,7 +65,7 @@ export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectL
             : (
                 <button
                   key={list.id}
-                  className="w-full text-left rounded-xl border border-stone-200 px-4 py-3 hover:border-stone-300 transition-colors cursor-pointer"
+                  className="w-full text-left rounded-xl squircle border border-stone-200 px-4 py-3 hover:border-stone-300 transition-colors cursor-pointer"
                   onClick={() => router.push(`/shopping-lists/${list.id}`)}
                 >
                   <p className="text-sm font-medium text-stone-800 truncate">{list.title}</p>
@@ -85,7 +85,7 @@ export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectL
       {lists.map(list => (
         <li key={list.id}>
           <button
-            className="w-full text-left rounded-xl border border-stone-200 px-5 py-4 hover:border-stone-300 transition-colors cursor-pointer"
+            className="w-full text-left rounded-xl squircle shadow-sm px-5 py-4 hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => router.push(`/shopping-lists/${list.id}`)}
           >
             <p className="font-medium text-stone-800">{list.title}</p>

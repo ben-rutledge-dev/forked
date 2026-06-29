@@ -58,7 +58,7 @@ export const GroceryCard = ({
   })();
 
   return (
-    <div className="mt-4 rounded-xl border border-stone-200 bg-white p-5">
+    <div className="mt-4 rounded-xl squircle shadow-sm bg-white p-5">
       <div className="flex flex-col sm:flex-row sm:items-stretch gap-6 sm:gap-0">
         <div className="flex-1 min-w-0 sm:pr-6 flex flex-col">
           {suggestionsContent}

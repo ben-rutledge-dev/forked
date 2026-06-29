@@ -101,10 +101,10 @@ export const NewRecipeBookForm = () => {
       />
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" variant="primary" size="md" shape="pill" disabled={saving || !title.trim()}>
+        <Button type="submit" variant="primary" size="md" disabled={saving || !title.trim()}>
           {saving ? t('creating') : t('create')}
         </Button>
-        <Button type="button" variant="secondary" size="md" shape="pill" href="/my/recipe-books">
+        <Button type="button" variant="secondary" size="md" href="/my/recipe-books">
           {t('cancel')}
         </Button>
       </div>

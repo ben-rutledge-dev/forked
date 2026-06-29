@@ -27,13 +27,15 @@ export const RecipesList = ({ recipes }: Props) => {
   }
 
   return (
-    <div className="flex gap-3 overflow-x-auto pb-2 scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden snap-x snap-mandatory">
+    <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]">
       {recipes.map(recipe => (
         <CompactRecipeCard
           key={recipe.id}
           id={recipe.id}
           title={recipe.title}
           coverImageUrl={recipe.coverImageUrl}
+          tags={recipe.tags}
+          categories={recipe.categories}
         />
       ))}
     </div>

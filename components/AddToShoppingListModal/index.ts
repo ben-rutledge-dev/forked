@@ -1,2 +1,1 @@
-export * from './AddToShoppingListModal';
-export * from './AddToShoppingListButton';
+export * from './addToShoppingListModal';

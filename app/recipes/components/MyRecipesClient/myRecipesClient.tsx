@@ -182,6 +182,22 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
     setPage(1);
   };
 
+  const handleBrowseQueryChange = (q: string) => {
+    setBrowseQuery(q);
+    setBrowsePage(1);
+  };
+
+  const handleBrowseCategoriesChange = (cats: string[]) => {
+    setBrowseCategories(cats);
+    setBrowsePage(1);
+  };
+
+  const clearBrowse = () => {
+    setBrowseQuery('');
+    setBrowseCategories([]);
+    setBrowsePage(1);
+  };
+
   const clearAll = () => {
     setSelectedFilters([]);
     setQuery('');
@@ -196,26 +212,28 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
       <PageHeader title={t('heading')} action={isAuthenticated ? <HeaderAction tab={tab} /> : undefined} />
 
       {/* Tabs — only shown when logged in */}
-      {isAuthenticated && <div className="flex gap-1 mb-8 border-b border-stone-200">
-        {TAB_KEYS.map(tabKey => (
-          <button
-            key={tabKey}
-            onClick={() => handleTabChange(tabKey)}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
-              tab === tabKey
-                ? 'border-primary-500 text-primary-500'
-                : 'border-transparent text-stone-500 hover:text-stone-700'
-            }`}
-          >
-            {tabKey === 'recipes' ? t('tabRecipes') : tabKey === 'favourites' ? t('tabFavourites') : tabKey === 'books' ? t('tabBooks') : t('tabBrowse')}
-            {tabKey === 'books' && pending.length > 0 && (
-              <span className="ml-1.5 rounded-full bg-primary-500 px-1.5 py-0.5 text-xs text-white">
-                {pending.length}
-              </span>
-            )}
-          </button>
-        ))}
-      </div>}
+      {isAuthenticated && (
+        <div className="flex gap-1 mb-8 border-b border-stone-200">
+          {TAB_KEYS.map(tabKey => (
+            <button
+              key={tabKey}
+              onClick={() => handleTabChange(tabKey)}
+              className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
+                tab === tabKey
+                  ? 'border-primary-500 text-primary-500'
+                  : 'border-transparent text-stone-500 hover:text-stone-700'
+              }`}
+            >
+              {tabKey === 'recipes' ? t('tabRecipes') : tabKey === 'favourites' ? t('tabFavourites') : tabKey === 'books' ? t('tabBooks') : t('tabBrowse')}
+              {tabKey === 'books' && pending.length > 0 && (
+                <span className="ml-1.5 rounded-full bg-primary-500 px-1.5 py-0.5 text-xs text-white">
+                  {pending.length}
+                </span>
+              )}
+            </button>
+          ))}
+        </div>
+      )}
 
       {tab === 'recipes' && (
         <>
@@ -351,9 +369,9 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
           <div className="mb-6">
             <SearchFilterBar
               query={browseQuery}
-              onQueryChange={q => { setBrowseQuery(q); setBrowsePage(1); }}
+              onQueryChange={handleBrowseQueryChange}
               selectedCategories={browseCategories}
-              onCategoriesChange={cats => { setBrowseCategories(cats); setBrowsePage(1); }}
+              onCategoriesChange={handleBrowseCategoriesChange}
               categoryOptions={poolCategoryOptions}
               groupLabels={GROUP_LABELS}
               groupOrder={[...GROUP_ORDER]}
@@ -363,7 +381,7 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
               count={poolTotal}
               isFetching={poolFetching}
               hasFilters={poolHasFilters}
-              onClear={() => { setBrowseQuery(''); setBrowseCategories([]); setBrowsePage(1); }}
+              onClear={clearBrowse}
             />
           </div>
 
@@ -412,7 +430,7 @@ const InviteRow: React.FC<InviteRowProps> = (props) => {
   const t = useTranslations('myRecipes');
 
   return (
-    <div className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-5 py-4">
+    <div className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white px-5 py-4">
       <div>
         <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
         <p className="text-xs text-stone-400 mt-0.5">
@@ -422,8 +440,8 @@ const InviteRow: React.FC<InviteRowProps> = (props) => {
         </p>
       </div>
       <div className="flex gap-2">
-        <Button variant="primary" size="sm" shape="pill" disabled={isPending} onClick={() => accept()}>{t('accept')}</Button>
-        <Button variant="secondary" size="sm" shape="pill" disabled={isPending} onClick={() => decline()}>{t('decline')}</Button>
+        <Button variant="primary" size="sm" disabled={isPending} onClick={() => accept()}>{t('accept')}</Button>
+        <Button variant="secondary" size="sm" disabled={isPending} onClick={() => decline()}>{t('decline')}</Button>
       </div>
     </div>
   );
@@ -438,22 +456,16 @@ const HeaderAction: React.FC<HeaderActionProps> = (props) => {
   const t = useTranslations('myRecipes');
   if (tab === 'recipes') {
     return (
-      <Link
-        href="/recipes/new"
-        className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
-      >
+      <Button href="/recipes/new" variant="primary" size="lg">
         {t('newRecipe')}
-      </Link>
+      </Button>
     );
   }
   if (tab === 'books') {
     return (
-      <Link
-        href="/my/recipe-books/new"
-        className="rounded-full bg-primary-500 px-5 py-2 text-sm font-medium text-white hover:bg-primary-600 transition-colors"
-      >
+      <Button href="/my/recipe-books/new" variant="primary" size="lg">
         {t('newRecipeBook')}
-      </Link>
+      </Button>
     );
   }
   return null;

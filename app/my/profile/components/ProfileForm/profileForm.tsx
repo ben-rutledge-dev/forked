@@ -297,10 +297,10 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
       </div>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" variant="neutral" size="lg" shape="pill" disabled={status === 'saving'}>
+        <Button type="submit" variant="neutral" size="lg" disabled={status === 'saving'}>
           {status === 'saving' ? t('saving') : t('saveProfile')}
         </Button>
-        <Button type="button" variant="secondary" size="lg" shape="pill" onClick={() => router.back()}>
+        <Button type="button" variant="secondary" size="lg" onClick={() => router.back()}>
           {t('cancel')}
         </Button>
       </div>

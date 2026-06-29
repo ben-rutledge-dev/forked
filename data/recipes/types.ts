@@ -34,6 +34,8 @@ export type PostRecipeResponse = {
   isPublic: boolean
   forkedFromId: string | null
   forkCount: number
+  tags: string[]
+  categories: string[]
   createdAt: string
   updatedAt: string
 };

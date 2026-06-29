@@ -56,7 +56,7 @@ const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSu
       <div className="absolute right-0 top-8 z-30">
         {activeSubMenu
           ? (
-              <div className="w-52 rounded-xl border border-stone-200 bg-white shadow-lg overflow-hidden">
+              <div className="w-52 rounded-xl squircle shadow-lg bg-white overflow-hidden">
                 <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-100">
                   <button onClick={onSubMenuBack} className="text-stone-400 hover:text-stone-600 cursor-pointer">
                     <ChevronLeftIcon className="w-3.5 h-3.5" />
@@ -91,7 +91,7 @@ const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSu
               </div>
             )
           : (
-              <div className="w-48 rounded-xl border border-stone-200 bg-white shadow-lg overflow-hidden">
+              <div className="w-48 rounded-xl squircle shadow-lg bg-white overflow-hidden">
                 {action.menuItems.map((item, j) => (
                   <button
                     key={item.label}
@@ -205,7 +205,7 @@ export const Card = ({ href, coverImageUrl, CoverPlaceholderIcon, actions, child
 
   return (
     <div
-      className={`group relative flex flex-col rounded-xl border border-stone-200 bg-white overflow-hidden hover:border-stone-300 transition-colors cursor-pointer ${className}`}
+      className={`group relative flex flex-col rounded-xl squircle shadow-sm bg-white overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${className}`}
       onClick={() => router.push(href)}
       onKeyDown={e => e.key === 'Enter' && router.push(href)}
       role="link"

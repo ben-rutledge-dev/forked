@@ -44,6 +44,7 @@ import { EntryCardGhost } from './components/EntryCard';
 import { MobileView } from './components/MobileView';
 import { WeekGrid } from './components/WeekGrid';
 import { Button } from '@/components/Button';
+import { ChevronLeftIcon, ChevronRightIcon } from '@/components/Icons';
 import { InviteModal, type InviteModalProps } from '@/components/Invites';
 import { MembersSection } from '@/components/MembersSection';
 import { PageHeader } from '@/components/PageHeader';
@@ -51,7 +52,7 @@ import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
 import { UserBadge } from '@/components/UserBadge';
 // Utils
-import { formatDateStrLabel } from '@/utils/dates';
+import { formatDateStrLabel, formatWeekRange } from '@/utils/dates';
 
 // All date helpers work on YYYY-MM-DD strings using UTC arithmetic to avoid
 // local-timezone offset errors when Date.toISOString() converts to UTC.
@@ -504,7 +505,7 @@ export const MealPlannerClient = ({ planId, isPremium, currentUserId, initialDat
           <Button
             variant="primary"
             size="md"
-            shape="pill"
+
             disabled={isCreating}
             onClick={handleCreate}
           >
@@ -521,57 +522,41 @@ export const MealPlannerClient = ({ planId, isPremium, currentUserId, initialDat
 
       <PageHeader
         title={planMeta?.title ?? t('heading')}
-        action={(
-          <div className="flex items-center gap-2">
-            {planMeta?.currentUserRole && (
-              <UserBadge role={planMeta.currentUserRole} />
-            )}
-            {isOwner && (
-              isPremium
-                ? (
-                    <Button variant="secondary" size="sm" shape="pill" onClick={handleInvite}>
-                      {t('invite')}
-                    </Button>
-                  )
-                : (
-                    <span className="text-xs text-stone-400">{t('upgradeToInvite')}</span>
-                  )
-            )}
-          </div>
-        )}
+        action={planMeta?.currentUserRole
+          ? <UserBadge role={planMeta.currentUserRole} />
+          : undefined}
       />
 
-      {isPastWeek && (
-        <div className="mb-4 rounded-lg bg-stone-100 px-4 py-2 text-sm text-stone-500">
-          {t('pastWeekBanner')}
-        </div>
-      )}
-
       {/* Week navigation */}
-      <div className="flex items-center gap-2 mb-6">
-        {isPremium && (
-          <Button
-            variant="secondary"
-            size="sm"
-            shape="pill"
-            disabled={!canGoPrev}
-            onClick={handlePrev}
-          >
-            {t('prevWeek')}
-          </Button>
-        )}
+      <div className="flex items-center justify-between mb-6">
         <Button
-          variant="secondary"
+          variant="ghost"
           size="sm"
-          shape="pill"
+          disabled={!canGoPrev}
+          onClick={handlePrev}
+        >
+          <ChevronLeftIcon className="w-4 h-4" />
+          {t('prevWeek')}
+        </Button>
+
+        <div className="text-center">
+          <div className="text-sm font-medium text-stone-600">
+            {formatWeekRange(currentStartDate, endDate)}
+          </div>
+          <div className={`text-xs mt-0.5 ${isPastWeek || !isPremium ? 'text-stone-400' : 'invisible'}`}>
+            {isPastWeek ? t('pastWeekBanner') : t('upgradeToNavigate')}
+          </div>
+        </div>
+
+        <Button
+          variant="ghost"
+          size="sm"
           disabled={!canGoNext}
           onClick={handleNext}
         >
           {t('nextWeek')}
+          <ChevronRightIcon className="w-4 h-4" />
         </Button>
-        {!isPremium && (
-          <span className="text-xs text-stone-400 ml-1">{t('upgradeToNavigate')}</span>
-        )}
       </div>
 
       <DndContext

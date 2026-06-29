@@ -30,7 +30,7 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
         <h2 className="text-lg font-semibold text-stone-900">
           {t('pickRecipeHeading', { slot: slotLabel, day: dayLabel })}
         </h2>
-        <div className="flex items-center gap-4 rounded-xl border border-stone-200 p-4">
+        <div className="flex items-center gap-4 rounded-xl squircle shadow-sm p-4">
           {selected.coverImageUrl
             ? (
                 <Image
@@ -52,10 +52,10 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
           </div>
         </div>
         <div className="flex gap-2">
-          <Button variant="primary" size="sm" shape="pill" onClick={() => onConfirm(selected)}>
+          <Button variant="primary" size="sm" onClick={() => onConfirm(selected)}>
             {t('confirmAdd')}
           </Button>
-          <Button variant="secondary" size="sm" shape="pill" onClick={() => setSelected(null)}>
+          <Button variant="secondary" size="sm" onClick={() => setSelected(null)}>
             {t('back')}
           </Button>
         </div>
@@ -81,7 +81,7 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
         {recipes.map(recipe => (
           <button
             key={recipe.id}
-            className="w-full flex items-center gap-3 rounded-xl border border-stone-200 p-3 hover:border-stone-300 hover:bg-stone-50 text-left transition-colors"
+            className="w-full flex items-center gap-3 rounded-xl squircle shadow-sm p-3 hover:shadow-md hover:bg-stone-50 text-left transition-colors"
             onClick={() => setSelected(recipe)}
           >
             {recipe.coverImageUrl
@@ -106,7 +106,7 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
           </button>
         ))}
       </div>
-      <Button variant="secondary" size="sm" shape="pill" onClick={() => onConfirm(null)}>
+      <Button variant="secondary" size="sm" onClick={() => onConfirm(null)}>
         {t('back')}
       </Button>
     </div>

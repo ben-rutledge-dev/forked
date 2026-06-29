@@ -25,7 +25,7 @@ export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddReci
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-stone-900">{t('recipesSection')}</h2>
         {isMember && (
-          <Button variant="secondary" size="sm" shape="pill" onClick={onAddRecipe}>
+          <Button variant="secondary" size="sm" onClick={onAddRecipe}>
             {t('addRecipe')}
           </Button>
         )}

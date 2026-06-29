@@ -46,7 +46,7 @@ const SignInPage = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-xl border border-stone-200 p-6 space-y-3">
+        <div className="bg-white rounded-xl squircle shadow-sm p-6 space-y-3">
           {PROVIDERS.map(provider => (
             <Button
               key={provider.id}

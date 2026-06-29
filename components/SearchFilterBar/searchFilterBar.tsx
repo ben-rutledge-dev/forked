@@ -43,13 +43,13 @@ export const SearchFilterBar = ({
           value={query}
           onChange={e => onQueryChange(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 min-w-0 rounded-lg border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
+          className="flex-1 min-w-0 rounded-lg squircle bg-white border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
         />
         {categoryOptions.length > 0 && (
           <button
             type="button"
             onClick={() => setOpen(o => !o)}
-            className={`inline-flex items-center gap-1.5 rounded-full border px-4 py-2 text-sm transition-colors ${
+            className={`inline-flex items-center gap-1.5 squircle border px-4 py-2 text-sm transition-colors ${
               open || activeCount > 0
                 ? 'border-stone-400 bg-stone-100 text-stone-700'
                 : 'border-stone-300 bg-white text-stone-500 hover:bg-stone-50'
@@ -58,7 +58,7 @@ export const SearchFilterBar = ({
             <FilterIcon className="w-3.5 h-3.5 opacity-60 shrink-0" />
             {t('filters')}
             {activeCount > 0 && (
-              <span className="rounded-full bg-stone-700 px-1.5 py-0.5 text-[11px] font-medium leading-none text-white">
+              <span className="flex items-center justify-center rounded-full bg-primary-500 w-5 h-5 text-[10px] font-medium text-white">
                 {activeCount}
               </span>
             )}

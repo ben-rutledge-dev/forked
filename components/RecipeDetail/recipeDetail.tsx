@@ -3,6 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 // Components
+import { Button } from '@/components/Button';
 import { CategoryPill } from '@/components/CategoryPill';
 import { IngredientsDisplay } from '@/components/IngredientsDisplay';
 import { PageHeader } from '@/components/PageHeader';
@@ -106,16 +107,14 @@ export const RecipeDetail = async ({
                   )}
             </span>
           )}
-          <Link
+          <Button
             href={cookHref}
-            className={`sm:ml-auto self-start rounded-full px-4 py-1.5 text-sm font-medium transition-colors ${
-              cookVariant === 'primary'
-                ? 'bg-primary-500 text-white hover:bg-primary-600'
-                : 'border border-stone-300 text-stone-600 hover:bg-stone-100'
-            }`}
+            variant={cookVariant === 'primary' ? 'primary' : 'secondary'}
+            size="md"
+            className="sm:ml-auto self-start"
           >
             {t('cookMode')}
-          </Link>
+          </Button>
         </div>
       </div>
 

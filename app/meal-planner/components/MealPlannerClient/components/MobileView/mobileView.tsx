@@ -7,7 +7,7 @@ import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]
 // App
 import { DayColumn } from '@/app/meal-planner/components/MealPlannerClient/components/DayColumn';
 import { addDays } from '@/app/meal-planner/components/MealPlannerClient/mealPlannerClient';
-
+// Utils
 import { formatDateStrLabel } from '@/utils/dates';
 
 const formatDate = formatDateStrLabel;
@@ -46,7 +46,7 @@ export const MobileView = ({ startDate, slots, entries, canEditSlots, canEditEnt
   };
 
   return (
-    <div className="md:hidden">
+    <div className="md:hidden bg-white rounded-xl squircle shadow-sm p-4">
       <div className="flex items-center justify-between mb-4">
         <button
           className="p-2 text-stone-400 hover:text-stone-600 disabled:opacity-30 transition-colors"

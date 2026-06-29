@@ -1,21 +1,17 @@
-// Data
-import type { MealPlanEntry } from '@/data/meal-plans/[mealPlanId]/types';
 // Components
-import { TonightSpotlight } from './components/TonightSpotlight';
+import { TonightSpotlight, type SpotlightEntry } from './components/TonightSpotlight';
 // App
 import { getMealPlanEntries, getMembership } from '@/app/dashboard/queries';
 
 type Props = { userId: string, todayStr: string, endStr: string };
 
-const mapEntry = (e: Awaited<ReturnType<typeof getMealPlanEntries>>[number]): MealPlanEntry => ({
+const mapEntry = (e: Awaited<ReturnType<typeof getMealPlanEntries>>[number]): SpotlightEntry => ({
   id: e.id,
-  mealPlanId: e.mealPlanId,
   slotId: e.slotId,
-  recipeId: e.recipeId,
+  slotLabel: e.slot.label,
   date: e.date.toISOString().split('T')[0],
   orderIndex: e.orderIndex,
-  createdAt: e.createdAt.toISOString(),
-  recipe: e.recipe ? { id: e.recipe.id, title: e.recipe.title, coverImageUrl: e.recipe.coverImageUrl ?? null } : null,
+  recipe: e.recipe ? { id: e.recipe.id, title: e.recipe.title, coverImageUrl: e.recipe.coverImageUrl ?? null, tags: e.recipe.tags, categories: e.recipe.categories.map(rc => rc.category.label) } : null,
 });
 
 export const TonightSpotlightSection = async ({ userId, todayStr, endStr }: Props) => {

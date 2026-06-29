@@ -20,3 +20,19 @@ export const formatDateStrLabel = (dateStr: string): string => {
   const [y, m, d] = dateStr.split('-').map(Number);
   return formatDayLabel(new Date(Date.UTC(y, m - 1, d)), true);
 };
+
+/**
+ * Format a week range as "9–15 Jun" or "30 Jun–6 Jul" when the range spans months.
+ */
+export const formatWeekRange = (startDateStr: string, endDateStr: string): string => {
+  const [sy, sm, sd] = startDateStr.split('-').map(Number);
+  const [ey, em, ed] = endDateStr.split('-').map(Number);
+  const start = new Date(Date.UTC(sy, sm - 1, sd));
+  const end = new Date(Date.UTC(ey, em - 1, ed));
+  const startMonth = new Intl.DateTimeFormat(undefined, { month: 'short', timeZone: 'UTC' }).format(start);
+  const endMonth = new Intl.DateTimeFormat(undefined, { month: 'short', timeZone: 'UTC' }).format(end);
+  const startDay = start.getUTCDate();
+  const endDay = end.getUTCDate();
+  if (startMonth === endMonth) return `${startDay}–${endDay} ${endMonth}`;
+  return `${startDay} ${startMonth}–${endDay} ${endMonth}`;
+};

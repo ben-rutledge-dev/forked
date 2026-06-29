@@ -11,7 +11,7 @@ type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'> & {
   fullWidth?: boolean
 };
 
-const baseClass = 'rounded-lg border border-stone-300 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500';
+const baseClass = 'squircle bg-white border border-stone-300 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500';
 
 const sizeClasses: Record<Size, string> = {
   md: 'px-3 py-2 text-sm',
@@ -25,13 +25,13 @@ export const TextInput = React.forwardRef<HTMLInputElement, Props>(
 
     if (prefix) {
       return (
-        <div className="flex items-center">
-          <span className={['shrink-0', sizeClasses[size], 'text-stone-400 border border-r-0 border-stone-300 rounded-l-lg bg-stone-50'].join(' ')}>
+        <div className={`flex items-center squircle overflow-hidden border border-stone-300 bg-white ${fullWidth ? 'w-full' : ''}`}>
+          <span className={['shrink-0', sizeClasses[size], 'text-stone-400 bg-stone-50 border-r border-stone-300'].join(' ')}>
             {prefix}
           </span>
           <input
             ref={ref}
-            className={['flex-1 min-w-0', inputCls, 'rounded-l-none', className].filter(Boolean).join(' ')}
+            className={['flex-1 min-w-0 bg-white text-stone-900 placeholder-stone-400 focus:outline-none', sizeClasses[size], className].filter(Boolean).join(' ')}
             {...props}
           />
         </div>

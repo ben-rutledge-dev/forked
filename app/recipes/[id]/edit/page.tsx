@@ -41,7 +41,7 @@ const EditRecipePage = async ({ params }: Props) => {
       <div className="flex items-center justify-between mb-8">
         <PageHeading>{t('editRecipeHeading')}</PageHeading>
         <div className="flex items-center gap-3">
-          <Button href={`/recipes/${id}/cook`} variant="primary" size="md" shape="pill">{t('cookModeLabel')}</Button>
+          <Button href={`/recipes/${id}/cook`} variant="primary" size="md">{t('cookModeLabel')}</Button>
           <DeleteButton recipeId={id} />
         </div>
       </div>

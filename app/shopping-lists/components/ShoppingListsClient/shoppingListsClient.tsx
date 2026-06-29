@@ -18,7 +18,7 @@ import { UserBadge } from '@/components/UserBadge';
 const NewListAction = ({ onNew }: { onNew: () => void }) => {
   const t = useTranslations('shoppingLists');
   return (
-    <Button variant="primary" size="md" shape="pill" onClick={onNew}>
+    <Button variant="primary" size="md" onClick={onNew}>
       {t('newList')}
     </Button>
   );
@@ -77,10 +77,10 @@ export const ShoppingListsClient = () => {
             value={newTitle}
             onChange={e => setNewTitle(e.target.value)}
           />
-          <Button type="submit" variant="primary" size="sm" shape="pill" disabled={isCreating || !newTitle.trim()}>
+          <Button type="submit" variant="primary" size="sm" disabled={isCreating || !newTitle.trim()}>
             {isCreating ? t('creating') : t('create')}
           </Button>
-          <Button type="button" variant="secondary" size="sm" shape="pill" onClick={() => setCreating(false)}>
+          <Button type="button" variant="secondary" size="sm" onClick={() => setCreating(false)}>
             {t('cancel')}
           </Button>
         </form>
@@ -91,7 +91,7 @@ export const ShoppingListsClient = () => {
           <SectionLabel className="mb-3">{t('pendingInvites')}</SectionLabel>
           <ul className="space-y-2">
             {pending.map(invite => (
-              <li key={invite.id} className="flex items-center justify-between rounded-xl border border-stone-200 px-4 py-3">
+              <li key={invite.id} className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white px-4 py-3">
                 <div>
                   <p className="text-sm font-medium">{invite.shoppingList.title}</p>
                   <p className="text-xs text-stone-400">
@@ -102,7 +102,7 @@ export const ShoppingListsClient = () => {
                   <Button
                     variant="primary"
                     size="sm"
-                    shape="pill"
+
                     onClick={() => handleAccept(invite.shoppingList.id)}
                   >
                     {t('accept')}
@@ -110,7 +110,7 @@ export const ShoppingListsClient = () => {
                   <Button
                     variant="secondary"
                     size="sm"
-                    shape="pill"
+
                     onClick={() => handleDecline(invite.shoppingList.id)}
                   >
                     {t('decline')}
@@ -131,7 +131,7 @@ export const ShoppingListsClient = () => {
               {lists.map(list => (
                 <li key={list.id}>
                   <button
-                    className="w-full text-left rounded-xl border border-stone-200 px-5 py-4 hover:border-stone-300 transition-colors cursor-pointer"
+                    className="w-full text-left rounded-xl squircle shadow-sm bg-white px-5 py-4 hover:shadow-md transition-shadow cursor-pointer"
                     onClick={() => router.push(`/shopping-lists/${list.id}`)}
                   >
                     <p className="font-medium text-stone-800">{list.title}</p>

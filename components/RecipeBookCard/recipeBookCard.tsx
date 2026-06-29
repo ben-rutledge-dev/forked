@@ -6,10 +6,10 @@ import { useDeleteRecipeBook } from '@/data/recipe-books/[recipeBookId]';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 // Components
-import { Badge } from '@/components/Badge';
 import { Card, CardAction } from '@/components/Card';
 import { BookIcon, DotsHorizontalIcon } from '@/components/Icons';
 import { UserBadge } from '@/components/UserBadge';
+import { VisibilityBadge } from '@/components/VisibilityBadge';
 // Utils
 import { OWNER, type Role } from '@/utils/roles';
 
@@ -72,9 +72,7 @@ export const RecipeBookCard = ({
           {t('count', { recipes: recipeCount, members: memberCount })}
         </span>
         <div className="flex items-center gap-1.5">
-          <Badge variant={isPublic ? 'success' : 'neutral'}>
-            {isPublic ? t('public') : t('private')}
-          </Badge>
+          <VisibilityBadge isPublic={isPublic} />
           {role && (
             <UserBadge role={role} />
           )}

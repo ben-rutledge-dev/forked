@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
+import { Fraunces, Hanken_Grotesk } from 'next/font/google';
 // Components
 import { Providers } from './components/Providers';
 import { Nav } from '@/components/Nav';
@@ -8,6 +9,18 @@ import { Nav } from '@/components/Nav';
 import { auth } from '@/lib/auth';
 import QueryProvider from './providers/QueryProvider';
 import '@/styles/globals.css';
+
+const hankenGrotesk = Hanken_Grotesk({
+  subsets: ['latin'],
+  variable: '--font-hanken',
+  display: 'swap',
+});
+
+const fraunces = Fraunces({
+  subsets: ['latin'],
+  variable: '--font-fraunces',
+  display: 'swap',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -31,7 +44,7 @@ const RootLayout = async ({
   const t = await getTranslations('layout');
 
   return (
-    <html lang="en-GB" suppressHydrationWarning>
+    <html lang="en-GB" className={`${hankenGrotesk.variable} ${fraunces.variable}`} suppressHydrationWarning>
       <body className="antialiased min-h-screen flex flex-col text-stone-900" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>

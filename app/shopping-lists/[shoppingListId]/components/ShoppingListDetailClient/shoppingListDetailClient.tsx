@@ -433,8 +433,8 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
                 value={newSectionTitle}
                 onChange={e => setNewSectionTitle(e.target.value)}
               />
-              <Button type="submit" variant="primary" size="sm" shape="pill">{t('add')}</Button>
-              <Button type="button" variant="secondary" size="sm" shape="pill" onClick={() => setAddingSection(false)}>{t('cancel')}</Button>
+              <Button type="submit" variant="primary" size="sm">{t('add')}</Button>
+              <Button type="button" variant="secondary" size="sm" onClick={() => setAddingSection(false)}>{t('cancel')}</Button>
             </form>
           )
         : (

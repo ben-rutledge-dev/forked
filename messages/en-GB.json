@@ -17,7 +17,9 @@
     "removeToken": "Remove {label}",
     "toggleDropdown": "Toggle dropdown",
     "pressEnterToAdd": "Press Enter to add \"{value}\"",
-    "noOptionsFound": "No options found"
+    "noOptionsFound": "No options found",
+    "public": "Public",
+    "private": "Private"
   },
   "nav": {
     "brand": "Forked",
@@ -29,7 +31,9 @@
     "signOut": "Sign out",
     "signIn": "Sign in",
     "closeMenu": "Close menu",
-    "openMenu": "Open menu"
+    "openMenu": "Open menu",
+    "userMenu": "User menu",
+    "userAvatar": "User avatar"
   },
   "home": {
     "heading": "A recipe pool you can make your own.",
@@ -436,18 +440,21 @@
       "browsePool": "Browse the pool"
     },
     "spotlight": {
-      "nothingPlanned": "Nothing planned tonight",
+      "nothingPlanned": "Nothing coming up",
       "addMealCta": "Add a meal to see your spotlight",
       "openPlanner": "Open planner",
-      "tonight": "Tonight · {date}",
-      "alsoToday": "Also today",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
       "startCooking": "Start cooking",
-      "viewRecipe": "View recipe"
+      "viewRecipe": "View recipe",
+      "prevMeal": "Previous meal",
+      "nextMeal": "Next meal"
     },
     "mealPlanStrip": {
       "planYourWeek": "Plan your week",
       "addMealsCta": "Add meals to see them here.",
-      "goToPlanner": "Go to Meal Planner"
+      "goToPlanner": "Go to Meal Planner",
+      "overflow": "+{count} more"
     },
     "suggestions": {
       "heading": "What to buy this week",
@@ -483,9 +490,9 @@
     "creating": "Creating…",
     "emptyTitle": "Plan your week",
     "emptySubtext": "Add recipes to your meal plan to see them here",
-    "pastWeekBanner": "Viewing past week — read only",
-    "prevWeek": "← Previous week",
-    "nextWeek": "Next week →",
+    "pastWeekBanner": "Past week (read only)",
+    "prevWeek": "Previous week",
+    "nextWeek": "Next week",
     "addSlot": "Add slot",
     "addSlotIcon": "+",
     "addSlotBefore": "Add slot before",

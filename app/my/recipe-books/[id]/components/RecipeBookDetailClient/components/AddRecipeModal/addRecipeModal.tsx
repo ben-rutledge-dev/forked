@@ -58,7 +58,7 @@ export const AddRecipeModal = ({ userRecipes, existingRecipeIds, onConfirm }: Pr
             )}
       </div>
       <div className="mt-4">
-        <Button variant="secondary" size="sm" shape="pill" onClick={() => onConfirm(null)}>
+        <Button variant="secondary" size="sm" onClick={() => onConfirm(null)}>
           {t('close')}
         </Button>
       </div>

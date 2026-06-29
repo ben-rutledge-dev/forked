@@ -11,10 +11,12 @@ import { CSS } from '@dnd-kit/utilities';
 import { useTranslations } from 'next-intl';
 // Data
 import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]/types';
+// Components
+import { PlusIcon } from '@/components/Icons';
 // App
 import { EntryCard } from '@/app/meal-planner/components/MealPlannerClient/components/EntryCard';
 import { addDays, type SlotDropTarget } from '@/app/meal-planner/components/MealPlannerClient/mealPlannerClient';
-
+// Utils
 import { formatDateStrLabel } from '@/utils/dates';
 
 const formatDayHeader = formatDateStrLabel;
@@ -54,17 +56,17 @@ const SlotHeader = ({ slot, canEditSlots, isOver, dropSide, onAddBefore, onDelet
       {/* Insert-before affordance */}
       {canEditSlots && (
         <button
-          className="absolute -left-2.5 top-1/2 -translate-y-1/2 z-10 grid place-items-center h-5 w-5 rounded-full bg-white border border-stone-300 text-stone-400 hover:text-primary-500 hover:border-primary-400 text-sm leading-none opacity-0 group-hover/header:opacity-100 transition-opacity"
+          className="absolute -left-2.5 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-5 w-5 rounded-full bg-white border border-stone-300 text-stone-400 hover:text-primary-500 hover:border-primary-400 opacity-0 group-hover/header:opacity-100 transition-opacity"
           aria-label={t('addSlotBefore')}
           onClick={onAddBefore}
         >
-          {t('addSlotIcon')}
+          <PlusIcon className="w-2.5 h-2.5" />
         </button>
       )}
 
       {/* Inner content: transform lives here so the label animates during drag */}
       <div
-        className="flex items-center gap-1 p-2"
+        className="flex items-center gap-1 py-2 pr-2 pl-4"
         style={{
           transform: CSS.Transform.toString(transform),
           transition,
@@ -224,7 +226,7 @@ export const WeekGrid = ({
 
   return (
     <div
-      className="hidden md:grid border-t border-l border-stone-100 overflow-x-auto mb-6"
+      className="hidden md:grid border-t border-l border-stone-100 overflow-x-auto mb-6 bg-white rounded-xl squircle shadow-sm overflow-hidden"
       style={{ gridTemplateColumns }}
     >
       {/* ── Header row ── */}

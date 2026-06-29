@@ -102,7 +102,7 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
             {pending.map(invite => (
               <div
                 key={invite.id}
-                className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-5 py-4"
+                className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white px-5 py-4"
               >
                 <div>
                   <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
@@ -116,7 +116,7 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
                   <Button
                     variant="primary"
                     size="sm"
-                    shape="pill"
+
                     disabled={acting === invite.id}
                     onClick={() => handleAccept(invite)}
                   >
@@ -125,7 +125,7 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
                   <Button
                     variant="secondary"
                     size="sm"
-                    shape="pill"
+
                     disabled={acting === invite.id}
                     onClick={() => handleDecline(invite)}
                   >

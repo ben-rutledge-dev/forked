@@ -22,7 +22,7 @@ type Props = {
 };
 
 export const PageLayout: React.FC<Props> = ({ width = 'wide', py = 'md', children }) => (
-  <div className={`mx-auto px-4 ${widthClasses[width]} ${pyClasses[py]}`}>
+  <div className={`mx-auto px-4 sm:px-8 lg:px-12 ${widthClasses[width]} ${pyClasses[py]}`}>
     {children}
   </div>
 );

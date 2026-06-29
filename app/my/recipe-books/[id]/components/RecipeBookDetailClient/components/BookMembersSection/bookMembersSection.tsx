@@ -28,7 +28,7 @@ export const BookMembersSection = ({ members, isOwner, currentUserId, onInvite, 
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-stone-900">{t('membersSection')}</h2>
         {isOwner && (
-          <Button variant="secondary" size="sm" shape="pill" onClick={onInvite}>
+          <Button variant="secondary" size="sm" onClick={onInvite}>
             {t('inviteCollaborator')}
           </Button>
         )}
@@ -36,7 +36,7 @@ export const BookMembersSection = ({ members, isOwner, currentUserId, onInvite, 
 
       <div className="space-y-2">
         {acceptedMembers.map(m => (
-          <div key={m.id} className="flex items-center justify-between rounded-xl border border-stone-200 bg-white px-4 py-3">
+          <div key={m.id} className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white px-4 py-3">
             <div className="flex items-center gap-3">
               {m.user.avatarUrl
                 ? (
@@ -79,7 +79,7 @@ export const BookMembersSection = ({ members, isOwner, currentUserId, onInvite, 
           <p className="text-xs font-medium text-stone-400 uppercase tracking-wide mb-2">{t('pendingInvites')}</p>
           <div className="space-y-2">
             {pendingMembers.map(m => (
-              <div key={m.id} className="flex items-center justify-between rounded-lg border border-stone-100 bg-stone-50 px-4 py-2.5 text-sm">
+              <div key={m.id} className="flex items-center justify-between rounded-lg squircle shadow-sm bg-stone-50 px-4 py-2.5 text-sm">
                 <span className="text-stone-600">
                   @
                   {m.user.username ?? m.user.id}

@@ -11,7 +11,7 @@ export const SignInButton = () => {
     <Button
       variant="secondary"
       size="lg"
-      shape="pill"
+
       onClick={() => signIn()}
       className="w-full sm:w-auto"
     >

@@ -13,7 +13,7 @@ const variantClasses: Record<Variant, string> = {
 };
 
 export const Badge = ({ children, variant = 'neutral', className = '' }: Props) => (
-  <span className={`w-fit rounded px-1.5 py-0.5 ${variantClasses[variant]} ${className}`}>
+  <span className={`w-fit rounded squircle px-1.5 py-0.5 ${variantClasses[variant]} ${className}`}>
     {children}
   </span>
 );

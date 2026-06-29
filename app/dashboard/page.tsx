@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import Link from 'next/link';
 import { redirect } from 'next/navigation';
 import { Suspense } from 'react';
 // Components
@@ -26,6 +27,12 @@ const addDaysStr = (dateStr: string, days: number) => {
   return new Date(Date.UTC(y, m - 1, d + days)).toISOString().split('T')[0];
 };
 
+const startOfWeek = (dateStr: string) => {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return addDaysStr(dateStr, dow === 0 ? -6 : 1 - dow);
+};
+
 const DashboardPage = async () => {
   const session = await auth();
   if (!session?.user?.id) redirect('/auth/signin');
@@ -33,17 +40,16 @@ const DashboardPage = async () => {
   const t = await getTranslations('dashboard');
   const userId = session.user.id;
   const todayStr = toDateStr(new Date());
+  const mondayStr = startOfWeek(todayStr);
+  const sundayStr = addDaysStr(mondayStr, 6);
   const endStr = addDaysStr(todayStr, 6);
 
   return (
     <PageLayout>
-      {/* Tonight + grocery card — two independent Suspense boundaries */}
+      {/* Tonight spotlight */}
       <section className="mb-10">
         <Suspense fallback={<div className="rounded-xl border border-stone-200 bg-stone-50 animate-pulse h-72" />}>
           <TonightSpotlightSection userId={userId} todayStr={todayStr} endStr={endStr} />
-        </Suspense>
-        <Suspense fallback={<div className="mt-4 rounded-xl border border-stone-200 bg-stone-50 animate-pulse h-48" />}>
-          <GrocerySection userId={userId} todayStr={todayStr} endStr={endStr} />
         </Suspense>
       </section>
 
@@ -51,24 +57,43 @@ const DashboardPage = async () => {
       <section className="mb-10">
         <SectionHeading className="mb-3">{t('thisWeek')}</SectionHeading>
         <Suspense fallback={(
-          <div className="flex gap-3 overflow-hidden">
+          <div className="rounded-xl border border-stone-200 bg-white divide-y divide-stone-100 px-5 overflow-hidden">
             {Array.from({ length: 7 }, (_, i) => (
-              <div key={i} className="flex-none w-44 rounded-xl bg-stone-100 animate-pulse h-32" />
+              <div key={i} className="py-3 flex gap-5">
+                <div className="w-10 shrink-0 space-y-1.5">
+                  <div className="h-2.5 rounded bg-stone-100 animate-pulse" />
+                  <div className="h-4 rounded bg-stone-100 animate-pulse" />
+                </div>
+                <div className="flex-1 flex gap-2">
+                  {i % 2 === 0 && <div className="h-11 w-36 rounded-lg bg-stone-100 animate-pulse" />}
+                  {i % 3 !== 1 && <div className="h-11 w-36 rounded-lg bg-stone-100 animate-pulse" />}
+                </div>
+              </div>
             ))}
           </div>
         )}
         >
-          <MealPlanStripSection userId={userId} todayStr={todayStr} endStr={endStr} />
+          <MealPlanStripSection userId={userId} startDateStr={mondayStr} endStr={sundayStr} />
+        </Suspense>
+      </section>
+
+      {/* Grocery */}
+      <section className="mb-10">
+        <Suspense fallback={<div className="rounded-xl border border-stone-200 bg-stone-50 animate-pulse h-48" />}>
+          <GrocerySection userId={userId} todayStr={todayStr} endStr={endStr} />
         </Suspense>
       </section>
 
       {/* Recipes */}
       <section className="mb-10">
-        <SectionHeading className="mb-3">{t('myRecipes')}</SectionHeading>
+        <div className="flex items-center justify-between mb-3">
+          <SectionHeading>{t('myRecipes')}</SectionHeading>
+          <Link href="/recipes?tab=recipes" className="text-xs font-medium text-primary-500 hover:underline">{t('seeAll')}</Link>
+        </div>
         <Suspense fallback={(
-          <div className="flex gap-3 overflow-hidden">
+          <div className="grid gap-3 grid-cols-[repeat(auto-fill,minmax(11rem,1fr))]">
             {Array.from({ length: 5 }, (_, i) => (
-              <div key={i} className="flex-none w-48 rounded-xl bg-stone-100 animate-pulse h-44" />
+              <div key={i} className="rounded-xl bg-stone-100 animate-pulse h-44" />
             ))}
           </div>
         )}

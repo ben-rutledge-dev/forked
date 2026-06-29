@@ -94,10 +94,10 @@ export const RecipeBookEditForm = ({ book, onSaved, onCancel }: Props) => {
         label={t('editMakePublicLabel')}
       />
       <div className="flex gap-2">
-        <Button type="submit" variant="primary" size="sm" shape="pill" disabled={status === 'saving'}>
+        <Button type="submit" variant="primary" size="sm" disabled={status === 'saving'}>
           {status === 'saving' ? t('editSaving') : t('editSave')}
         </Button>
-        <Button type="button" variant="secondary" size="sm" shape="pill" onClick={onCancel}>
+        <Button type="button" variant="secondary" size="sm" onClick={onCancel}>
           {t('editCancel')}
         </Button>
       </div>

@@ -101,7 +101,7 @@ export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
 
   return (
     <div className="relative" ref={ref}>
-      <Button variant="secondary" size="md" shape="pill" onClick={handleOpen}>
+      <Button variant="secondary" size="md" onClick={handleOpen}>
         {t('addToBookButton')}
       </Button>
 

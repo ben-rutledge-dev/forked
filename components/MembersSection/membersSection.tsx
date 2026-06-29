@@ -42,7 +42,7 @@ export const MembersSection = ({
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-lg font-semibold text-stone-900">{t('heading')}</h2>
         {isOwner && onInvite && (
-          <Button variant="secondary" size="sm" shape="pill" onClick={onInvite}>
+          <Button variant="secondary" size="sm" onClick={onInvite}>
             {t('invite')}
           </Button>
         )}
@@ -89,7 +89,7 @@ type MemberCardProps = {
 const MemberCard = ({ member: m, pending = false, actionLabel, onAction }: MemberCardProps) => {
   const t = useTranslations('membersSection');
   return (
-    <div className={`flex items-center justify-between rounded-xl border px-4 py-3 ${pending ? 'bg-stone-50 border-stone-100' : 'bg-white border-stone-200'}`}>
+    <div className={`flex items-center justify-between rounded-xl squircle shadow-sm px-4 py-3 ${pending ? 'bg-stone-50' : 'bg-white'}`}>
       <div className="flex items-center gap-3">
         {m.user.avatarUrl
           ? (

@@ -47,7 +47,7 @@ export const ForkButton = ({ recipeId }: { recipeId: string }) => {
     <Button
       variant="primary"
       size="md"
-      shape="pill"
+
       onClick={handleFork}
       disabled={forking}
       className="shrink-0 flex items-center gap-2"

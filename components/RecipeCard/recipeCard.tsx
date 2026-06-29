@@ -11,12 +11,12 @@ import { useConfirm } from '@/hooks/useConfirm';
 import { useModal } from '@/hooks/useModal';
 // Components
 import { AddToShoppingListModal } from '@/components/AddToShoppingListModal';
-import { Badge } from '@/components/Badge';
 import { Button } from '@/components/Button';
 import { Card, CardAction } from '@/components/Card';
 import { ForkIcon } from '@/components/ForkIcon';
 import { DotsHorizontalIcon, EditIcon, HeartIcon, RecipeIcon } from '@/components/Icons';
 import { Toast } from '@/components/Toast';
+import { VisibilityBadge } from '@/components/VisibilityBadge';
 
 type BookOption = { id: string, title: string };
 
@@ -173,7 +173,7 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           title: favourited ? t('unfavourite') : t('favourite'),
           Icon: (
             <HeartIcon
-              className={`w-3.5 h-3.5 ${favourited ? 'text-red-500' : ''}`}
+              className={`w-3.5 h-3.5 ${favourited ? 'text-primary-500' : ''}`}
               filled={favourited}
             />
           ),
@@ -270,12 +270,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
           </span>
           {isOwned
             ? (
-                <Badge variant={isPublic ? 'success' : 'neutral'}>
-                  {isPublic ? t('public') : t('private')}
-                </Badge>
+                <VisibilityBadge isPublic={isPublic ?? false} />
               )
             : (
-                <Button variant="primary" size="sm" shape="pill" disabled={forking} onClick={handleFork} className="flex items-center gap-1.5">
+                <Button variant="primary" size="sm" disabled={forking} onClick={handleFork} className="flex items-center gap-1.5">
                   {forking ? t('forking') : t('fork')}
                   <ForkIcon animating={iconAnimating} onDone={handleAnimationDone} size={12} />
                 </Button>
