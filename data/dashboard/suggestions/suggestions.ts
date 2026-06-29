@@ -24,7 +24,7 @@ export const usePostDismissSuggestion = () => {
           queryKeys.dashboard.suggestions(variables.userId ?? ''),
           old =>
             old
-              ? { suggestions: old.suggestions.filter(s => s !== variables.ingredientName) }
+              ? { suggestions: old.suggestions.filter(s => s.name !== variables.ingredientName) }
               : old,
         );
       },

@@ -4,6 +4,7 @@ import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 // Data
 import { usePostDismissSuggestion } from '@/data/dashboard/suggestions';
+import type { Suggestion } from '@/data/dashboard/suggestions/types';
 import { usePostItems } from '@/data/shopping-lists/[shoppingListId]/items';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
@@ -19,7 +20,7 @@ type ToastState
     | null;
 
 type Props = {
-  suggestions: string[]
+  suggestions: Suggestion[]
   userId: string
   selectedListId: string | null
   selectedListName: string | null
@@ -27,7 +28,7 @@ type Props = {
 
 export const SuggestionsSection = ({ suggestions: initialSuggestions, userId, selectedListId, selectedListName }: Props) => {
   const t = useTranslations('dashboard.suggestions');
-  const [suggestions, setSuggestions] = useState(initialSuggestions);
+  const [suggestions, setSuggestions] = useState<Suggestion[]>(initialSuggestions);
   const [selected, setSelected] = useState(new Set<string>());
   const [submitting, setSubmitting] = useState(false);
   const [activeToast, setActiveToast] = useState<ToastState>(null);
@@ -64,7 +65,7 @@ export const SuggestionsSection = ({ suggestions: initialSuggestions, userId, se
   };
 
   const handleSkip = (ingredient: string) => {
-    setSuggestions(s => s.filter(i => i !== ingredient));
+    setSuggestions(s => s.filter(i => i.name !== ingredient));
     setSelected((prev) => {
       const next = new Set(prev);
       next.delete(ingredient);
@@ -97,7 +98,7 @@ export const SuggestionsSection = ({ suggestions: initialSuggestions, userId, se
     try {
       const addedArr = Array.from(selected);
       await postItems({ items: addedArr.map(name => ({ name, sectionId })) });
-      setSuggestions(s => s.filter(i => !addedArr.includes(i)));
+      setSuggestions(s => s.filter(i => !addedArr.includes(i.name)));
       setSelected(new Set());
       for (const name of addedArr) {
         dismiss({ ingredientName: name, permanent: false, userId });
@@ -170,14 +171,15 @@ export const SuggestionsSection = ({ suggestions: initialSuggestions, userId, se
       {header}
 
       <div className="flex flex-wrap gap-2">
-        {suggestions.map(ingredient => (
+        {suggestions.map(suggestion => (
           <DismissibleChip
-            key={ingredient}
-            label={ingredient}
-            selected={selected.has(ingredient)}
-            onToggle={() => toggleSelected(ingredient)}
-            onSkip={() => handleSkip(ingredient)}
-            onAlwaysSkip={() => handleAlwaysSkip(ingredient)}
+            key={suggestion.name}
+            label={suggestion.name}
+            recipes={suggestion.recipes}
+            selected={selected.has(suggestion.name)}
+            onToggle={() => toggleSelected(suggestion.name)}
+            onSkip={() => handleSkip(suggestion.name)}
+            onAlwaysSkip={() => handleAlwaysSkip(suggestion.name)}
           />
         ))}
       </div>

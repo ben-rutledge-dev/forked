@@ -1,4 +1,5 @@
 // Data
+import type { Suggestion } from '@/data/dashboard/suggestions/types';
 import type { ShoppingListWithStats } from '@/data/shopping-lists/types';
 // Components
 import { GroceryCard } from './components/GroceryCard';
@@ -12,26 +13,28 @@ import {
 } from '@/app/dashboard/queries';
 
 type SuggestionEntry = {
-  recipe: { ingredients: Array<{ name: string }> } | null
+  recipe: { title: string, ingredients: Array<{ name: string }> } | null
 };
 
 const buildSuggestions = (
   entries: SuggestionEntry[],
   dismissals: Array<{ ingredientName: string }>,
-): string[] => {
+): Suggestion[] => {
   const dismissed = new Set(dismissals.map(d => d.ingredientName.toLowerCase().trim()));
-  const seen = new Set<string>();
-  const result: string[] = [];
+  const seen = new Map<string, Suggestion>();
   for (const entry of entries) {
+    const recipeTitle = entry.recipe?.title;
     for (const ing of entry.recipe?.ingredients ?? []) {
       const key = ing.name.toLowerCase().trim();
-      if (key && !seen.has(key) && !dismissed.has(key)) {
-        seen.add(key);
-        result.push(ing.name.trim());
+      if (!key || dismissed.has(key)) continue;
+      if (!seen.has(key)) seen.set(key, { name: ing.name.trim(), recipes: [] });
+      const suggestion = seen.get(key)!;
+      if (recipeTitle && !suggestion.recipes.includes(recipeTitle)) {
+        suggestion.recipes.push(recipeTitle);
       }
     }
   }
-  return result;
+  return Array.from(seen.values());
 };
 
 type Props = { userId: string, todayStr: string, endStr: string };
@@ -53,7 +56,7 @@ export const GrocerySection = async ({ userId, todayStr, endStr }: Props) => {
     uncheckedCount: m.shoppingList.items.filter(i => !i.checked).length,
   }));
 
-  let suggestions: string[] | null = null;
+  let suggestions: Suggestion[] | null = null;
 
   if (isPremium && membership) {
     const [entries, dismissals] = await Promise.all([

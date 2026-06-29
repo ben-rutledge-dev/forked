@@ -2,6 +2,7 @@
 
 import { useSyncExternalStore } from 'react';
 // Data
+import type { Suggestion } from '@/data/dashboard/suggestions/types';
 import type { ShoppingListWithStats } from '@/data/shopping-lists/types';
 // Components
 import { ShoppingListsSection } from './components/ShoppingListsSection';
@@ -17,7 +18,7 @@ const readStoredListId = () => localStorage.getItem(LS_KEY);
 const serverStoredListId = () => null;
 
 type Props = {
-  suggestions: string[] | null
+  suggestions: Suggestion[] | null
   shoppingLists: ShoppingListWithStats[]
   isPremium: boolean
   hasMealPlan: boolean

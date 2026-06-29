@@ -1,3 +1,8 @@
+export type Suggestion = {
+  name: string
+  recipes: string[]
+};
+
 export type SuggestionsParams = {
   userId?: string
   isPremium?: boolean
@@ -5,7 +10,7 @@ export type SuggestionsParams = {
 };
 
 export type SuggestionsResponse = {
-  suggestions: string[]
+  suggestions: Suggestion[]
 };
 
 export type DismissPayload = {
