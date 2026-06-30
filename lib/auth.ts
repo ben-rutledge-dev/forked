@@ -7,10 +7,13 @@ import Google from 'next-auth/providers/google';
 import { PrismaClient } from '@/generated/prisma/client';
 
 // NextAuth needs its own client — PrismaAdapter is incompatible with the
-// driver-adapter pattern used in lib/prisma.ts
-const authPrisma = new PrismaClient({
+// driver-adapter pattern used in lib/prisma.ts.
+// Global singleton prevents connection pool exhaustion from HMR reloads in dev.
+const globalForAuthPrisma = globalThis as unknown as { authPrisma: PrismaClient };
+const authPrisma = globalForAuthPrisma.authPrisma ?? new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL! }),
 });
+if (process.env.NODE_ENV !== 'production') globalForAuthPrisma.authPrisma = authPrisma;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   trustHost: true,
