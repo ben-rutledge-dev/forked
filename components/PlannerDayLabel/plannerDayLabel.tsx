@@ -11,10 +11,10 @@ export const PlannerDayLabel = ({ dateStr, isToday = false }: Props) => {
 
   return (
     <div className="w-10 shrink-0 pt-0.5 text-center">
-      <p className={`text-[10px] font-semibold uppercase tracking-wide ${isToday ? 'text-primary-500' : 'text-stone-400'}`}>
+      <p className={`text-[10px] font-semibold uppercase tracking-wide ${isToday ? 'text-primary-500' : 'text-stone-400 dark:text-stone-500'}`}>
         {weekday}
       </p>
-      <p className={`text-base font-semibold leading-tight ${isToday ? 'text-primary-600' : 'text-stone-700'}`}>
+      <p className={`text-base font-semibold leading-tight ${isToday ? 'text-primary-600' : 'text-stone-700 dark:text-stone-300'}`}>
         {dayNum}
       </p>
     </div>

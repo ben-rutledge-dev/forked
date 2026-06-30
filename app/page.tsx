@@ -17,10 +17,10 @@ const Home = async () => {
   return (
     <PageLayout width="narrow" py="spacious">
       <div className="text-center">
-        <h1 className="text-4xl font-semibold tracking-tight text-stone-900 sm:text-5xl">
+        <h1 className="text-4xl font-semibold tracking-tight text-stone-900 dark:text-stone-100 sm:text-5xl">
           {t('heading')}
         </h1>
-        <p className="mt-6 text-lg text-stone-500 leading-relaxed">
+        <p className="mt-6 text-lg text-stone-500 dark:text-stone-400 leading-relaxed">
           {t('description')}
         </p>
       </div>

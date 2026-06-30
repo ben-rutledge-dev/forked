@@ -18,9 +18,11 @@ type Props = {
   ingredients: IngredientItem[]
   actions: ReturnType<typeof useListField<IngredientItem>>
   emptyIngredient: () => IngredientItem
+  ingredientErrors?: Set<string>
+  onClearError?: (id: string) => void
 };
 
-export const FormIngredients = ({ ingredients, actions, emptyIngredient }: Props) => {
+export const FormIngredients = ({ ingredients, actions, emptyIngredient, ingredientErrors, onClearError }: Props) => {
   const t = useTranslations('formIngredients');
 
   return (
@@ -29,9 +31,9 @@ export const FormIngredients = ({ ingredients, actions, emptyIngredient }: Props
         <SectionHeading>{t('heading')}</SectionHeading>
       </div>
       <div className="flex items-center gap-2 mb-1 pl-15 pr-9">
-        <span className="w-16 text-xs text-stone-400 font-medium">{t('qty')}</span>
-        <span className="w-28 text-xs text-stone-400 font-medium">{t('unit')}</span>
-        <span className="flex-1 text-xs text-stone-400 font-medium">{t('ingredient')}</span>
+        <span className="w-16 text-xs text-stone-400 dark:text-stone-500 font-medium">{t('qty')}</span>
+        <span className="w-28 text-xs text-stone-400 dark:text-stone-500 font-medium">{t('unit')}</span>
+        <span className="flex-1 text-xs text-stone-400 dark:text-stone-500 font-medium">{t('ingredient')}</span>
       </div>
       <div className="space-y-2">
         {ingredients.map((ing, i) => (
@@ -75,11 +77,15 @@ export const FormIngredients = ({ ingredients, actions, emptyIngredient }: Props
             <TextInput
               type="text"
               value={ing.name}
-              onChange={e => actions.update(ing._id, 'name', e.target.value)}
+              onChange={(e) => {
+                actions.update(ing._id, 'name', e.target.value);
+                if (e.target.value.trim()) onClearError?.(ing._id);
+              }}
               placeholder={t('ingredientPlaceholder')}
               size="sm"
               fullWidth={false}
               className="flex-1 min-w-0"
+              error={ingredientErrors?.has(ing._id)}
             />
             <RemoveButton onClick={() => actions.remove(ing._id)} label={t('removeIngredient')} />
           </div>
@@ -88,11 +94,11 @@ export const FormIngredients = ({ ingredients, actions, emptyIngredient }: Props
       <button
         type="button"
         onClick={() => actions.append(emptyIngredient)}
-        className="mt-2 w-full flex items-center gap-2 py-1 text-xs text-stone-400 hover:text-stone-600 transition-colors group"
+        className="mt-2 w-full flex items-center gap-2 py-1 text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-400 transition-colors group"
       >
-        <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+        <span className="flex-1 border-t border-dashed border-stone-200 dark:border-stone-700 group-hover:border-stone-400 dark:group-hover:border-stone-500 transition-colors" />
         <span>{t('addIngredient')}</span>
-        <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+        <span className="flex-1 border-t border-dashed border-stone-200 dark:border-stone-700 group-hover:border-stone-400 dark:group-hover:border-stone-500 transition-colors" />
       </button>
     </div>
   );

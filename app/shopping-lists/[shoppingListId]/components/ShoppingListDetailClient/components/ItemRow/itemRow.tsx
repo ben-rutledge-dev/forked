@@ -57,7 +57,7 @@ export const ItemRow = ({ item, shoppingListId, onEnter }: ItemRowProps) => {
         <button
           {...attributes}
           {...listeners}
-          className="mt-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 cursor-grab touch-none text-stone-300 hover:text-stone-500 transition-opacity text-sm px-0.5 shrink-0"
+          className="mt-0.5 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 cursor-grab touch-none text-stone-300 dark:text-stone-600 hover:text-stone-500 dark:hover:text-stone-400 transition-opacity text-sm px-0.5 shrink-0"
           aria-label={t('dragToReorder')}
         >
           ⠿
@@ -75,16 +75,16 @@ export const ItemRow = ({ item, shoppingListId, onEnter }: ItemRowProps) => {
             suppressContentEditableWarning
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
-            className={`block text-sm outline-none ${item.checked ? 'line-through text-stone-400' : 'text-stone-700'}`}
+            className={`block text-sm outline-none ${item.checked ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-700 dark:text-stone-300'}`}
           >
             {item.name}
           </span>
           {item.recipeTitle && (
-            <p className="text-xs text-stone-400 mt-0.5">{`from ${item.recipeTitle}`}</p>
+            <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">{`from ${item.recipeTitle}`}</p>
           )}
         </div>
         <button
-          className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 text-stone-400 hover:text-danger-500 transition-opacity text-xs px-1"
+          className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 text-stone-400 dark:text-stone-500 hover:text-danger-500 transition-opacity text-xs px-1"
           onClick={() => deleteItem()}
           aria-label={t('deleteItem')}
         >
@@ -96,9 +96,9 @@ export const ItemRow = ({ item, shoppingListId, onEnter }: ItemRowProps) => {
 };
 
 export const ItemRowGhost = ({ item }: { item: ShoppingListItem }) => (
-  <div className="flex items-center gap-2 py-1.5 px-2 bg-white rounded-lg border border-stone-200 shadow-lg opacity-60 cursor-grabbing">
-    <span className="text-stone-300 text-sm shrink-0">⠿</span>
-    <input type="checkbox" checked={item.checked} readOnly className="h-4 w-4 rounded border-stone-300 shrink-0" />
-    <span className={`text-sm ${item.checked ? 'line-through text-stone-400' : 'text-stone-700'}`}>{item.name}</span>
+  <div className="flex items-center gap-2 py-1.5 px-2 bg-white dark:bg-stone-800 rounded-lg border border-stone-200 dark:border-stone-700 shadow-lg dark:shadow-stone-950/30 opacity-60 cursor-grabbing">
+    <span className="text-stone-300 dark:text-stone-600 text-sm shrink-0">⠿</span>
+    <input type="checkbox" checked={item.checked} readOnly className="h-4 w-4 rounded border-stone-300 dark:border-stone-600 shrink-0" />
+    <span className={`text-sm ${item.checked ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-700 dark:text-stone-300'}`}>{item.name}</span>
   </div>
 );

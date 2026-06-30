@@ -15,7 +15,7 @@ export const InviteModal = ({ bookId, isPremium, onConfirm }: Props) => {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-lg font-semibold text-stone-900">{t('inviteHeading')}</h2>
+      <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{t('inviteHeading')}</h2>
       <InviteForm
         roles={
           isPremium

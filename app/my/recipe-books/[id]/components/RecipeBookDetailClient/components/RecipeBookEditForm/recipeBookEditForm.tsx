@@ -71,7 +71,7 @@ export const RecipeBookEditForm = ({ book, onSaved, onCancel }: Props) => {
   const registerDescription = register('description');
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="mt-4 rounded-xl border border-stone-200 bg-stone-50 p-5 space-y-4 mb-6">
+    <form onSubmit={handleSubmit(onSubmit)} className="mt-4 rounded-xl border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 p-5 space-y-4 mb-6">
 
       <FormField label={t('editTitleLabel')} error={errors.title?.message}>
         <TextInput {...registerTitle} />

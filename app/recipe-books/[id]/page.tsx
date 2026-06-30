@@ -58,11 +58,11 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
       )}
 
       <PageHeader title={book.title} backHref="/recipes?tab=books" />
-      {book.description && <p className="mt-2 text-stone-500">{book.description}</p>}
+      {book.description && <p className="mt-2 text-stone-500 dark:text-stone-400">{book.description}</p>}
 
       <div className="mt-3 flex flex-wrap gap-2">
         {book.members.map(m => (
-          <span key={m.id} className="text-xs text-stone-500">
+          <span key={m.id} className="text-xs text-stone-500 dark:text-stone-400">
             {m.user.isPublic && m.user.username
               ? (
                   <Link href={`/u/${m.user.username}`} className="hover:underline">
@@ -73,7 +73,7 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
                   m.user.name ?? m.user.username ?? t('anonymous')
                 )}
             {m.role === OWNER && (
-              <span className="ml-1 text-stone-300">{t('ownerLabel')}</span>
+              <span className="ml-1 text-stone-300 dark:text-stone-600">{t('ownerLabel')}</span>
             )}
           </span>
         ))}
@@ -82,7 +82,7 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
       <div className="mt-8">
         {publicEntries.length === 0
           ? (
-              <p className="text-stone-400 text-center py-12">{t('noPublicRecipes')}</p>
+              <p className="text-stone-400 dark:text-stone-500 text-center py-12">{t('noPublicRecipes')}</p>
             )
           : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -90,7 +90,7 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
                   <Link
                     key={entry.id}
                     href={`/recipes/${entry.recipe.id}`}
-                    className="flex flex-col rounded-xl border border-stone-200 bg-white overflow-hidden hover:border-stone-300 transition-colors"
+                    className="flex flex-col rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 overflow-hidden hover:border-stone-300 dark:hover:border-stone-600 transition-colors"
                   >
                     {entry.recipe.coverImageUrl && (
                       <div className="relative h-36">
@@ -98,9 +98,9 @@ const PublicRecipeBookPage = async ({ params }: Props) => {
                       </div>
                     )}
                     <div className="p-5">
-                      <h3 className="font-semibold text-stone-900 line-clamp-2">{entry.recipe.title}</h3>
+                      <h3 className="font-semibold text-stone-900 dark:text-stone-100 line-clamp-2">{entry.recipe.title}</h3>
                       {entry.recipe.description && (
-                        <p className="mt-1 text-sm text-stone-500 line-clamp-2">{entry.recipe.description}</p>
+                        <p className="mt-1 text-sm text-stone-500 dark:text-stone-400 line-clamp-2">{entry.recipe.description}</p>
                       )}
                     </div>
                   </Link>

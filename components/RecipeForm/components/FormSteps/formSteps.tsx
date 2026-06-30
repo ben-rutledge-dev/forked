@@ -35,7 +35,7 @@ export const FormSteps = ({ steps, actions, emptyStep, onError }: Props) => {
           <div key={step._id}>
             <div className="flex gap-2 py-1.5">
               <div className="flex flex-col items-center gap-1 pt-1 mr-1">
-                <span className="text-xs text-stone-400 font-medium">{i + 1}</span>
+                <span className="text-xs text-stone-400 dark:text-stone-500 font-medium">{i + 1}</span>
                 <IconButton
                   type="button"
                   onClick={() => actions.move(step._id, -1)}
@@ -64,7 +64,7 @@ export const FormSteps = ({ steps, actions, emptyStep, onError }: Props) => {
                 </div>
                 <div className="flex items-center gap-4 flex-wrap pt-3">
                   <div className="flex items-center gap-2">
-                    <label className="text-xs text-stone-500">{t('timerLabel')}</label>
+                    <label className="text-xs text-stone-500 dark:text-stone-400">{t('timerLabel')}</label>
                     <TextInput
                       type="number"
                       min="0"
@@ -89,11 +89,11 @@ export const FormSteps = ({ steps, actions, emptyStep, onError }: Props) => {
             <button
               type="button"
               onClick={() => actions.insert(step._id, emptyStep)}
-              className="w-full flex items-center gap-2 py-1 text-xs text-stone-400 hover:text-stone-600 transition-colors group"
+              className="w-full flex items-center gap-2 py-1 text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-400 transition-colors group"
             >
-              <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+              <span className="flex-1 border-t border-dashed border-stone-200 dark:border-stone-700 group-hover:border-stone-400 dark:group-hover:border-stone-500 transition-colors" />
               <span>{t('addStep')}</span>
-              <span className="flex-1 border-t border-dashed border-stone-200 group-hover:border-stone-400 transition-colors" />
+              <span className="flex-1 border-t border-dashed border-stone-200 dark:border-stone-700 group-hover:border-stone-400 dark:group-hover:border-stone-500 transition-colors" />
             </button>
           </div>
         ))}

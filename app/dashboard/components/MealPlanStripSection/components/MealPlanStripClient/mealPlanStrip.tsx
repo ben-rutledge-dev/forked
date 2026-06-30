@@ -43,12 +43,12 @@ export const MealPlanStrip = ({ data, startDateStr }: Props) => {
   const days = buildDays(data.entries, startDateStr);
 
   return (
-    <div className="rounded-xl squircle shadow-sm bg-white divide-y divide-stone-100 px-5 overflow-hidden">
+    <div className="rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 divide-y divide-stone-100 dark:divide-stone-700 px-5 overflow-hidden">
       {days.map(({ dateStr, entries, isToday, isPast }) => {
         const overflow = entries.length - 3;
         const visible = entries.slice(0, 3);
         return (
-          <div key={dateStr} className={`py-3 -mx-5 px-5 ${isToday ? 'bg-primary-50' : ''}`}>
+          <div key={dateStr} className={`py-3 -mx-5 px-5 ${isToday ? 'bg-primary-50 dark:bg-stone-700' : ''}`}>
             <div className={`flex gap-5 ${isPast ? 'opacity-40' : ''}`}>
               {/* Date label */}
               <PlannerDayLabel dateStr={dateStr} isToday={isToday} />
@@ -56,7 +56,7 @@ export const MealPlanStrip = ({ data, startDateStr }: Props) => {
               {/* Entries */}
               <div className="flex-1 min-w-0 flex items-center">
                 {visible.length === 0
-                  ? <span className="text-sm text-stone-300">—</span>
+                  ? <span className="text-sm text-stone-300 dark:text-stone-600">—</span>
                   : (
                       <div className="flex gap-2 flex-wrap">
                         {visible.map(e => (
@@ -65,7 +65,7 @@ export const MealPlanStrip = ({ data, startDateStr }: Props) => {
                                 <Link
                                   key={e.id}
                                   href={`/recipes/${e.recipe.id}`}
-                                  className="flex items-end gap-2 rounded-lg squircle shadow-sm bg-white p-2 hover:shadow-md transition-shadow"
+                                  className="flex items-end gap-2 rounded-lg squircle shadow-sm bg-white dark:bg-stone-700 p-2 hover:shadow-md transition-shadow"
                                 >
                                   {e.recipe.coverImageUrl
                                     ? (
@@ -77,31 +77,31 @@ export const MealPlanStrip = ({ data, startDateStr }: Props) => {
                                           className="rounded object-cover h-7 w-7 shrink-0"
                                         />
                                       )
-                                    : <div className="h-7 w-7 shrink-0 rounded bg-stone-100" />}
+                                    : <div className="h-7 w-7 shrink-0 rounded bg-stone-100 dark:bg-stone-600" />}
                                   <div className="flex flex-col min-w-0">
-                                    <span className="text-[10px] font-semibold uppercase tracking-wide text-stone-400 truncate">
+                                    <span className="text-[10px] font-semibold uppercase tracking-wide text-stone-400 dark:text-stone-500 truncate">
                                       {e.slotLabel}
                                     </span>
-                                    <span className="text-xs font-medium text-stone-800 truncate leading-tight">
+                                    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 truncate leading-tight">
                                       {e.recipe.title}
                                     </span>
                                   </div>
                                 </Link>
                               )
                             : (
-                                <div key={e.id} className="flex items-end gap-2 rounded-lg squircle shadow-sm bg-white p-2">
-                                  <div className="h-7 w-7 shrink-0 rounded bg-stone-100" />
+                                <div key={e.id} className="flex items-end gap-2 rounded-lg squircle shadow-sm bg-white dark:bg-stone-700 p-2">
+                                  <div className="h-7 w-7 shrink-0 rounded bg-stone-100 dark:bg-stone-600" />
                                   <div className="flex flex-col min-w-0">
-                                    <span className="text-[10px] font-semibold uppercase tracking-wide text-stone-400 truncate">
+                                    <span className="text-[10px] font-semibold uppercase tracking-wide text-stone-400 dark:text-stone-500 truncate">
                                       {e.slotLabel}
                                     </span>
-                                    <span className="text-xs font-medium text-stone-300 truncate">—</span>
+                                    <span className="text-xs font-medium text-stone-300 dark:text-stone-600 truncate">—</span>
                                   </div>
                                 </div>
                               )
                         ))}
                         {overflow > 0 && (
-                          <p className="text-xs text-stone-400 self-center">{t('overflow', { count: overflow })}</p>
+                          <p className="text-xs text-stone-400 dark:text-stone-500 self-center">{t('overflow', { count: overflow })}</p>
                         )}
                       </div>
                     )}
@@ -117,9 +117,9 @@ export const MealPlanStrip = ({ data, startDateStr }: Props) => {
 export const MealPlanStripEmpty = () => {
   const t = useTranslations('dashboard.mealPlanStrip');
   return (
-    <div className="rounded-xl squircle shadow-sm bg-white px-5 py-6 text-center">
-      <p className="text-sm font-medium text-stone-700 mb-1">{t('planYourWeek')}</p>
-      <p className="text-xs text-stone-400 mb-3">{t('addMealsCta')}</p>
+    <div className="rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-5 py-6 text-center">
+      <p className="text-sm font-medium text-stone-700 dark:text-stone-300 mb-1">{t('planYourWeek')}</p>
+      <p className="text-xs text-stone-400 dark:text-stone-500 mb-3">{t('addMealsCta')}</p>
       <Link href="/meal-planner" className="text-xs font-medium text-primary-500 hover:underline">
         {t('goToPlanner')}
       </Link>

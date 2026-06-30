@@ -19,7 +19,8 @@
     "pressEnterToAdd": "Press Enter to add \"{value}\"",
     "noOptionsFound": "No options found",
     "public": "Public",
-    "private": "Private"
+    "private": "Private",
+    "usedIn": "Used in"
   },
   "nav": {
     "brand": "Forked",
@@ -33,7 +34,8 @@
     "closeMenu": "Close menu",
     "openMenu": "Open menu",
     "userMenu": "User menu",
-    "userAvatar": "User avatar"
+    "userAvatar": "User avatar",
+    "settings": "Settings"
   },
   "home": {
     "heading": "A recipe pool you can make your own.",
@@ -152,7 +154,8 @@
     "saving": "Saving…",
     "saveChanges": "Save changes",
     "createRecipe": "Create recipe",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "ingredientMissingName": "Each ingredient needs a name"
   },
   "formIngredients": {
     "heading": "Ingredients",
@@ -518,5 +521,29 @@
     "noRecipesFound": "No saved recipes found",
     "confirmAdd": "Add to plan",
     "back": "Back"
+  },
+  "settings": {
+    "heading": "Settings",
+    "appearance": "Appearance",
+    "suggestions": "Suggestions",
+    "profile": "Profile",
+    "privacy": "Privacy",
+    "appearanceHeading": "Appearance",
+    "darkModeLabel": "Dark mode",
+    "darkModeDescription": "Switch between light and dark themes.",
+    "unitSystemLabel": "Unit system",
+    "unitSystemDescription": "Choose between metric and imperial measurements.",
+    "metric": "Metric",
+    "imperial": "Imperial",
+    "suggestionsHeading": "Suggestions manager",
+    "suggestionsDescription": "Ingredients you have permanently hidden from grocery suggestions. Restore any to allow them to appear again.",
+    "noDismissals": "No ingredients have been permanently hidden.",
+    "restore": "Restore",
+    "restoring": "Restoring…",
+    "restored": "Restored!",
+    "privacyHeading": "Privacy",
+    "profileHeading": "Profile",
+    "viewProfile": "View profile",
+    "settingsNavLabel": "Settings navigation"
   }
 }

@@ -40,7 +40,7 @@ export const MobileView = ({ startDate, slots, entries, canEditSlots, canEditEnt
   };
 
   return (
-    <div className="md:hidden bg-white rounded-xl squircle shadow-sm p-4">
+    <div className="md:hidden bg-white dark:bg-stone-800 rounded-xl squircle shadow-sm p-4">
       <div onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
         <DayColumn
           date={currentDate}

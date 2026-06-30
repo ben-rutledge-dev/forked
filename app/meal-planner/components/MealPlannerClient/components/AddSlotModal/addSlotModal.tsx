@@ -27,8 +27,8 @@ export const AddSlotModal = ({ onConfirm }: Props) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
-      <h2 className="text-lg font-semibold text-stone-900">{t('addSlotHeading')}</h2>
-      <p className="text-sm text-stone-500">{t('addSlotHint')}</p>
+      <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{t('addSlotHeading')}</h2>
+      <p className="text-sm text-stone-500 dark:text-stone-400">{t('addSlotHint')}</p>
       <div>
         <TextInput
           autoFocus

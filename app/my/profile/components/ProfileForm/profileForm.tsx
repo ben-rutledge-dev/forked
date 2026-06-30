@@ -24,8 +24,13 @@ import { UserProfile } from '@/types';
 
 const isValidUrl = (v: string) => {
   if (!v) return true;
-  try { new URL(v); return true; }
-  catch { return false; }
+  try {
+    new URL(v);
+    return true;
+  }
+  catch {
+    return false;
+  }
 };
 
 const profileSchema = z.object({
@@ -174,11 +179,11 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
       <div className="space-y-5">
         {/* Cover photo */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">{t('coverPhotoLabel')}</label>
+          <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">{t('coverPhotoLabel')}</label>
           {coverImageUrl
             ? (
                 <div className="relative block h-32">
-                  <div className="absolute inset-0 rounded-xl overflow-hidden border border-stone-200">
+                  <div className="absolute inset-0 rounded-xl overflow-hidden border border-stone-200 dark:border-stone-700">
                     <Image src={coverImageUrl} alt={t('coverPhotoAlt')} fill className="object-cover" sizes="100vw" />
                   </div>
                   <CornerDeleteButton
@@ -191,7 +196,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
                 </div>
               )
             : (
-                <label className={`flex items-center gap-2 cursor-pointer rounded-xl border border-dashed border-stone-300 px-4 py-3 text-sm text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-colors ${coverUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+                <label className={`flex items-center gap-2 cursor-pointer rounded-xl border border-dashed border-stone-300 dark:border-stone-600 px-4 py-3 text-sm text-stone-500 dark:text-stone-400 hover:border-stone-400 dark:hover:border-stone-500 hover:text-stone-700 dark:hover:text-stone-300 transition-colors ${coverUploading ? 'opacity-50 pointer-events-none' : ''}`}>
                   <CameraIcon className="w-4 h-4 shrink-0" />
                   {coverUploading ? t('uploading') : t('addCoverPhoto')}
                   <input ref={coverInputRef} type="file" accept="image/*" className="sr-only" onChange={handleCoverChange} />
@@ -205,7 +210,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
             {avatarUrl
               ? (
                   <>
-                    <Image src={avatarUrl} alt={t('avatarAlt')} width={64} height={64} className="w-16 h-16 rounded-full object-cover border border-stone-200" />
+                    <Image src={avatarUrl} alt={t('avatarAlt')} width={64} height={64} className="w-16 h-16 rounded-full object-cover border border-stone-200 dark:border-stone-700" />
                     <CornerDeleteButton
                       onClick={() => {
                         setValue('avatarUrl', '');
@@ -217,12 +222,12 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
                   </>
                 )
               : (
-                  <div className="w-16 h-16 rounded-full bg-stone-100 flex items-center justify-center text-stone-400">
+                  <div className="w-16 h-16 rounded-full bg-stone-100 dark:bg-stone-800 flex items-center justify-center text-stone-400 dark:text-stone-500">
                     <UserIcon className="w-8 h-8" />
                   </div>
                 )}
           </div>
-          <label className={`cursor-pointer text-sm text-stone-500 hover:text-stone-700 transition-colors ${avatarUploading ? 'opacity-50 pointer-events-none' : ''}`}>
+          <label className={`cursor-pointer text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-300 transition-colors ${avatarUploading ? 'opacity-50 pointer-events-none' : ''}`}>
             {avatarUploading ? t('uploading') : avatarUrl ? t('changeProfilePhoto') : t('addProfilePhoto')}
             <input ref={avatarInputRef} type="file" accept="image/*" className="sr-only" onChange={handleAvatarChange} />
           </label>
@@ -236,7 +241,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
           label={(
             <>
               {t('usernameLabel')}
-              <span className="text-stone-400 font-normal">{t('usernameHint')}</span>
+              <span className="text-stone-400 dark:text-stone-500 font-normal">{t('usernameHint')}</span>
             </>
           )}
           hint={t('usernameFormat')}
@@ -279,7 +284,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
         <SectionHeading>
           {t('linksHeading')}
           {' '}
-          <span className="text-sm font-normal text-stone-400">{t('linksOptional')}</span>
+          <span className="text-sm font-normal text-stone-400 dark:text-stone-500">{t('linksOptional')}</span>
         </SectionHeading>
         <FormField htmlFor="websiteUrl" label={t('websiteLabel')} error={errors.websiteUrl?.message}>
           <Controller

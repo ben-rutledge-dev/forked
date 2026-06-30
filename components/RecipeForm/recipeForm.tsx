@@ -115,6 +115,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
       ? withIds(initialData.ingredients)
       : [emptyIngredient()],
   );
+  const [ingredientErrors, setIngredientErrors] = useState<Set<string>>(new Set());
 
   const [steps, setSteps] = useState<StepItem[]>(
     initialData?.steps?.length
@@ -156,6 +157,14 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
   };
 
   const ingredientActions = useListField(setIngredients);
+
+  const clearIngredientError = (id: string) => {
+    setIngredientErrors((prev) => {
+      const next = new Set(prev);
+      next.delete(id);
+      return next;
+    });
+  };
   const stepActions = useListField(setSteps);
 
   const onSubmit = async (data: RecipeFormValues) => {
@@ -164,8 +173,19 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
       return;
     }
 
+    const partialIds = ingredients
+      .filter(i => i.name.trim() === '' && (i.quantity.trim() || i.unitKey || i.unit))
+      .map(i => i._id);
+    if (partialIds.length > 0) {
+      setIngredientErrors(new Set(partialIds));
+      setError('root', { message: t('ingredientMissingName') });
+      return;
+    }
+    setIngredientErrors(new Set());
+
     const validIngredients = ingredients
-      .map(i => ({ id: i.id, name: i.name, quantity: i.quantity, unit: i.unit, unitKey: i.unitKey ?? null }));
+      .filter(i => i.name.trim() !== '')
+      .map(i => ({ id: i.id, name: i.name.trim(), quantity: i.quantity, unit: i.unit, unitKey: i.unitKey ?? null }));
 
     const validSteps = steps
       .map(s => ({ id: s.id, instruction: s.instruction, timerSeconds: s.timerSeconds, imageUrl: s.imageUrl }));
@@ -211,12 +231,12 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       {forkedFrom && (
-        <p className="text-sm text-stone-500">
+        <p className="text-sm text-stone-500 dark:text-stone-400">
           {t('forkedFrom')}
           {' '}
           {forkedFrom.isPublic
             ? (
-                <a href={`/recipes/${forkedFrom.id}`} className="underline hover:text-stone-700">
+                <a href={`/recipes/${forkedFrom.id}`} className="underline hover:text-stone-700 dark:hover:text-stone-200">
                   {forkedFrom.title}
                 </a>
               )
@@ -247,9 +267,9 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
 
         {/* Categories + My Tags */}
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">{t('categoriesLabel')}</label>
+          <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">{t('categoriesLabel')}</label>
           {categoriesLoading
-            ? <p className="text-sm text-stone-400">{t('loadingCategories')}</p>
+            ? <p className="text-sm text-stone-400 dark:text-stone-500">{t('loadingCategories')}</p>
             : (
                 <div className="space-y-3">
                   {CATEGORY_GROUP_ORDER.map((group) => {
@@ -297,7 +317,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
                       onChange={e => setTagInput(e.target.value)}
                       onKeyDown={handleTagInputKeyDown}
                       placeholder={t('tagPlaceholder')}
-                      className="mt-2 w-full rounded-lg border border-stone-300 px-3 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
+                      className="mt-2 w-full rounded-lg border border-stone-300 dark:border-stone-600 px-3 py-2 text-sm text-stone-900 dark:text-stone-100 bg-white dark:bg-stone-800 placeholder-stone-400 dark:placeholder-stone-500 focus:border-stone-500 dark:focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-500 dark:focus:ring-stone-400"
                     />
                   </div>
                 </div>
@@ -305,7 +325,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-stone-700 mb-2">{t('coverPhotoLabel')}</label>
+          <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">{t('coverPhotoLabel')}</label>
           <Controller
             name="coverImageUrl"
             control={control}
@@ -332,7 +352,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
                 disabled={noCategoriesSelected && !value}
               />
               {noCategoriesSelected && !value && (
-                <p className="mt-1 text-xs text-stone-400">
+                <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
                   {t('categoryRequired')}
                 </p>
               )}
@@ -345,6 +365,8 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
         ingredients={ingredients}
         actions={ingredientActions}
         emptyIngredient={emptyIngredient}
+        ingredientErrors={ingredientErrors}
+        onClearError={clearIngredientError}
       />
 
       <FormSteps
@@ -362,7 +384,7 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
           size="lg"
           disabled={isSubmitting}
         >
-          {isSubmitting ? t('saving') : recipeId ? t('saveChanges') : t('createRecipe')}
+          {isSubmitting ? t('saving') : (recipeId ? t('saveChanges') : t('createRecipe'))}
         </Button>
         <Button
           type="button"

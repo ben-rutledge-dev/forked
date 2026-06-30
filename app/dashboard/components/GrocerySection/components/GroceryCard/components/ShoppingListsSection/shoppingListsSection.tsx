@@ -28,15 +28,15 @@ export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectL
       return (
         <Link
           href="/shopping-lists"
-          className="rounded-lg border border-dashed border-stone-300 px-4 py-3 text-xs text-stone-400 text-center hover:border-stone-400 transition-colors block"
+          className="rounded-lg border border-dashed border-stone-300 dark:border-stone-600 px-4 py-3 text-xs text-stone-400 dark:text-stone-500 text-center hover:border-stone-400 dark:hover:border-stone-500 transition-colors block"
         >
           {t('newList')}
         </Link>
       );
     }
     return (
-      <div className="rounded-xl squircle shadow-sm bg-white px-5 py-6 text-center">
-        <p className="text-sm text-stone-500 mb-2">{t('noListsYet')}</p>
+      <div className="rounded-xl squircle shadow-sm bg-white dark:bg-stone-700 px-5 py-6 text-center">
+        <p className="text-sm text-stone-500 dark:text-stone-400 mb-2">{t('noListsYet')}</p>
         <Link href="/shopping-lists" className="text-xs text-primary-500 hover:underline">
           {t('createList')}
         </Link>
@@ -53,23 +53,23 @@ export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectL
             ? (
                 <button
                   key={list.id}
-                  className={`w-full text-left rounded-xl squircle px-4 py-3 transition-all cursor-pointer ${isActive ? 'shadow-md ring-2 ring-primary-500' : 'shadow-sm hover:shadow-md'}`}
+                  className={`w-full text-left rounded-xl squircle px-4 py-3 transition-all cursor-pointer ${isActive ? 'shadow-md ring-2 ring-primary-500' : 'shadow-sm hover:shadow-md bg-white dark:bg-stone-700'}`}
                   onClick={() => onSelectList(list.id)}
                 >
-                  <p className={`text-sm font-medium truncate ${isActive ? 'text-stone-900' : 'text-stone-500'}`}>
+                  <p className={`text-sm font-medium truncate ${isActive ? 'text-stone-900 dark:text-stone-100' : 'text-stone-500 dark:text-stone-400'}`}>
                     {list.title}
                   </p>
-                  <p className="text-xs text-stone-400 mt-0.5">{listMeta(list)}</p>
+                  <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">{listMeta(list)}</p>
                 </button>
               )
             : (
                 <button
                   key={list.id}
-                  className="w-full text-left rounded-xl squircle border border-stone-200 px-4 py-3 hover:border-stone-300 transition-colors cursor-pointer"
+                  className="w-full text-left rounded-xl squircle border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-4 py-3 hover:border-stone-300 transition-colors cursor-pointer"
                   onClick={() => router.push(`/shopping-lists/${list.id}`)}
                 >
-                  <p className="text-sm font-medium text-stone-800 truncate">{list.title}</p>
-                  <p className="text-xs text-stone-400 mt-0.5">{listMeta(list)}</p>
+                  <p className="text-sm font-medium text-stone-800 dark:text-stone-200 truncate">{list.title}</p>
+                  <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">{listMeta(list)}</p>
                 </button>
               );
         })}
@@ -85,11 +85,11 @@ export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectL
       {lists.map(list => (
         <li key={list.id}>
           <button
-            className="w-full text-left rounded-xl squircle shadow-sm px-5 py-4 hover:shadow-md transition-shadow cursor-pointer"
+            className="w-full text-left rounded-xl squircle shadow-sm bg-white dark:bg-stone-700 px-5 py-4 hover:shadow-md transition-shadow cursor-pointer"
             onClick={() => router.push(`/shopping-lists/${list.id}`)}
           >
-            <p className="font-medium text-stone-800">{list.title}</p>
-            <p className="mt-1 text-xs text-stone-400">{listMeta(list)}</p>
+            <p className="font-medium text-stone-800 dark:text-stone-200">{list.title}</p>
+            <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">{listMeta(list)}</p>
           </button>
         </li>
       ))}

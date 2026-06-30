@@ -75,6 +75,15 @@ const eslintConfig = defineConfig([
         'words': {
           exclude: ['Forked', '©', '@', '↑', '↓', '▲', '▼', '▾', '▸', '·', '←', '/', 'x\\.com/', 'instagram\\.com/', '0', '\\(', '\\)', '×', '✕', '⠿', 'recipes', 'books', ':', '—'],
         },
+        'callees': {
+          // Re-include plugin defaults (lost due to shallow _.defaults merge) + react-hook-form register patterns
+          exclude: [
+            'i18n(ext)?', 't', 'require', 'addEventListener', 'removeEventListener',
+            'postMessage', 'getElementById', 'dispatch', 'commit',
+            'includes', 'indexOf', 'endsWith', 'startsWith',
+            'register', 'registerSection', 'registerItem',
+          ],
+        },
       }],
     },
   },

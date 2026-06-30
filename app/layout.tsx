@@ -45,13 +45,17 @@ const RootLayout = async ({
 
   return (
     <html lang="en-GB" className={`${hankenGrotesk.variable} ${fraunces.variable}`} suppressHydrationWarning>
-      <body className="antialiased min-h-screen flex flex-col text-stone-900" suppressHydrationWarning>
+      <head>
+        {/* Inline script prevents flash of wrong theme on load */}
+        <script dangerouslySetInnerHTML={{ __html: 'try{if(localStorage.getItem(\'forked:theme\')===\'dark\')document.documentElement.classList.add(\'dark\')}catch(e){}' }} />
+      </head>
+      <body className="antialiased min-h-screen flex flex-col text-stone-900 dark:text-stone-100 dark:bg-stone-900" suppressHydrationWarning>
         <NextIntlClientProvider messages={messages}>
           <QueryProvider>
             <Providers session={session}>
               <Nav />
               <main className="flex-1">{children}</main>
-              <footer className="mt-16 border-t border-stone-100 py-8 text-center text-xs text-stone-400">
+              <footer className="mt-16 border-t border-stone-100 dark:border-stone-700 py-8 text-center text-xs text-stone-400 dark:text-stone-500">
                 {t('footer', { year: new Date().getFullYear() })}
               </footer>
             </Providers>

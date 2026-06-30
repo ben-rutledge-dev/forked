@@ -23,7 +23,7 @@ export const AlertConfirm = ({
 
   return (
     <div className="p-6 flex flex-col gap-5">
-      <p className="text-stone-700 text-sm leading-relaxed">{text}</p>
+      <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed">{text}</p>
       <div className="flex justify-end gap-2">
         <Button variant="secondary" size="sm" shape="rounded" onClick={() => onConfirm(false)}>
           {cancelLabel ?? t('cancel')}

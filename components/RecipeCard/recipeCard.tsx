@@ -261,10 +261,10 @@ export const RecipeCard: React.FC<RecipeCardProps> = ({
       {shoppingToast && <Toast message={shoppingToast} onDismiss={() => setShoppingToast(null)} />}
       <Card href={href} coverImageUrl={coverImageUrl} CoverPlaceholderIcon={PlaceholderIcon} actions={cardActions}>
         <div className="flex-1">
-          <h3 className="font-semibold text-stone-900 line-clamp-2">{title}</h3>
-          {description && <p className="mt-1 text-sm text-stone-500 line-clamp-2">{description}</p>}
+          <h3 className="font-semibold text-stone-900 dark:text-stone-100 line-clamp-2">{title}</h3>
+          {description && <p className="mt-1 text-sm text-stone-500 dark:text-stone-400 line-clamp-2">{description}</p>}
         </div>
-        <div className="flex items-center justify-between text-xs text-stone-400">
+        <div className="flex items-center justify-between text-xs text-stone-400 dark:text-stone-500">
           <span>
             {t('forks', { count: forkCount })}
           </span>

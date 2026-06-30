@@ -21,12 +21,12 @@ export const Checkbox = ({ checked, onChange, label, description, id, className,
         checked={checked}
         onChange={onChange}
         disabled={disabled}
-        className="h-4 w-4 shrink-0 rounded border-stone-300 accent-stone-900"
+        className="h-4 w-4 shrink-0 rounded border-stone-300 dark:border-stone-600 accent-stone-900"
       />
-      {label !== undefined && <span className="text-sm text-stone-700">{label}</span>}
+      {label !== undefined && <span className="text-sm text-stone-700 dark:text-stone-300">{label}</span>}
     </label>
     {description && (
-      <p className="mt-0.5 pl-6 text-xs text-stone-400">{description}</p>
+      <p className="mt-0.5 pl-6 text-xs text-stone-400 dark:text-stone-500">{description}</p>
     )}
   </div>
 );

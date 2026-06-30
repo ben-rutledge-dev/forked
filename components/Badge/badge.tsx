@@ -7,9 +7,9 @@ type Props = {
 };
 
 const variantClasses: Record<Variant, string> = {
-  success: 'bg-success-50 text-success-700',
-  neutral: 'bg-stone-100 text-stone-500',
-  primary: 'bg-primary-50 text-primary-500',
+  success: 'bg-green-50 dark:bg-green-900 text-green-700 dark:text-green-300',
+  neutral: 'bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400',
+  primary: 'bg-primary-50 dark:bg-primary-700 text-primary-500 dark:text-primary-100',
 };
 
 export const Badge = ({ children, variant = 'neutral', className = '' }: Props) => (

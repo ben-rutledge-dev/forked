@@ -102,11 +102,11 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
             {pending.map(invite => (
               <div
                 key={invite.id}
-                className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white px-5 py-4"
+                className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-5 py-4"
               >
                 <div>
-                  <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
-                  <p className="text-xs text-stone-400 mt-0.5">
+                  <p className="font-medium text-stone-900 dark:text-stone-100">{invite.recipeBook.title}</p>
+                  <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
                     {t('invitedAs')}
                     {' '}
                     <span className="font-medium">{invite.role}</span>
@@ -140,9 +140,9 @@ export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
 
       {books.length === 0
         ? (
-            <div className="text-center py-20 text-stone-400">
+            <div className="text-center py-20 text-stone-400 dark:text-stone-500">
               <p>{t('noBooksYet')}</p>
-              <Link href="/my/recipe-books/new" className="mt-4 inline-block text-stone-700 underline hover:text-stone-900">
+              <Link href="/my/recipe-books/new" className="mt-4 inline-block text-stone-700 dark:text-stone-300 underline hover:text-stone-900 dark:hover:text-stone-100">
                 {t('createBook')}
               </Link>
             </div>

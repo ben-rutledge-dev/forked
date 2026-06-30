@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { useRef, useState } from 'react';
 // Components
 import { CHIP_ACTIVE_CLASS, CHIP_INACTIVE_CLASS } from '@/components/Chip';
@@ -25,6 +26,7 @@ export const DismissibleChip = ({
   onSkip,
   disabled = false,
 }: DismissibleChipProps) => {
+  const t = useTranslations('common');
   const [showTooltip, setShowTooltip] = useState(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const hasRecipes = recipes && recipes.length > 0;
@@ -74,7 +76,7 @@ export const DismissibleChip = ({
           type="button"
           onClick={onSkip}
           disabled={disabled}
-          className="absolute right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-stone-400 hover:text-stone-600 cursor-pointer disabled:cursor-not-allowed"
+          className="absolute right-2 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity text-stone-400 dark:text-stone-500 hover:text-stone-600 cursor-pointer disabled:cursor-not-allowed"
           aria-label={`Skip ${label}`}
         >
           <XIcon className="w-3 h-3" />
@@ -82,10 +84,10 @@ export const DismissibleChip = ({
       )}
 
       {showTooltip && hasRecipes && (
-        <div className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-white border border-stone-200 squircle px-3 py-2.5 shadow-sm z-10 min-w-40 pointer-events-none">
-          <p className="text-stone-400 uppercase tracking-wide text-[10px] mb-1.5">Used in</p>
+        <div className="absolute bottom-[calc(100%+6px)] left-1/2 -translate-x-1/2 bg-white dark:bg-stone-800 border border-stone-200 dark:border-stone-700 squircle px-3 py-2.5 shadow-sm z-10 min-w-40 pointer-events-none">
+          <p className="text-stone-400 dark:text-stone-500 uppercase tracking-wide text-[10px] mb-1.5">{t('usedIn')}</p>
           {recipes.map(r => (
-            <div key={r} className="flex items-center gap-1.5 py-0.5 text-xs text-stone-700 whitespace-nowrap">
+            <div key={r} className="flex items-center gap-1.5 py-0.5 text-xs text-stone-700 dark:text-stone-300 whitespace-nowrap">
               <span className="w-1.5 h-1.5 rounded-full bg-primary-500 shrink-0" />
               {r}
             </div>

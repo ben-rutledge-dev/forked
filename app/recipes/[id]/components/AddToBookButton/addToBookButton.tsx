@@ -66,14 +66,14 @@ export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
 
   let dropdownContent: ReactNode;
   if (books === null) {
-    dropdownContent = <div className="px-4 py-3 text-sm text-stone-400">{t('loadingBooks')}</div>;
+    dropdownContent = <div className="px-4 py-3 text-sm text-stone-400 dark:text-stone-500">{t('loadingBooks')}</div>;
   }
   else if (books.length === 0) {
     dropdownContent = (
-      <div className="px-4 py-3 text-sm text-stone-400">
+      <div className="px-4 py-3 text-sm text-stone-400 dark:text-stone-500">
         {t('noBooksList')}
         {' '}
-        <Link href="/my/recipe-books/new" className="underline text-stone-600 hover:text-stone-900">{t('createOne')}</Link>
+        <Link href="/my/recipe-books/new" className="underline text-stone-600 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-100">{t('createOne')}</Link>
       </div>
     );
   }
@@ -85,11 +85,11 @@ export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
             key={b.id}
             disabled={adding === b.id || done === b.id}
             onClick={() => handleAdd(b.id)}
-            className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors disabled:opacity-60 flex items-center justify-between gap-2"
+            className="w-full text-left px-4 py-2.5 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-800 transition-colors disabled:opacity-60 flex items-center justify-between gap-2"
           >
             <span className="truncate">{b.title}</span>
             {done === b.id && (
-              <svg className="w-4 h-4 text-stone-400 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 text-stone-400 dark:text-stone-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
               </svg>
             )}
@@ -106,7 +106,7 @@ export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
       </Button>
 
       {open && (
-        <div className="absolute left-0 top-11 z-30 w-56 rounded-xl border border-stone-200 bg-white shadow-lg overflow-hidden max-w-[calc(100vw-2rem)] sm:left-auto sm:right-0">
+        <div className="absolute left-0 top-11 z-30 w-56 rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 shadow-lg dark:shadow-stone-950/30 overflow-hidden max-w-[calc(100vw-2rem)] sm:left-auto sm:right-0">
           {dropdownContent}
         </div>
       )}

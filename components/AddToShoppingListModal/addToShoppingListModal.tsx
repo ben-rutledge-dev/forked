@@ -195,10 +195,10 @@ const StageOne = ({
   return (
     <>
       <ModalHeading className="mb-1">{t('modalHeading')}</ModalHeading>
-      {recipeTitle && <p className="text-sm text-stone-500 mb-4">{recipeTitle}</p>}
+      {recipeTitle && <p className="text-sm text-stone-500 dark:text-stone-400 mb-4">{recipeTitle}</p>}
 
       <div className="flex justify-between items-center mb-3">
-        <span className="text-sm font-medium text-stone-600">{t('ingredientsLabel')}</span>
+        <span className="text-sm font-medium text-stone-600 dark:text-stone-400">{t('ingredientsLabel')}</span>
         {!ingredientsLoading && (
           <button className="text-xs text-primary-500 hover:underline" onClick={onToggleAll}>
             {selected.size === ingredients.length ? t('deselectAll') : t('selectAll')}
@@ -210,7 +210,7 @@ const StageOne = ({
         ? (
             <div className="space-y-3 mb-6">
               {[1, 2, 3].map(n => (
-                <div key={n} className="h-5 bg-stone-100 rounded animate-pulse" />
+                <div key={n} className="h-5 bg-stone-100 dark:bg-stone-800 rounded animate-pulse" />
               ))}
             </div>
           )
@@ -304,12 +304,12 @@ const StageTwo = ({
               className={`w-full text-left rounded-lg border px-4 py-3 text-sm transition-colors ${
                 chosenListId === list.id
                   ? 'border-primary-400 bg-primary-50'
-                  : 'border-stone-200 hover:border-stone-300'
+                  : 'border-stone-200 dark:border-stone-700 hover:border-stone-300 dark:hover:border-stone-600'
               }`}
               onClick={() => onSelectList(list.id)}
             >
               <span className="font-medium">{list.title}</span>
-              <span className="ml-2 text-stone-400">
+              <span className="ml-2 text-stone-400 dark:text-stone-500">
                 {t('itemCount', { count: list.uncheckedCount })}
               </span>
             </button>
@@ -322,7 +322,7 @@ const StageTwo = ({
             <form onSubmit={handleSubmit(onNewList)} className="flex gap-2 mb-4">
               <input
                 autoFocus
-                className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                className="flex-1 rounded-lg border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 placeholder:text-stone-400 dark:placeholder:text-stone-500"
                 placeholder={t('newListPlaceholder')}
                 {...registerTitle}
               />

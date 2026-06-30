@@ -12,7 +12,7 @@ type CategoryPillProps = {
 };
 
 export const CategoryPill = ({ href, children }: CategoryPillProps) => (
-  <Link href={href} className={CHIP_INACTIVE_CLASS}>
+  <Link href={href} className={CHIP_ACTIVE_CLASS}>
     {children}
   </Link>
 );

@@ -82,14 +82,22 @@ export const ShoppingListsClient = () => {
           <div className="flex gap-2">
             <input
               autoFocus
-              className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+              className="flex-1 rounded-lg border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 placeholder-stone-400 dark:placeholder-stone-500"
               placeholder={t('listNamePlaceholder')}
               {...register('title')}
             />
             <Button type="submit" variant="primary" size="sm" disabled={isCreating}>
               {isCreating ? t('creating') : t('create')}
             </Button>
-            <Button type="button" variant="secondary" size="sm" onClick={() => { setCreating(false); reset(); }}>
+            <Button
+              type="button"
+              variant="secondary"
+              size="sm"
+              onClick={() => {
+                setCreating(false);
+                reset();
+              }}
+            >
               {t('cancel')}
             </Button>
           </div>
@@ -102,10 +110,10 @@ export const ShoppingListsClient = () => {
           <SectionLabel className="mb-3">{t('pendingInvites')}</SectionLabel>
           <ul className="space-y-2">
             {pending.map(invite => (
-              <li key={invite.id} className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white px-4 py-3">
+              <li key={invite.id} className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-4 py-3">
                 <div>
                   <p className="text-sm font-medium">{invite.shoppingList.title}</p>
-                  <p className="text-xs text-stone-400">
+                  <p className="text-xs text-stone-400 dark:text-stone-500">
                     {invite.role === 'OWNER' ? t('invitedAsOwner') : t('invitedAsCollaborator')}
                   </p>
                 </div>
@@ -135,18 +143,18 @@ export const ShoppingListsClient = () => {
 
       {lists.length === 0
         ? (
-            <p className="text-stone-400 text-sm">{t('noListsYet')}</p>
+            <p className="text-stone-400 dark:text-stone-500 text-sm">{t('noListsYet')}</p>
           )
         : (
             <ul className="grid gap-4 sm:grid-cols-2">
               {lists.map(list => (
                 <li key={list.id}>
                   <button
-                    className="w-full text-left rounded-xl squircle shadow-sm bg-white px-5 py-4 hover:shadow-md transition-shadow cursor-pointer"
+                    className="w-full text-left rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-5 py-4 hover:shadow-md transition-shadow cursor-pointer"
                     onClick={() => router.push(`/shopping-lists/${list.id}`)}
                   >
-                    <p className="font-medium text-stone-800">{list.title}</p>
-                    <p className="mt-1 text-xs text-stone-400">
+                    <p className="font-medium text-stone-800 dark:text-stone-200">{list.title}</p>
+                    <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
                       {t('stats', { items: list.uncheckedCount, members: list.memberCount })}
                     </p>
                     {list.role === 'OWNER' && (

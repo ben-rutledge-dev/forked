@@ -45,8 +45,8 @@ export const ImageUpload = ({ value, onChange, onError, label = 'Add photo', pre
   const t = useTranslations('common');
 
   const previewCls = previewSize === 'sm'
-    ? 'w-12 h-8 rounded object-cover border border-stone-200'
-    : 'w-24 h-16 rounded-lg object-cover border border-stone-200';
+    ? 'w-12 h-8 rounded object-cover border border-stone-200 dark:border-stone-700'
+    : 'w-24 h-16 rounded-lg object-cover border border-stone-200 dark:border-stone-700';
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -80,7 +80,7 @@ export const ImageUpload = ({ value, onChange, onError, label = 'Add photo', pre
   }
 
   return (
-    <label className={`inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-stone-300 px-4 py-2 text-sm text-stone-500 hover:border-stone-400 hover:text-stone-700 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
+    <label className={`inline-flex items-center gap-2 cursor-pointer rounded-lg border border-dashed border-stone-300 dark:border-stone-600 px-4 py-2 text-sm text-stone-500 dark:text-stone-400 hover:border-stone-400 dark:hover:border-stone-500 hover:text-stone-700 dark:hover:text-stone-200 transition-colors ${uploading ? 'opacity-50 pointer-events-none' : ''}`}>
       <CameraIcon className="w-4 h-4 shrink-0" />
       {uploading ? t('uploading') : label}
       <input ref={inputRef} type="file" accept="image/*" className="sr-only" onChange={handleChange} />

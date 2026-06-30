@@ -43,7 +43,7 @@ export const SearchFilterBar = ({
           value={query}
           onChange={e => onQueryChange(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 min-w-0 rounded-lg squircle bg-white border border-stone-300 px-4 py-2 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
+          className="flex-1 min-w-0 rounded-lg squircle bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-600 px-4 py-2 text-sm text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:border-stone-500 dark:focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-500 dark:focus:ring-stone-400"
         />
         {categoryOptions.length > 0 && (
           <button
@@ -51,8 +51,8 @@ export const SearchFilterBar = ({
             onClick={() => setOpen(o => !o)}
             className={`inline-flex items-center gap-1.5 squircle border px-4 py-2 text-sm transition-colors ${
               open || activeCount > 0
-                ? 'border-stone-400 bg-stone-100 text-stone-700'
-                : 'border-stone-300 bg-white text-stone-500 hover:bg-stone-50'
+                ? 'border-stone-400 dark:border-stone-500 bg-stone-100 dark:bg-stone-700 text-stone-700 dark:text-stone-300'
+                : 'border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-700'
             }`}
           >
             <FilterIcon className="w-3.5 h-3.5 opacity-60 shrink-0" />
@@ -67,7 +67,7 @@ export const SearchFilterBar = ({
       </div>
 
       {open && categoryOptions.length > 0 && (
-        <div className="mt-2 rounded-lg border border-stone-200 bg-stone-50 px-3 py-3">
+        <div className="mt-2 rounded-lg border border-stone-200 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 px-3 py-3">
           <TokenInput
             mode="pills"
             value={selectedCategories}

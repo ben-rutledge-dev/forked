@@ -27,7 +27,7 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
   if (selected) {
     return (
       <div className="p-6 space-y-4">
-        <h2 className="text-lg font-semibold text-stone-900">
+        <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
           {t('pickRecipeHeading', { slot: slotLabel, day: dayLabel })}
         </h2>
         <div className="flex items-center gap-4 rounded-xl squircle shadow-sm p-4">
@@ -42,12 +42,12 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
                 />
               )
             : (
-                <div className="h-16 w-16 flex-shrink-0 rounded-lg bg-stone-100" />
+                <div className="h-16 w-16 flex-shrink-0 rounded-lg bg-stone-100 dark:bg-stone-700" />
               )}
           <div>
-            <p className="font-medium text-stone-900">{selected.title}</p>
+            <p className="font-medium text-stone-900 dark:text-stone-100">{selected.title}</p>
             {selected.description && (
-              <p className="text-sm text-stone-500 line-clamp-2 mt-0.5">{selected.description}</p>
+              <p className="text-sm text-stone-500 dark:text-stone-400 line-clamp-2 mt-0.5">{selected.description}</p>
             )}
           </div>
         </div>
@@ -65,7 +65,7 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
 
   return (
     <div className="p-6 space-y-4">
-      <h2 className="text-lg font-semibold text-stone-900">
+      <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">
         {t('pickRecipeHeading', { slot: slotLabel, day: dayLabel })}
       </h2>
       <TextInput
@@ -74,14 +74,14 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
         placeholder={t('searchPlaceholder')}
       />
       <div className="max-h-80 overflow-y-auto space-y-2">
-        {isLoading && <p className="text-sm text-stone-400 py-4 text-center">{t('loading')}</p>}
+        {isLoading && <p className="text-sm text-stone-400 dark:text-stone-500 py-4 text-center">{t('loading')}</p>}
         {!isLoading && recipes.length === 0 && (
-          <p className="text-sm text-stone-400 py-4 text-center">{t('noRecipesFound')}</p>
+          <p className="text-sm text-stone-400 dark:text-stone-500 py-4 text-center">{t('noRecipesFound')}</p>
         )}
         {recipes.map(recipe => (
           <button
             key={recipe.id}
-            className="w-full flex items-center gap-3 rounded-xl squircle shadow-sm p-3 hover:shadow-md hover:bg-stone-50 text-left transition-colors"
+            className="w-full flex items-center gap-3 rounded-xl squircle shadow-sm p-3 hover:shadow-md hover:bg-stone-50 dark:hover:bg-stone-800 text-left transition-colors"
             onClick={() => setSelected(recipe)}
           >
             {recipe.coverImageUrl
@@ -95,12 +95,12 @@ export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
                   />
                 )
               : (
-                  <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-stone-100" />
+                  <div className="h-12 w-12 flex-shrink-0 rounded-lg bg-stone-100 dark:bg-stone-700" />
                 )}
             <div className="min-w-0">
-              <p className="font-medium text-stone-900 truncate">{recipe.title}</p>
+              <p className="font-medium text-stone-900 dark:text-stone-100 truncate">{recipe.title}</p>
               {recipe.description && (
-                <p className="text-xs text-stone-500 truncate">{recipe.description}</p>
+                <p className="text-xs text-stone-500 dark:text-stone-400 truncate">{recipe.description}</p>
               )}
             </div>
           </button>

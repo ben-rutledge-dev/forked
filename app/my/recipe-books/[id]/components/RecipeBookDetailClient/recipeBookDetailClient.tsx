@@ -212,7 +212,7 @@ export const RecipeBookDetailClient: React.FC<Props> = (props) => {
         onRemoveMember={handleRemoveMember}
       />
 
-      <div className="mt-10 pt-6 border-t border-stone-100 flex gap-3">
+      <div className="mt-10 pt-6 border-t border-stone-100 dark:border-stone-700 flex gap-3">
         {isOwner
           ? (
               <Button variant="danger" size="sm" onClick={() => handleDelete(t('removeFromCollectionConfirm'))}>

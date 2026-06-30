@@ -23,7 +23,7 @@ export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddReci
   return (
     <div className="mt-8">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-lg font-semibold text-stone-900">{t('recipesSection')}</h2>
+        <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{t('recipesSection')}</h2>
         {isMember && (
           <Button variant="secondary" size="sm" onClick={onAddRecipe}>
             {t('addRecipe')}
@@ -33,7 +33,7 @@ export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddReci
 
       {sortedEntries.length === 0
         ? (
-            <p className="text-stone-400 text-sm py-8 text-center">{t('noRecipes')}</p>
+            <p className="text-stone-400 dark:text-stone-500 text-sm py-8 text-center">{t('noRecipes')}</p>
           )
         : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -54,7 +54,7 @@ export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddReci
                       <button
                         disabled={i === 0}
                         onClick={() => onMove(entry.id, 'up')}
-                        className="rounded px-2 py-0.5 text-xs text-stone-400 hover:text-stone-600 disabled:opacity-30 border border-stone-200 bg-white"
+                        className="rounded px-2 py-0.5 text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 disabled:opacity-30 border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800"
                         title={t('moveUp')}
                       >
                         ↑
@@ -62,7 +62,7 @@ export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddReci
                       <button
                         disabled={i === sortedEntries.length - 1}
                         onClick={() => onMove(entry.id, 'down')}
-                        className="rounded px-2 py-0.5 text-xs text-stone-400 hover:text-stone-600 disabled:opacity-30 border border-stone-200 bg-white"
+                        className="rounded px-2 py-0.5 text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300 disabled:opacity-30 border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800"
                         title={t('moveDown')}
                       >
                         ↓

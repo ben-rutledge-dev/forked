@@ -22,7 +22,7 @@ const DoneItem = ({ item, shoppingListId }: { item: ShoppingListItem, shoppingLi
         id={`done-${item.id}`}
         checked
         onChange={() => putItem({ checked: false })}
-        label={<span className="text-sm line-through text-stone-400">{item.name}</span>}
+        label={<span className="text-sm line-through text-stone-400 dark:text-stone-500">{item.name}</span>}
       />
     </li>
   );
@@ -34,10 +34,10 @@ export const DoneSection = ({ items, shoppingListId, onClearDone }: DoneSectionP
   if (items.length === 0) return null;
 
   return (
-    <div className="mt-8 border-t border-stone-200 pt-6">
+    <div className="mt-8 border-t border-stone-200 dark:border-stone-700 pt-6">
       <div className="flex items-center justify-between mb-2">
         <button
-          className="flex items-center gap-2 text-sm font-semibold text-stone-500 hover:text-stone-700"
+          className="flex items-center gap-2 text-sm font-semibold text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200"
           onClick={() => setExpanded(e => !e)}
         >
           <span>{expanded ? '▾' : '▸'}</span>

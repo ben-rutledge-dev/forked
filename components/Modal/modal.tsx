@@ -33,7 +33,7 @@ export const Modal = () => {
         onClick={handleBackdropClick}
       />
       {/* Panel */}
-      <div className={`relative w-full ${maxWidth} max-h-[90dvh] overflow-y-auto bg-white rounded-xl squircle shadow-xl`}>
+      <div className={`relative w-full ${maxWidth} max-h-[90dvh] overflow-y-auto bg-white dark:bg-stone-800 rounded-xl squircle shadow-xl dark:shadow-stone-950/30`}>
         <Component {...props} onConfirm={onConfirm} />
       </div>
     </dialog>

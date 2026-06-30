@@ -4,9 +4,9 @@ import Link from 'next/link';
 import { ReactNode } from 'react';
 // Components
 import { Button } from '@/components/Button';
-import { CategoryPill } from '@/components/CategoryPill';
 import { IngredientsDisplay } from '@/components/IngredientsDisplay';
 import { PageHeader } from '@/components/PageHeader';
+import { RecipeTagPill } from '@/components/RecipeTagPill';
 import { SectionHeading } from '@/components/Typography';
 // Types
 import { RecipeWithRelations } from '@/types';
@@ -49,30 +49,25 @@ export const RecipeDetail = async ({
         <PageHeader title={recipe.title} action={headerAction} backHref={backHref} />
 
         {recipe.description && (
-          <p className="mt-3 text-stone-600 leading-relaxed">{recipe.description}</p>
+          <p className="mt-3 text-stone-600 dark:text-stone-400 leading-relaxed">{recipe.description}</p>
         )}
 
-        {(recipe.categories?.length ?? 0) > 0 && (
+        {((recipe.categories?.length ?? 0) > 0 || (recipe.tags?.length ?? 0) > 0) && (
           <div className="mt-3 flex flex-wrap gap-1.5">
             {recipe.categories!.map(cat => (
-              <CategoryPill key={cat.id} href={`/pool?categories=${cat.slug}`}>
+              <RecipeTagPill key={cat.id} href={`/recipes?categories=${cat.slug}`}>
                 {cat.label}
-              </CategoryPill>
+              </RecipeTagPill>
             ))}
-          </div>
-        )}
-
-        {(recipe.tags?.length ?? 0) > 0 && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
             {recipe.tags!.map(tag => (
-              <CategoryPill key={tag} href={`/recipes?tags=${encodeURIComponent(tag)}`}>
+              <RecipeTagPill key={tag} href={`/recipes?tags=${encodeURIComponent(tag)}`}>
                 {tag}
-              </CategoryPill>
+              </RecipeTagPill>
             ))}
           </div>
         )}
 
-        <div className="mt-4 flex flex-col gap-2 text-sm text-stone-400 sm:flex-row sm:items-center sm:gap-4">
+        <div className="mt-4 flex flex-col gap-2 text-sm text-stone-400 dark:text-stone-500 sm:flex-row sm:items-center sm:gap-4">
           {metaBadge}
           {recipe.author && (
             <span>
@@ -80,7 +75,7 @@ export const RecipeDetail = async ({
               {' '}
               {recipe.author.isPublic && recipe.author.username
                 ? (
-                    <Link href={`/u/${recipe.author.username}`} className="underline hover:text-stone-600">
+                    <Link href={`/u/${recipe.author.username}`} className="underline hover:text-stone-600 dark:hover:text-stone-400">
                       {recipe.author.username}
                     </Link>
                   )
@@ -97,7 +92,7 @@ export const RecipeDetail = async ({
                 ? (
                     <Link
                       href={`/recipes/${recipe.forkedFrom.id}`}
-                      className="underline hover:text-stone-600"
+                      className="underline hover:text-stone-600 dark:hover:text-stone-400"
                     >
                       {recipe.forkedFrom.title}
                     </Link>
@@ -130,13 +125,13 @@ export const RecipeDetail = async ({
           <ol className="space-y-6">
             {recipe.steps.map((step, i) => (
               <li key={step.id} className="flex gap-4">
-                <span className="shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-stone-100 text-stone-500 text-sm font-medium mt-0.5">
+                <span className="shrink-0 flex items-center justify-center w-7 h-7 rounded-full bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-sm font-medium mt-0.5">
                   {i + 1}
                 </span>
                 <div className="flex-1">
-                  <p className="text-stone-700 leading-relaxed">{step.instruction}</p>
+                  <p className="text-stone-700 dark:text-stone-300 leading-relaxed">{step.instruction}</p>
                   {step.timerSeconds && (
-                    <p className="mt-1 text-sm text-stone-400">
+                    <p className="mt-1 text-sm text-stone-400 dark:text-stone-500">
                       {t('timer', {
                         min: Math.floor(step.timerSeconds / 60),
                         sec: step.timerSeconds % 60,
@@ -151,18 +146,18 @@ export const RecipeDetail = async ({
       )}
 
       {(recipe.forks?.length ?? 0) > 0 && (
-        <section className="border-t border-stone-200 pt-8">
+        <section className="border-t border-stone-200 dark:border-stone-700 pt-8">
           <SectionHeading className="mb-4">{t('publicForks')}</SectionHeading>
           <ul className="space-y-3">
             {recipe.forks!.map(fork => (
               <li key={fork.id}>
                 <Link
                   href={`/recipes/${fork.id}`}
-                  className="block rounded-lg border border-stone-200 p-4 hover:border-stone-300 transition-colors"
+                  className="block rounded-lg border border-stone-200 dark:border-stone-700 p-4 hover:border-stone-300 dark:hover:border-stone-600 transition-colors"
                 >
-                  <p className="font-medium text-stone-900">{fork.title}</p>
+                  <p className="font-medium text-stone-900 dark:text-stone-100">{fork.title}</p>
                   {fork.description && (
-                    <p className="mt-1 text-sm text-stone-500 line-clamp-1">{fork.description}</p>
+                    <p className="mt-1 text-sm text-stone-500 dark:text-stone-400 line-clamp-1">{fork.description}</p>
                   )}
                 </Link>
               </li>

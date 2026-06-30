@@ -44,7 +44,7 @@ const SlotHeader = ({ slot, canEditSlots, isOver, dropSide, onAddBefore, onDelet
   // The transform is applied only to the inner content div so the visual
   // reorder animation still works.
   return (
-    <div ref={setNodeRef} className="relative group/header border-b border-r border-stone-100 bg-stone-50">
+    <div ref={setNodeRef} className="relative group/header border-b border-r border-stone-100 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
       {/* Drop indicator — in non-transformed outer div so it tracks the real column */}
       {isOver && dropSide && (
         <div className={`absolute top-0 bottom-0 w-0.5 bg-primary-500 z-20 ${dropSide === 'left' ? '-left-px' : '-right-px'}`} />
@@ -53,7 +53,7 @@ const SlotHeader = ({ slot, canEditSlots, isOver, dropSide, onAddBefore, onDelet
       {/* Insert-before affordance */}
       {canEditSlots && (
         <button
-          className="absolute -left-2.5 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-5 w-5 rounded-full bg-white border border-stone-300 text-stone-400 hover:text-primary-500 hover:border-primary-400 opacity-0 group-hover/header:opacity-100 transition-opacity"
+          className="absolute -left-2.5 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-5 w-5 rounded-full bg-white dark:bg-stone-800 border border-stone-300 dark:border-stone-600 text-stone-400 dark:text-stone-500 hover:text-primary-500 hover:border-primary-400 opacity-0 group-hover/header:opacity-100 transition-opacity"
           aria-label={t('addSlotBefore')}
           onClick={onAddBefore}
         >
@@ -71,14 +71,14 @@ const SlotHeader = ({ slot, canEditSlots, isOver, dropSide, onAddBefore, onDelet
         }}
       >
         <span
-          className={`text-xs font-semibold text-stone-500 uppercase tracking-wide truncate ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
+          className={`text-xs font-semibold text-stone-500 dark:text-stone-400 uppercase tracking-wide truncate ${draggable ? 'cursor-grab active:cursor-grabbing' : ''}`}
           {...(draggable ? { ...attributes, ...listeners } : {})}
         >
           {slot.label}
         </span>
         {canEditSlots && !slot.isDefault && (
           <button
-            className="ml-auto shrink-0 text-stone-300 hover:text-danger-500 text-sm leading-none opacity-0 group-hover/header:opacity-100 transition-opacity"
+            className="ml-auto shrink-0 text-stone-300 dark:text-stone-600 hover:text-danger-500 text-sm leading-none opacity-0 group-hover/header:opacity-100 transition-opacity"
             aria-label={t('deleteSlot')}
             onClick={onDelete}
           >
@@ -116,7 +116,7 @@ const SlotCell = ({ date, slot, entries, canEditEntries, isHighlighted, overEntr
   });
 
   return (
-    <div ref={setNodeRef} className={`min-h-12 p-2 border-b border-r border-stone-100 transition-colors ${isHighlighted ? 'bg-primary-50' : ''}`}>
+    <div ref={setNodeRef} className={`min-h-12 p-2 border-b border-r border-stone-100 dark:border-stone-700 transition-colors ${isHighlighted ? 'bg-primary-50 dark:bg-stone-600' : ''}`}>
       {/* items=[] prevents verticalListSortingStrategy from applying CSS transforms
           to other entries during drag. Those transforms shift entries' stored rects
           into adjacent day rows, causing collision detection to pick up the wrong
@@ -137,7 +137,7 @@ const SlotCell = ({ date, slot, entries, canEditEntries, isHighlighted, overEntr
       </SortableContext>
       {canEditEntries && (
         <button
-          className="mt-1 text-xs text-stone-300 hover:text-primary-500 transition-colors"
+          className={`mt-1 text-xs hover:text-primary-500 transition-colors ${isHighlighted ? 'text-stone-400 dark:text-stone-300' : 'text-stone-300 dark:text-stone-600'}`}
           onClick={() => onAddRecipe(slot.id, slot.label, date)}
         >
           {t('addRecipe')}
@@ -152,7 +152,7 @@ const SlotCell = ({ date, slot, entries, canEditEntries, isHighlighted, overEntr
 const StartDropZone = ({ showDropBar }: { showDropBar: boolean }) => {
   const { setNodeRef } = useDroppable({ id: 'slot-start', data: { type: 'slot-start' } });
   return (
-    <div ref={setNodeRef} className="relative p-2 border-b border-r border-stone-100 bg-stone-50">
+    <div ref={setNodeRef} className="relative p-2 border-b border-r border-stone-100 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
       {showDropBar && <div className="absolute top-0 bottom-0 right-0 w-0.5 bg-primary-500 z-20" />}
     </div>
   );
@@ -172,7 +172,7 @@ const AddSlotColumn = ({ showDropBar, onAdd }: AddSlotColumnProps) => {
   return (
     <button
       ref={setNodeRef}
-      className="relative grid place-items-center border-b border-r border-stone-100 bg-stone-50 text-stone-400 hover:text-primary-500 text-lg leading-none"
+      className="relative grid place-items-center border-b border-r border-stone-100 dark:border-stone-700 bg-stone-50 dark:bg-stone-900 text-stone-400 dark:text-stone-500 hover:text-primary-500 text-lg leading-none"
       aria-label={t('addSlot')}
       onClick={onAdd}
     >
@@ -229,7 +229,7 @@ export const WeekGrid = ({
 
   return (
     <div
-      className="hidden md:grid border-t border-l border-stone-100 overflow-x-auto mb-6 bg-white rounded-xl squircle shadow-sm overflow-hidden"
+      className="hidden md:grid border-t border-l border-stone-100 dark:border-stone-700 overflow-x-auto mb-6 bg-white dark:bg-stone-800 rounded-xl squircle shadow-sm overflow-hidden"
       style={{ gridTemplateColumns }}
     >
       {/* ── Header row ── */}
@@ -260,7 +260,7 @@ export const WeekGrid = ({
       {/* ── Day rows ── */}
       {dates.map(date => (
         <div key={date} className="contents">
-          <div className={`p-2 border-b border-r border-stone-100 flex items-start pt-3 ${date === today ? 'bg-primary-50' : 'bg-stone-50'}`}>
+          <div className={`p-2 border-b border-r border-stone-100 dark:border-stone-700 flex items-start pt-3 ${date === today ? 'bg-primary-50 dark:bg-stone-700' : 'bg-stone-50 dark:bg-stone-900'}`}>
             <PlannerDayLabel dateStr={date} isToday={date === today} />
           </div>
           {slots.map(slot => (
@@ -277,7 +277,7 @@ export const WeekGrid = ({
               onRemoveEntry={onRemoveEntry}
             />
           ))}
-          {canEditSlots && <div className="border-b border-r border-stone-100" />}
+          {canEditSlots && <div className="border-b border-r border-stone-100 dark:border-stone-700" />}
         </div>
       ))}
     </div>

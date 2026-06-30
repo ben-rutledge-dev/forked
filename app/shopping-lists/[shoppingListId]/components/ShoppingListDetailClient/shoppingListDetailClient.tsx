@@ -356,7 +356,7 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
             ? (
                 <input
                   autoFocus
-                  className="text-2xl font-bold text-stone-800 outline-none border-b-2 border-primary-400 w-full"
+                  className="text-2xl font-bold text-stone-800 dark:text-stone-200 outline-none border-b-2 border-primary-400 w-full"
                   value={titleDraft}
                   onChange={e => setTitleDraft(e.target.value)}
                   onBlur={handleTitleBlur}
@@ -415,9 +415,9 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
             {(() => {
               if (activeItem) return <ItemRowGhost item={activeItem} />;
               if (activeSection) return (
-                <div className="mb-6 rounded-xl border border-primary-300 bg-white shadow-xl opacity-60 px-4 py-3 cursor-grabbing">
-                  <p className="text-sm font-semibold text-stone-600">{activeSection.title}</p>
-                  <p className="text-xs text-stone-400 mt-1">
+                <div className="mb-6 rounded-xl border border-primary-300 bg-white dark:bg-stone-800 shadow-xl dark:shadow-stone-950/30 opacity-60 px-4 py-3 cursor-grabbing">
+                  <p className="text-sm font-semibold text-stone-600 dark:text-stone-400">{activeSection.title}</p>
+                  <p className="text-xs text-stone-400 dark:text-stone-500 mt-1">
                     {t('itemCount', { count: activeSection.items.length })}
                   </p>
                 </div>
@@ -433,17 +433,27 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
             <form onSubmit={handleSectionSubmit(onAddSection)} className="flex gap-2 mt-2">
               <input
                 autoFocus
-                className="flex-1 rounded-lg border border-stone-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400"
+                className="flex-1 rounded-lg border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 text-stone-900 dark:text-stone-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-400 placeholder-stone-400 dark:placeholder-stone-500"
                 placeholder={t('sectionNamePlaceholder')}
                 {...registerSection('title')}
               />
               <Button type="submit" variant="primary" size="sm">{t('add')}</Button>
-              <Button type="button" variant="secondary" size="sm" onClick={() => { setAddingSection(false); resetSection(); }}>{t('cancel')}</Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="sm"
+                onClick={() => {
+                  setAddingSection(false);
+                  resetSection();
+                }}
+              >
+                {t('cancel')}
+              </Button>
             </form>
           )
         : (
             <button
-              className="mt-2 text-sm text-stone-400 hover:text-stone-600"
+              className="mt-2 text-sm text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-300"
               onClick={() => setAddingSection(true)}
             >
               {t('addSection')}
@@ -465,7 +475,7 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
       />
 
       {/* Footer actions */}
-      <div className="mt-10 border-t border-stone-100 pt-6">
+      <div className="mt-10 border-t border-stone-100 dark:border-stone-700 pt-6">
         <button
           className="text-sm text-danger-500 hover:text-danger-700"
           onClick={handleLeaveOrDelete}

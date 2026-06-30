@@ -1,0 +1,1 @@
+export { RecipeTagPill } from './recipeTagPill';

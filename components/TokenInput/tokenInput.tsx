@@ -167,13 +167,13 @@ export const TokenInput = ({
           {value.map(id => (
             <span
               key={id}
-              className="inline-flex items-center gap-1 rounded-full border border-stone-300 bg-stone-100 px-2.5 py-0.5 text-sm text-stone-700"
+              className="inline-flex items-center gap-1 rounded-full border border-stone-300 dark:border-stone-600 bg-stone-100 dark:bg-stone-800 px-2.5 py-0.5 text-sm text-stone-700 dark:text-stone-300"
             >
               {getLabel(id)}
               <button
                 type="button"
                 onClick={() => removeToken(id)}
-                className="text-stone-400 hover:text-stone-700 leading-none"
+                className="text-stone-400 dark:text-stone-500 hover:text-stone-700 dark:hover:text-stone-200 leading-none"
                 aria-label={t('removeToken', { label: getLabel(id) })}
               >
                 ×
@@ -197,7 +197,7 @@ export const TokenInput = ({
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
           autoComplete="off"
-          className="w-full rounded-lg border border-stone-300 px-3 py-2 pr-8 text-sm text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500"
+          className="w-full rounded-lg border border-stone-300 dark:border-stone-600 bg-white dark:bg-stone-800 px-3 py-2 pr-8 text-sm text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:border-stone-500 dark:focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-500 dark:focus:ring-stone-400"
         />
         <button
           type="button"
@@ -212,7 +212,7 @@ export const TokenInput = ({
               inputRef.current?.focus();
             }
           }}
-          className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 hover:text-stone-600"
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-400"
           aria-label={t('toggleDropdown')}
         >
           <ChevronDownIcon className="w-4 h-4" />
@@ -220,10 +220,10 @@ export const TokenInput = ({
       </div>
 
       {open && (
-        <div className="absolute z-50 mt-1 w-full rounded-lg border border-stone-200 bg-white shadow-md overflow-hidden">
+        <div className="absolute z-50 mt-1 w-full rounded-lg border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 shadow-md dark:shadow-stone-950/30 overflow-hidden">
           <ul className="max-h-60 overflow-y-auto py-1" role="listbox">
             {flatOptions.length === 0 && (
-              <li className="px-3 py-2 text-sm text-stone-400">
+              <li className="px-3 py-2 text-sm text-stone-400 dark:text-stone-500">
                 {mode === 'create' && inputValue.trim()
                   ? t('pressEnterToAdd', { value: inputValue.trim() })
                   : t('noOptionsFound')}
@@ -329,7 +329,7 @@ const PillSelect = ({
       )}
       {groups.map((group, i) => (
         <div key={group.key} className={(ungrouped.length > 0 || i > 0) ? 'mt-3' : ''}>
-          <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-stone-400">
+          <p className="mb-1.5 text-xs font-semibold uppercase tracking-wide text-stone-400 dark:text-stone-500">
             {groupLabels?.[group.key] ?? group.key}
           </p>
           <div className="flex flex-wrap gap-1.5">
@@ -361,8 +361,8 @@ const OptionItem = ({ opt, selected, focused, onSelect, onMouseEnter }: OptionIt
     }}
     onMouseEnter={onMouseEnter}
     className={`flex items-center justify-between px-3 py-2 text-sm cursor-pointer select-none ${
-      focused ? 'bg-stone-100' : 'hover:bg-stone-50'
-    } ${selected ? 'text-stone-500' : 'text-stone-700'}`}
+      focused ? 'bg-stone-100 dark:bg-stone-700' : 'hover:bg-stone-50 dark:hover:bg-stone-700'
+    } ${selected ? 'text-stone-500 dark:text-stone-400' : 'text-stone-700 dark:text-stone-300'}`}
   >
     <span>{opt.label}</span>
     {selected && (

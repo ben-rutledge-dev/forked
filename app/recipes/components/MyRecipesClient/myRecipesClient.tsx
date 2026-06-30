@@ -213,7 +213,7 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
 
       {/* Tabs — only shown when logged in */}
       {isAuthenticated && (
-        <div className="flex gap-1 mb-8 border-b border-stone-200">
+        <div className="flex gap-1 mb-8 border-b border-stone-200 dark:border-stone-700">
           {TAB_KEYS.map(tabKey => (
             <button
               key={tabKey}
@@ -221,7 +221,7 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
               className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 -mb-px ${
                 tab === tabKey
                   ? 'border-primary-500 text-primary-500'
-                  : 'border-transparent text-stone-500 hover:text-stone-700'
+                  : 'border-transparent text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200'
               }`}
             >
               {tabKey === 'recipes' ? t('tabRecipes') : tabKey === 'favourites' ? t('tabFavourites') : tabKey === 'books' ? t('tabBooks') : t('tabBrowse')}
@@ -259,16 +259,16 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
           <div className={isFetching ? 'opacity-60 transition-opacity' : ''}>
             {recipes.length === 0
               ? (
-                  <div className="text-center py-20 text-stone-400">
+                  <div className="text-center py-20 text-stone-400 dark:text-stone-500">
                     {hasFilters
                       ? t('noResults')
                       : (
                           <>
                             <p>{t('noRecipesYet')}</p>
                             <div className="mt-4 flex items-center justify-center gap-4">
-                              <Link href="/recipes/new" className="text-stone-700 underline hover:text-stone-900">{t('createOne')}</Link>
-                              <span className="text-stone-300">{t('or')}</span>
-                              <Link href="/recipes?tab=browse" className="text-stone-700 underline hover:text-stone-900">{t('forkFromPool')}</Link>
+                              <Link href="/recipes/new" className="text-stone-700 dark:text-stone-300 underline hover:text-stone-900 dark:hover:text-stone-100">{t('createOne')}</Link>
+                              <span className="text-stone-300 dark:text-stone-600">{t('or')}</span>
+                              <Link href="/recipes?tab=browse" className="text-stone-700 dark:text-stone-300 underline hover:text-stone-900 dark:hover:text-stone-100">{t('forkFromPool')}</Link>
                             </div>
                           </>
                         )}
@@ -430,10 +430,10 @@ const InviteRow: React.FC<InviteRowProps> = (props) => {
   const t = useTranslations('myRecipes');
 
   return (
-    <div className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white px-5 py-4">
+    <div className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-5 py-4">
       <div>
-        <p className="font-medium text-stone-900">{invite.recipeBook.title}</p>
-        <p className="text-xs text-stone-400 mt-0.5">
+        <p className="font-medium text-stone-900 dark:text-stone-100">{invite.recipeBook.title}</p>
+        <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
           {t('invitedAs')}
           {' '}
           <span className="font-medium">{invite.role}</span>

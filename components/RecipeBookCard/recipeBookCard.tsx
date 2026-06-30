@@ -65,9 +65,9 @@ export const RecipeBookCard = ({
   return (
     <Card href={target} coverImageUrl={coverImageUrl} CoverPlaceholderIcon={PlaceholderIcon} actions={cardActions}>
       <div className="flex-1">
-        <h3 className="font-semibold text-stone-900 line-clamp-2">{title}</h3>
+        <h3 className="font-semibold text-stone-900 dark:text-stone-100 line-clamp-2">{title}</h3>
       </div>
-      <div className="flex items-center justify-between text-xs text-stone-400">
+      <div className="flex items-center justify-between text-xs text-stone-400 dark:text-stone-500">
         <span>
           {t('count', { recipes: recipeCount, members: memberCount })}
         </span>

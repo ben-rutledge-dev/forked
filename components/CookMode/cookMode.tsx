@@ -130,9 +130,9 @@ export const CookMode = ({ recipe, backHref }: Props) => {
 
   if (steps.length === 0) {
     return (
-      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-stone-50 px-4">
-        <p className="text-stone-500">{t('noSteps')}</p>
-        <Link href={backHref} className="mt-4 text-stone-700 underline">
+      <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-stone-50 dark:bg-stone-900 px-4">
+        <p className="text-stone-500 dark:text-stone-400">{t('noSteps')}</p>
+        <Link href={backHref} className="mt-4 text-stone-700 dark:text-stone-300 underline">
           {t('goBack')}
         </Link>
       </div>
@@ -140,14 +140,14 @@ export const CookMode = ({ recipe, backHref }: Props) => {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex flex-col bg-stone-50 overflow-y-auto">
-      <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-stone-200">
-        <Link href={backHref} className="text-sm text-stone-500 hover:text-stone-700 transition-colors">
+    <div className="fixed inset-0 z-50 flex flex-col bg-stone-50 dark:bg-stone-900 overflow-y-auto">
+      <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700">
+        <Link href={backHref} className="text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors">
           ←
           {' '}
           {recipe.title}
         </Link>
-        <span className="text-sm text-stone-400">
+        <span className="text-sm text-stone-400 dark:text-stone-500">
           {stepIndex + 1}
           {' '}
           /
@@ -163,7 +163,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
       </div>
 
       {showIngredients && (
-        <div className="border-b border-stone-200 bg-white px-4 py-4">
+        <div className="border-b border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-4 py-4">
           <IngredientsDisplay ingredients={recipe.ingredients} compact />
         </div>
       )}
@@ -180,7 +180,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
             />
           </div>
         )}
-        <p className="text-2xl leading-relaxed text-stone-900 sm:text-3xl">
+        <p className="text-2xl leading-relaxed text-stone-900 dark:text-stone-100 sm:text-3xl">
           {currentStep.instruction}
         </p>
 
@@ -205,7 +205,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
                     size="md"
 
                     onClick={stopSpeaking}
-                    className="flex items-center gap-2 bg-stone-100 text-stone-700 hover:bg-stone-200"
+                    className="flex items-center gap-2 bg-stone-100 dark:bg-stone-800 text-stone-700 dark:text-stone-300 hover:bg-stone-200 dark:hover:bg-stone-700"
                   >
                     <StopSquareIcon className="w-4 h-4" />
                     {t('stop')}
@@ -216,7 +216,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
 
         {timerRemaining !== null && (
           <div className="mt-8 flex items-center gap-4">
-            <span className="text-4xl font-semibold tabular-nums text-stone-900">
+            <span className="text-4xl font-semibold tabular-nums text-stone-900 dark:text-stone-100">
               {String(mins).padStart(2, '0')}
               :
               {String(secs).padStart(2, '0')}
@@ -275,7 +275,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
               key={i}
               onClick={() => goTo(i)}
               className={`w-2 h-2 rounded-full transition-colors ${
-                i === stepIndex ? 'bg-primary-500' : 'bg-stone-300'
+                i === stepIndex ? 'bg-primary-500' : 'bg-stone-300 dark:bg-stone-600'
               }`}
             />
           ))}

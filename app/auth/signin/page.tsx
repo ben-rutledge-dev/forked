@@ -31,13 +31,13 @@ const SignInPage = () => {
   const errorMessage = error ? getErrorMessage(error) : null;
 
   return (
-    <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-stone-50 px-4">
+    <div className="flex min-h-[calc(100vh-64px)] items-center justify-center bg-stone-50 dark:bg-stone-900 px-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Link href="/" className="text-2xl font-semibold tracking-tight text-stone-900">
+          <Link href="/" className="text-2xl font-semibold tracking-tight text-stone-900 dark:text-stone-100">
             Forked
           </Link>
-          <p className="mt-2 text-stone-500 text-sm">{t('signInHeading')}</p>
+          <p className="mt-2 text-stone-500 dark:text-stone-400 text-sm">{t('signInHeading')}</p>
         </div>
 
         {errorMessage && (
@@ -46,7 +46,7 @@ const SignInPage = () => {
           </div>
         )}
 
-        <div className="bg-white rounded-xl squircle shadow-sm p-6 space-y-3">
+        <div className="bg-white dark:bg-stone-800 rounded-xl squircle shadow-sm p-6 space-y-3">
           {PROVIDERS.map(provider => (
             <Button
               key={provider.id}
@@ -61,7 +61,7 @@ const SignInPage = () => {
           ))}
         </div>
 
-        <p className="mt-6 text-center text-xs text-stone-400">
+        <p className="mt-6 text-center text-xs text-stone-400 dark:text-stone-500">
           {t('terms')}
         </p>
       </div>

@@ -89,19 +89,19 @@ export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: Sec
             <button
               {...attributes}
               {...listeners}
-              className="cursor-grab touch-none text-stone-300 hover:text-stone-500 text-sm"
+              className="cursor-grab touch-none text-stone-300 dark:text-stone-600 hover:text-stone-500 dark:hover:text-stone-400 text-sm"
               aria-label={t('dragSection')}
             >
               ⠿
             </button>
           )}
           {isUnsorted
-            ? <span className="text-sm font-semibold text-stone-400">{t('unsorted')}</span>
+            ? <span className="text-sm font-semibold text-stone-400 dark:text-stone-500">{t('unsorted')}</span>
             : editingTitle
               ? (
                   <input
                     autoFocus
-                    className="flex-1 text-sm font-semibold text-stone-600 outline-none border-b border-primary-400"
+                    className="flex-1 text-sm font-semibold text-stone-600 dark:text-stone-400 outline-none border-b border-primary-400 bg-transparent"
                     value={titleDraft}
                     onChange={e => setTitleDraft(e.target.value)}
                     onBlur={handleTitleBlur}
@@ -110,7 +110,7 @@ export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: Sec
                 )
               : (
                   <button
-                    className="flex-1 text-left text-sm font-semibold text-stone-600 hover:text-stone-800"
+                    className="flex-1 text-left text-sm font-semibold text-stone-600 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200"
                     onClick={() => setEditingTitle(true)}
                   >
                     {section.title}
@@ -118,7 +118,7 @@ export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: Sec
                 )}
           {!isUnsorted && (
             <button
-              className="text-xs text-stone-400 hover:text-danger-500 transition-colors"
+              className="text-xs text-stone-400 dark:text-stone-500 hover:text-danger-500 transition-colors"
               onClick={handleDeleteSection}
               aria-label={t('deleteSection')}
             >
@@ -143,7 +143,7 @@ export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: Sec
 
       <form onSubmit={handleSubmit(onAddItem)} className="mt-1">
         <input
-          className="w-full text-sm text-stone-500 placeholder-stone-300 outline-none py-1 border-b border-transparent focus:border-stone-200"
+          className="w-full text-sm text-stone-500 dark:text-stone-400 placeholder-stone-300 dark:placeholder-stone-500 outline-none py-1 border-b border-transparent focus:border-stone-200 dark:focus:border-stone-700 bg-transparent"
           placeholder={t('addItemPlaceholder')}
           {...register('name')}
         />

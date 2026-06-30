@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
-import { ForkBrandIcon, UserIcon } from '@/components/Icons';
+import { CogIcon, ForkBrandIcon, UserIcon } from '@/components/Icons';
 
 export const Nav = () => {
   const { data: session, status } = useSession();
@@ -84,22 +84,31 @@ export const Nav = () => {
                     </button>
 
                     {userMenuOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-48 rounded-lg bg-white shadow-lg ring-1 ring-black/10 py-1 z-50">
+                      <div className="absolute right-0 top-full mt-2 w-48 rounded-lg bg-white dark:bg-stone-800 shadow-lg dark:shadow-stone-950/30 ring-1 ring-black/10 dark:ring-white/10 py-1 z-50">
                         {session.user?.name && (
-                          <div className="px-4 py-2 text-xs text-stone-400 border-b border-stone-100 truncate">
+                          <div className="px-4 py-2 text-xs text-stone-400 dark:text-stone-500 border-b border-stone-100 dark:border-stone-700 truncate">
                             {session.user.name}
                           </div>
                         )}
                         <Link
                           href="/my/profile"
-                          className="block px-4 py-2 text-sm text-stone-700 hover:bg-stone-50 transition-colors"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
                           onClick={closeUserMenu}
                         >
+                          <UserIcon className="w-4 h-4 text-stone-400 dark:text-stone-500" />
                           {t('profile')}
                         </Link>
-                        <div className="border-t border-stone-100 mt-1 pt-1">
+                        <Link
+                          href="/my/settings"
+                          className="flex items-center gap-2 px-4 py-2 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors"
+                          onClick={closeUserMenu}
+                        >
+                          <CogIcon className="w-4 h-4 text-stone-400 dark:text-stone-500" />
+                          {t('settings')}
+                        </Link>
+                        <div className="border-t border-stone-100 dark:border-stone-700 mt-1 pt-1">
                           <button
-                            className="w-full text-left px-4 py-2 text-sm text-stone-500 hover:bg-stone-50 hover:text-stone-700 transition-colors"
+                            className="w-full text-left px-4 py-2 text-sm text-stone-500 dark:text-stone-400 hover:bg-stone-50 dark:hover:bg-stone-700 hover:text-stone-700 dark:hover:text-stone-200 transition-colors"
                             onClick={() => {
                               signOut();
                               closeUserMenu();
@@ -168,10 +177,19 @@ export const Nav = () => {
                     <div className="border-t border-white/20 mt-1 pt-1">
                       <Link
                         href="/my/profile"
-                        className="block px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
+                        className="flex items-center gap-2 px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
                         onClick={closeMenu}
                       >
+                        <UserIcon className="w-4 h-4 opacity-70" />
                         {t('profile')}
+                      </Link>
+                      <Link
+                        href="/my/settings"
+                        className="flex items-center gap-2 px-2 py-2.5 text-primary-100 hover:text-white transition-colors"
+                        onClick={closeMenu}
+                      >
+                        <CogIcon className="w-4 h-4 opacity-70" />
+                        {t('settings')}
                       </Link>
                       <button
                         className="px-2 py-2.5 text-left text-primary-200 hover:text-white transition-colors"

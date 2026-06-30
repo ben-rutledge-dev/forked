@@ -81,21 +81,21 @@ const PublicProfilePage = async ({ params }: Props) => {
       <PageLayout py="none">
         {/* Profile header */}
         <div className="flex items-end gap-4 -mt-8 mb-6 px-0">
-          <div className="shrink-0 rounded-full border-4 border-white overflow-hidden bg-stone-100 w-20 h-20 relative">
+          <div className="shrink-0 rounded-full border-4 border-white dark:border-stone-800 overflow-hidden bg-stone-100 dark:bg-stone-800 w-20 h-20 relative">
             {user.avatarUrl
               ? (
                   <Image src={user.avatarUrl} alt={displayName ?? ''} fill className="object-cover" sizes="80px" />
                 )
               : (
-                  <div className="w-full h-full flex items-center justify-center text-stone-400">
+                  <div className="w-full h-full flex items-center justify-center text-stone-400 dark:text-stone-500">
                     <UserIcon className="w-10 h-10" />
                   </div>
                 )}
           </div>
           <div className="pb-1">
-            <h1 className="text-xl font-semibold text-stone-900 leading-tight">{displayName}</h1>
+            <h1 className="text-xl font-semibold text-stone-900 dark:text-stone-100 leading-tight">{displayName}</h1>
             {user.showName && user.name && user.username && (
-              <p className="text-sm text-stone-400">
+              <p className="text-sm text-stone-400 dark:text-stone-500">
                 @
                 {user.username}
               </p>
@@ -105,34 +105,34 @@ const PublicProfilePage = async ({ params }: Props) => {
 
         {/* Bio */}
         {user.bio && (
-          <p className="text-stone-600 mb-4 leading-relaxed max-w-xl">{user.bio}</p>
+          <p className="text-stone-600 dark:text-stone-400 mb-4 leading-relaxed max-w-xl">{user.bio}</p>
         )}
 
         {/* Links */}
         {hasLinks && (
           <div className="flex flex-col gap-2 mb-6">
             {user.websiteUrl && (
-              <a href={user.websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-stone-800 transition-colors">
+              <a href={user.websiteUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 transition-colors">
                 <GlobeIcon className="w-4 h-4 shrink-0" />
                 {displayUrl(user.websiteUrl)}
               </a>
             )}
             {user.twitterHandle && (
-              <a href={`https://x.com/${user.twitterHandle}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-stone-800 transition-colors">
+              <a href={`https://x.com/${user.twitterHandle}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400 hover:text-stone-800 dark:hover:text-stone-200 transition-colors">
                 <TwitterXIcon className="w-4 h-4 shrink-0" />
                 x.com/
                 {user.twitterHandle}
               </a>
             )}
             {user.instagramHandle && (
-              <a href={`https://instagram.com/${user.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-[#E1306C] transition-colors">
+              <a href={`https://instagram.com/${user.instagramHandle}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400 hover:text-[#E1306C] transition-colors">
                 <InstagramIcon className="w-4 h-4 shrink-0" />
                 instagram.com/
                 {user.instagramHandle}
               </a>
             )}
             {user.youtubeUrl && (
-              <a href={user.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 hover:text-[#FF0000] transition-colors">
+              <a href={user.youtubeUrl} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 text-sm text-stone-500 dark:text-stone-400 hover:text-[#FF0000] transition-colors">
                 <YouTubeIcon className="w-4 h-4 shrink-0" />
                 {displayUrl(user.youtubeUrl)}
               </a>
@@ -140,13 +140,13 @@ const PublicProfilePage = async ({ params }: Props) => {
           </div>
         )}
 
-        <hr className="border-stone-100 mb-8" />
+        <hr className="border-stone-100 dark:border-stone-700 mb-8" />
 
         {/* Recipes */}
         <SectionHeading className="mb-4">
           {t('recipesHeading')}
           {' '}
-          <span className="text-stone-400 font-normal">
+          <span className="text-stone-400 dark:text-stone-500 font-normal">
             (
             {user.recipes.length}
             )
@@ -155,7 +155,7 @@ const PublicProfilePage = async ({ params }: Props) => {
 
         {user.recipes.length === 0
           ? (
-              <p className="text-stone-400 text-sm">{t('noPublicRecipes')}</p>
+              <p className="text-stone-400 dark:text-stone-500 text-sm">{t('noPublicRecipes')}</p>
             )
           : (
               <ProfileRecipesGrid recipes={user.recipes.map(r => ({

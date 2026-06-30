@@ -24,7 +24,7 @@ const volumeKeys = ['ML', 'L', 'TSP', 'TBSP', 'FL_OZ', 'CUP', 'PT', 'QT', 'GAL']
 const weightKeys = ['G', 'KG', 'OZ', 'LB'] as const;
 
 const selectClass
-  = 'rounded-lg border border-stone-300 text-stone-900 placeholder-stone-400 focus:border-stone-500 focus:outline-none focus:ring-1 focus:ring-stone-500 px-2 py-1.5 text-sm w-28 bg-white';
+  = 'rounded-lg border border-stone-300 dark:border-stone-600 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:border-stone-500 dark:focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-500 dark:focus:ring-stone-400 px-2 py-1.5 text-sm w-28 bg-white dark:bg-stone-800';
 
 export const UnitSelect = ({ unitKey, unit, onChange, disabled, customPlaceholder, customLabel, ariaLabel }: Props) => {
   // Derived directly from props — no local state needed

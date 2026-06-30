@@ -8,7 +8,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { ChevronLeftIcon } from '@/components/Icons';
 
 export const cardIconBtnCls
-  = 'flex items-center justify-center w-7 h-7 rounded-lg bg-white/90 text-stone-500 hover:bg-white hover:text-stone-700 shadow-sm transition-colors cursor-pointer';
+  = 'flex items-center justify-center w-7 h-7 rounded-lg bg-white/90 dark:bg-stone-700/90 text-stone-500 hover:bg-white dark:hover:bg-stone-700 hover:text-stone-700 dark:text-stone-400 dark:hover:text-stone-200 shadow-sm transition-colors cursor-pointer';
 
 export type CardMenuSubItem = {
   label: string
@@ -56,20 +56,20 @@ const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSu
       <div className="absolute right-0 top-8 z-30">
         {activeSubMenu
           ? (
-              <div className="w-52 rounded-xl squircle shadow-lg bg-white overflow-hidden">
-                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-100">
-                  <button onClick={onSubMenuBack} className="text-stone-400 hover:text-stone-600 cursor-pointer">
+              <div className="w-52 rounded-xl squircle shadow-lg dark:shadow-stone-950/30 bg-white dark:bg-stone-800 overflow-hidden">
+                <div className="flex items-center gap-2 px-4 py-2.5 border-b border-stone-100 dark:border-stone-700">
+                  <button onClick={onSubMenuBack} className="text-stone-400 dark:text-stone-500 hover:text-stone-600 cursor-pointer">
                     <ChevronLeftIcon className="w-3.5 h-3.5" />
                   </button>
-                  <span className="text-xs font-medium text-stone-500">{activeSubMenu.title}</span>
+                  <span className="text-xs font-medium text-stone-500 dark:text-stone-400">{activeSubMenu.title}</span>
                 </div>
                 {activeSubMenu.items === null
                   ? (
-                      <div className="px-4 py-3 text-sm text-stone-400">{loadingLabel}</div>
+                      <div className="px-4 py-3 text-sm text-stone-400 dark:text-stone-500">{loadingLabel}</div>
                     )
                   : activeSubMenu.items.length === 0
                     ? (
-                        <div className="px-4 py-3 text-sm text-stone-400">{activeSubMenu.emptyLabel ?? noItemsLabel}</div>
+                        <div className="px-4 py-3 text-sm text-stone-400 dark:text-stone-500">{activeSubMenu.emptyLabel ?? noItemsLabel}</div>
                       )
                     : (
                         <div className="max-h-48 overflow-y-auto">
@@ -81,7 +81,7 @@ const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSu
                                 subItem.onClick();
                                 onClose();
                               }}
-                              className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors disabled:opacity-50 cursor-pointer truncate"
+                              className="w-full text-left px-4 py-2.5 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors disabled:opacity-50 cursor-pointer truncate"
                             >
                               {subItem.label}
                             </button>
@@ -91,13 +91,13 @@ const Action = ({ action, isOpen, activeSubMenu, onToggle, onMenuItemClick, onSu
               </div>
             )
           : (
-              <div className="w-48 rounded-xl squircle shadow-lg bg-white overflow-hidden">
+              <div className="w-48 rounded-xl squircle shadow-lg dark:shadow-stone-950/30 bg-white dark:bg-stone-800 overflow-hidden">
                 {action.menuItems.map((item, j) => (
                   <button
                     key={item.label}
                     disabled={item.disabled}
                     onClick={() => onMenuItemClick(item, j)}
-                    className="w-full text-left px-4 py-2.5 text-sm text-stone-700 hover:bg-stone-50 transition-colors disabled:opacity-50 cursor-pointer"
+                    className="w-full text-left px-4 py-2.5 text-sm text-stone-700 dark:text-stone-300 hover:bg-stone-50 dark:hover:bg-stone-700 transition-colors disabled:opacity-50 cursor-pointer"
                   >
                     {item.label}
                   </button>
@@ -205,7 +205,7 @@ export const Card = ({ href, coverImageUrl, CoverPlaceholderIcon, actions, child
 
   return (
     <div
-      className={`group relative flex flex-col rounded-xl squircle shadow-sm bg-white overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${className}`}
+      className={`group relative flex flex-col rounded-xl squircle shadow-sm dark:shadow-stone-950/30 bg-white dark:bg-stone-800 overflow-hidden hover:shadow-md transition-shadow cursor-pointer ${className}`}
       onClick={() => router.push(href)}
       onKeyDown={e => e.key === 'Enter' && router.push(href)}
       role="link"
@@ -217,7 +217,7 @@ export const Card = ({ href, coverImageUrl, CoverPlaceholderIcon, actions, child
               <Image src={coverImageUrl} alt="" fill className="object-cover" sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" />
             )
           : (
-              <div className="w-full h-36 bg-stone-100 flex items-center justify-center">
+              <div className="w-full h-36 bg-stone-100 dark:bg-stone-800 flex items-center justify-center">
                 {CoverPlaceholderIcon}
               </div>
             )}

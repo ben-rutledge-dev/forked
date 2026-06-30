@@ -40,13 +40,13 @@ export const IngredientsDisplay = ({ ingredients, compact = false, action }: Pro
       <div className={`flex items-center justify-between ${compact ? 'mb-2' : 'mb-3'}`}>
         <div className="flex items-center gap-3">
           {compact
-            ? <h3 className="text-sm font-medium text-stone-700">{t('ingredients')}</h3>
+            ? <h3 className="text-sm font-medium text-stone-700 dark:text-stone-300">{t('ingredients')}</h3>
             : <SectionHeading>{t('ingredients')}</SectionHeading>}
           {hasConvertibleUnit && (
             <button
               type="button"
               onClick={toggle}
-              className="text-xs text-stone-400 hover:text-stone-600 underline underline-offset-2 transition-colors"
+              className="text-xs text-stone-400 dark:text-stone-500 hover:text-stone-600 dark:hover:text-stone-400 underline underline-offset-2 transition-colors"
             >
               {system === 'imperial' ? t('switchToMetric') : t('switchToImperial')}
             </button>
@@ -54,12 +54,12 @@ export const IngredientsDisplay = ({ ingredients, compact = false, action }: Pro
         </div>
         {action && <div className="shrink-0">{action}</div>}
       </div>
-      <ul className={compact ? 'space-y-1 text-sm text-stone-600' : 'space-y-2'}>
+      <ul className={compact ? 'space-y-1 text-sm text-stone-600 dark:text-stone-400' : 'space-y-2'}>
         {ingredients.map((ing) => {
           const amount = renderAmount(ing);
           return (
-            <li key={ing.id} className={`flex gap-2${compact ? '' : ' text-stone-700'}`}>
-              <span className={`text-stone-400 shrink-0 ${compact ? 'min-w-16' : 'min-w-20 text-right'}`}>
+            <li key={ing.id} className={`flex gap-2${compact ? '' : ' text-stone-700 dark:text-stone-300'}`}>
+              <span className={`text-stone-400 dark:text-stone-500 shrink-0 ${compact ? 'min-w-16' : 'min-w-20 text-right'}`}>
                 {amount}
               </span>
               <span>{ing.name}</span>

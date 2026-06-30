@@ -16,8 +16,8 @@ export const RecipesList = ({ recipes }: Props) => {
 
   if (recipes.length === 0) {
     return (
-      <div className="rounded-xl border border-stone-200 bg-white px-5 py-6 text-center">
-        <p className="text-sm text-stone-500 mb-2">{t('noRecipesYet')}</p>
+      <div className="rounded-xl border border-stone-200 dark:border-stone-700 bg-white dark:bg-stone-800 px-5 py-6 text-center">
+        <p className="text-sm text-stone-500 dark:text-stone-400 mb-2">{t('noRecipesYet')}</p>
         <div className="flex justify-center gap-4 text-xs">
           <Link href="/recipes/new" className="text-primary-500 hover:underline">{t('createRecipe')}</Link>
           <Link href="/recipes" className="text-primary-500 hover:underline">{t('browsePool')}</Link>

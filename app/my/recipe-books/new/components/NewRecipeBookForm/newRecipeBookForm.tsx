@@ -71,7 +71,7 @@ export const NewRecipeBookForm = () => {
           <>
             {t('descriptionLabel')}
             {' '}
-            <span className="font-normal text-stone-400">{t('descriptionOptional')}</span>
+            <span className="font-normal text-stone-400 dark:text-stone-500">{t('descriptionOptional')}</span>
           </>
         )}
       >
@@ -83,9 +83,9 @@ export const NewRecipeBookForm = () => {
       </FormField>
 
       <div>
-        <label className="block text-sm font-medium text-stone-700 mb-2">
+        <label className="block text-sm font-medium text-stone-700 dark:text-stone-300 mb-2">
           {t('coverPhotoLabel')}
-          <span className="font-normal text-stone-400">{t('descriptionOptional')}</span>
+          <span className="font-normal text-stone-400 dark:text-stone-500">{t('descriptionOptional')}</span>
         </label>
         <Controller
           name="coverImageUrl"

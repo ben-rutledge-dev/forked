@@ -1,0 +1,1 @@
+export { PrivacyForm } from './privacyForm';

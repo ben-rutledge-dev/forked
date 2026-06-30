@@ -12,7 +12,7 @@ export type InviteModalProps<TRole extends string> = {
 
 export const InviteModal = <TRole extends string>({ heading, roles, defaultRole, onSubmit, onConfirm }: InviteModalProps<TRole>) => (
   <div className="p-6 space-y-4">
-    <h2 className="text-lg font-semibold text-stone-900">{heading}</h2>
+    <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{heading}</h2>
     <InviteForm
       roles={roles}
       defaultRole={defaultRole}
