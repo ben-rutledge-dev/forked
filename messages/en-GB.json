@@ -190,8 +190,8 @@
     "done": "Done",
     "pause": "Pause",
     "reset": "Reset",
-    "back": "← Back",
-    "next": "Next →",
+    "back": "Back",
+    "next": "Next",
     "switchToMetric": "Switch to metric",
     "switchToImperial": "Switch to imperial"
   },

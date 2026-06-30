@@ -37,7 +37,7 @@ const sizeClasses: Record<ButtonSize, string> = {
   sm: 'px-3 py-1 text-sm',
   md: 'px-4 py-2 text-sm',
   lg: 'px-6 py-2.5 text-sm font-medium',
-  xl: 'py-4 text-lg',
+  xl: 'px-6 py-4 text-lg',
 };
 
 export const Button: React.FC<ButtonProps> = ({
@@ -51,7 +51,7 @@ export const Button: React.FC<ButtonProps> = ({
   children,
 }) => {
   const classes = [
-    'inline-flex items-center gap-1.5',
+    'inline-flex items-center justify-center gap-1.5',
     'cursor-pointer disabled:cursor-not-allowed',
     'transition-colors',
     'rounded-lg squircle',

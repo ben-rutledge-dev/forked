@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useCallback, useEffect, useRef, useState } from 'react';
 // Components
 import { Button } from '@/components/Button';
-import { SpeakerWaveIcon, StopSquareIcon } from '@/components/Icons';
+import { ChevronLeftIcon, ChevronRightIcon, SpeakerWaveIcon, StopSquareIcon } from '@/components/Icons';
 import { IngredientsDisplay } from '@/components/IngredientsDisplay';
 // Types
 import { RecipeWithRelations } from '@/types';
@@ -142,9 +142,8 @@ export const CookMode = ({ recipe, backHref }: Props) => {
   return (
     <div className="fixed inset-0 z-50 flex flex-col bg-stone-50 dark:bg-stone-900 overflow-y-auto">
       <div className="flex items-center justify-between px-4 py-3 bg-white dark:bg-stone-800 border-b border-stone-200 dark:border-stone-700">
-        <Link href={backHref} className="text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors">
-          ←
-          {' '}
+        <Link href={backHref} className="flex items-center gap-1 text-sm text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200 transition-colors">
+          <ChevronLeftIcon className="w-4 h-4" />
           {recipe.title}
         </Link>
         <span className="text-sm text-stone-400 dark:text-stone-500">
@@ -267,6 +266,7 @@ export const CookMode = ({ recipe, backHref }: Props) => {
           disabled={stepIndex === 0}
           className="flex-1"
         >
+          <ChevronLeftIcon className="w-5 h-5" />
           {t('back')}
         </Button>
         <div className="flex gap-1">
@@ -283,12 +283,12 @@ export const CookMode = ({ recipe, backHref }: Props) => {
         <Button
           variant="secondary"
           size="xl"
-          shape="square"
           onClick={() => goTo(stepIndex + 1)}
           disabled={stepIndex === steps.length - 1}
           className="flex-1"
         >
           {t('next')}
+          <ChevronRightIcon className="w-5 h-5" />
         </Button>
       </div>
     </div>
