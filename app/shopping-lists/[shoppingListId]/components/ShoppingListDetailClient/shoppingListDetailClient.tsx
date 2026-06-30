@@ -286,9 +286,8 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
           if (idx === targetSectionIdx) return { ...s, items: newTargetItems };
           return s;
         }));
-        moveItemSection({ itemId: String(active.id), sectionId: targetSectionId })
-          .then(() => reorderItems({ items: newTargetItems.map((item, i) => ({ id: item.id, orderIndex: i })) }))
-          .catch(invalidateDetail);
+        moveItemSection({ itemId: String(active.id), sectionId: targetSectionId }).catch(invalidateDetail);
+        reorderItems({ items: newTargetItems.map((item, i) => ({ id: item.id, orderIndex: i })) });
       }
     }
   };
@@ -380,6 +379,7 @@ export const ShoppingListDetailClient: React.FC<Props> = (props) => {
 
       <DragOverContext.Provider value={{ overId, activeType, dropSide }}>
         <DndContext
+          id="shopping-list-dnd"
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}

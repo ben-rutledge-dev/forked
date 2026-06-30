@@ -71,13 +71,42 @@ export const usePutItemsReorder = (params?: Params) => {
 
 export const usePutItemSection = (params?: Params) => {
   const queryClient = useQueryClient();
+  const queryKey = queryKeys.shoppingLists.detail(params?.shoppingListId ?? '');
   return useApiPut<PutItemSectionPayload, void>(
     ({ itemId }) => `/api/shopping-lists/${params?.shoppingListId ?? ''}/items/${itemId}`,
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.shoppingLists.detail(params?.shoppingListId ?? ''),
+      onMutate: async ({ itemId, sectionId }) => {
+        await queryClient.cancelQueries({ queryKey });
+        const previous = queryClient.getQueryData(queryKey);
+        queryClient.setQueryData<ShoppingListDetail>(queryKey, (old) => {
+          if (!old) return old;
+          let movedItem: ShoppingListDetail['sections'][number]['items'][number] | undefined;
+          const sections = old.sections.map(section => {
+            const item = section.items.find(i => i.id === itemId);
+            if (item) {
+              movedItem = { ...item, sectionId };
+              return { ...section, items: section.items.filter(i => i.id !== itemId) };
+            }
+            return section;
+          });
+          if (!movedItem) return old;
+          return {
+            ...old,
+            sections: sections.map(section =>
+              section.id === sectionId
+                ? { ...section, items: [...section.items, movedItem!] }
+                : section,
+            ),
+          };
         });
+        return { previous };
+      },
+      onError: (_err, _payload, context) => {
+        const ctx = context as { previous?: unknown } | undefined;
+        if (ctx?.previous) queryClient.setQueryData(queryKey, ctx.previous);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey });
       },
     },
   );
