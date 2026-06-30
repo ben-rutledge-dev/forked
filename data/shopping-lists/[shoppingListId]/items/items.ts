@@ -81,7 +81,7 @@ export const usePutItemSection = (params?: Params) => {
         queryClient.setQueryData<ShoppingListDetail>(queryKey, (old) => {
           if (!old) return old;
           let movedItem: ShoppingListDetail['sections'][number]['items'][number] | undefined;
-          const sections = old.sections.map(section => {
+          const sections = old.sections.map((section) => {
             const item = section.items.find(i => i.id === itemId);
             if (item) {
               movedItem = { ...item, sectionId };

@@ -84,7 +84,7 @@ export const Nav = () => {
                     </button>
 
                     {userMenuOpen && (
-                      <div className="absolute right-0 top-full mt-2 w-48 rounded-lg bg-white dark:bg-stone-800 shadow-lg dark:shadow-stone-950/30 ring-1 ring-black/10 dark:ring-white/10 py-1 z-50">
+                      <div className="absolute right-0 top-full mt-2 w-48 squircle bg-white dark:bg-stone-800 shadow-lg dark:shadow-stone-950/30 ring-1 ring-black/10 dark:ring-white/10 py-1 z-50">
                         {session.user?.name && (
                           <div className="px-4 py-2 text-xs text-stone-400 dark:text-stone-500 border-b border-stone-100 dark:border-stone-700 truncate">
                             {session.user.name}

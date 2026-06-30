@@ -18,9 +18,9 @@ import { FormSteps } from './components/FormSteps';
 import { Button } from '@/components/Button';
 import { CategoryPillButton } from '@/components/CategoryPill';
 import { Checkbox } from '@/components/Checkbox';
-import { CornerDeleteButton } from '@/components/CornerDeleteButton';
 import { FormBanner } from '@/components/FormBanner';
 import { FormField } from '@/components/FormField';
+import { XIcon } from '@/components/Icons';
 import { ImageUpload } from '@/components/ImageUpload';
 import { Textarea } from '@/components/Textarea';
 import { TextInput } from '@/components/TextInput';
@@ -298,16 +298,24 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
                     <SectionLabel className="mb-1.5">{t('myTagsLabel')}</SectionLabel>
                     <div className="flex flex-wrap gap-1.5">
                       {tagPool.map(tag => (
-                        <div key={tag} className="relative group/tag">
+                        <div key={tag} className="relative group/tag inline-flex items-center">
                           <CategoryPillButton
                             active={tags.includes(tag)}
                             onClick={() => toggleTag(tag)}
                           >
                             {tag}
+                            {!tags.includes(tag) && <span className="inline-block w-3.5" aria-hidden="true" />}
                           </CategoryPillButton>
-                          <span className="opacity-0 group-hover/tag:opacity-100 transition-opacity">
-                            <CornerDeleteButton onClick={() => removeTagFromPool(tag)} label={`Remove ${tag}`} />
-                          </span>
+                          {!tags.includes(tag) && (
+                            <button
+                              type="button"
+                              onClick={() => removeTagFromPool(tag)}
+                              className="absolute right-2 opacity-0 group-hover/tag:opacity-100 transition-opacity text-stone-400 dark:text-stone-500 hover:text-stone-600 cursor-pointer"
+                              aria-label={`Remove ${tag}`}
+                            >
+                              <XIcon className="w-3 h-3" />
+                            </button>
+                          )}
                         </div>
                       ))}
                     </div>
