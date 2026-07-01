@@ -34,7 +34,7 @@ export const HeartIcon = ({ className, filled }: IconProps & { filled?: boolean 
     viewBox="0 0 24 24"
     fill={filled ? 'currentColor' : 'none'}
     stroke="currentColor"
-    strokeWidth={filled ? 0 : 1.75}
+    strokeWidth={filled ? 0 : 1.5}
     aria-hidden="true"
   >
     <path
@@ -52,7 +52,7 @@ export const EditIcon = ({ className }: IconProps) => (
     <path
       strokeLinecap="round"
       strokeLinejoin="round"
-      strokeWidth={2}
+      strokeWidth={1.5}
       d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 012.828 0l.172.172a2 2 0 010 2.828L12 16H9v-3z"
     />
   </svg>
@@ -72,7 +72,7 @@ export const XIcon = ({ className }: IconProps) => (
     viewBox="0 0 10 10"
     fill="none"
     stroke="currentColor"
-    strokeWidth="1.75"
+    strokeWidth="1.5"
     strokeLinecap="round"
     aria-hidden="true"
   >
@@ -85,13 +85,13 @@ export const XIcon = ({ className }: IconProps) => (
 
 export const ChevronLeftIcon = ({ className }: IconProps) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
   </svg>
 );
 
 export const ChevronRightIcon = ({ className }: IconProps) => (
   <svg className={className} fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
   </svg>
 );
 

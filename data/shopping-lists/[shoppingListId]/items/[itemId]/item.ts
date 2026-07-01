@@ -53,13 +53,34 @@ export const usePutItem = (params?: Params) => {
 
 export const useDeleteItem = (params?: Params) => {
   const queryClient = useQueryClient();
+  const queryKey = queryKeys.shoppingLists.detail(params?.shoppingListId ?? '');
   return useApiDelete<void, void>(
     url(params?.shoppingListId ?? '', params?.itemId ?? ''),
     {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.shoppingLists.detail(params?.shoppingListId ?? ''),
-        });
+      onMutate: async () => {
+        await queryClient.cancelQueries({ queryKey });
+        const previous = queryClient.getQueryData(queryKey);
+        queryClient.setQueryData<import('@/data/shopping-lists/[shoppingListId]/types').ShoppingListDetail>(
+          queryKey,
+          (old) => {
+            if (!old) return old;
+            return {
+              ...old,
+              sections: old.sections.map(section => ({
+                ...section,
+                items: section.items.filter(item => item.id !== params?.itemId),
+              })),
+            };
+          },
+        );
+        return { previous };
+      },
+      onError: (_err, _vars, context) => {
+        const ctx = context as { previous?: unknown } | undefined;
+        if (ctx?.previous) queryClient.setQueryData(queryKey, ctx.previous);
+      },
+      onSettled: () => {
+        queryClient.invalidateQueries({ queryKey });
       },
     },
   );

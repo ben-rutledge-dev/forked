@@ -241,6 +241,7 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
           label={(
             <>
               {t('usernameLabel')}
+              {' '}
               <span className="text-stone-400 dark:text-stone-500 font-normal">{t('usernameHint')}</span>
             </>
           )}
