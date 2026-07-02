@@ -7,34 +7,17 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 // Data
-import { queryKeys } from '@/data/queryKeys';
-import { useQueryClient } from '@/data/shared/hooks';
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
 // Components
+import { ShoppingListInvitesSection } from './components/ShoppingListInvitesSection';
 import { Button } from '@/components/Button';
 import { PageHeader } from '@/components/PageHeader';
 import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
-import { SectionLabel } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
-
-const createListSchema = z.object({
-  title: z.string().min(1, 'List name is required').max(100),
-});
-type CreateListForm = z.infer<typeof createListSchema>;
-
-const NewListAction = ({ onNew }: { onNew: () => void }) => {
-  const t = useTranslations('shoppingLists');
-  return (
-    <Button variant="primary" size="md" onClick={onNew}>
-      {t('newList')}
-    </Button>
-  );
-};
 
 export const ShoppingListsClient = () => {
   const router = useRouter();
-  const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const t = useTranslations('shoppingLists');
@@ -54,18 +37,6 @@ export const ShoppingListsClient = () => {
     reset();
     setCreating(false);
     router.push(`/shopping-lists/${list.id}`);
-  };
-
-  const handleAccept = async (shoppingListId: string) => {
-    await fetch(`/api/shopping-lists/${shoppingListId}/invites/accept`, { method: 'POST' });
-    await queryClient.invalidateQueries({ queryKey: queryKeys.shoppingLists.mine() });
-    setToast(t('inviteAccepted'));
-  };
-
-  const handleDecline = async (shoppingListId: string) => {
-    await fetch(`/api/shopping-lists/${shoppingListId}/invites/decline`, { method: 'POST' });
-    await queryClient.invalidateQueries({ queryKey: queryKeys.shoppingLists.mine() });
-    setToast(t('inviteDeclined'));
   };
 
   return (
@@ -105,41 +76,7 @@ export const ShoppingListsClient = () => {
         </form>
       )}
 
-      {pending.length > 0 && (
-        <section className="mb-8">
-          <SectionLabel className="mb-3">{t('pendingInvites')}</SectionLabel>
-          <ul className="space-y-2">
-            {pending.map(invite => (
-              <li key={invite.id} className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-4 py-3">
-                <div>
-                  <p className="text-sm font-medium">{invite.shoppingList.title}</p>
-                  <p className="text-xs text-stone-400 dark:text-stone-500">
-                    {invite.role === 'OWNER' ? t('invitedAsOwner') : t('invitedAsCollaborator')}
-                  </p>
-                </div>
-                <div className="flex gap-2">
-                  <Button
-                    variant="primary"
-                    size="sm"
-
-                    onClick={() => handleAccept(invite.shoppingList.id)}
-                  >
-                    {t('accept')}
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-
-                    onClick={() => handleDecline(invite.shoppingList.id)}
-                  >
-                    {t('decline')}
-                  </Button>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
+      <ShoppingListInvitesSection pending={pending} onToast={setToast} />
 
       {lists.length === 0
         ? (
@@ -166,5 +103,19 @@ export const ShoppingListsClient = () => {
             </ul>
           )}
     </PageLayout>
+  );
+};
+
+const createListSchema = z.object({
+  title: z.string().min(1, 'List name is required').max(100),
+});
+type CreateListForm = z.infer<typeof createListSchema>;
+
+const NewListAction = ({ onNew }: { onNew: () => void }) => {
+  const t = useTranslations('shoppingLists');
+  return (
+    <Button variant="primary" size="md" onClick={onNew}>
+      {t('newList')}
+    </Button>
   );
 };

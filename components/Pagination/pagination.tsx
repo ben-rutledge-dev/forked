@@ -19,7 +19,6 @@ export const Pagination = ({ page, totalPages, onPageChange }: Props) => {
       <Button
         variant="secondary"
         size="md"
-        shape="rounded"
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
       >
@@ -37,7 +36,6 @@ export const Pagination = ({ page, totalPages, onPageChange }: Props) => {
       <Button
         variant="secondary"
         size="md"
-        shape="rounded"
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
       >

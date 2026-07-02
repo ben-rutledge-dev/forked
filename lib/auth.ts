@@ -3,6 +3,7 @@ import { PrismaPg } from '@prisma/adapter-pg';
 import NextAuth from 'next-auth';
 import GitHub from 'next-auth/providers/github';
 import Google from 'next-auth/providers/google';
+import Nodemailer from 'next-auth/providers/nodemailer';
 // Lib
 import { PrismaClient } from '@/generated/prisma/client';
 
@@ -29,6 +30,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       clientId: process.env.GOOGLE_CLIENT_ID ?? '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? '',
       allowDangerousEmailAccountLinking: true,
+    }),
+    // Passwordless magic-link sign-up/sign-in. Transport-agnostic: any SMTP
+    // provider works by setting EMAIL_SERVER (e.g. Resend, Mailgun, Postmark).
+    Nodemailer({
+      server: process.env.EMAIL_SERVER,
+      from: process.env.EMAIL_FROM,
     }),
   ],
   session: {

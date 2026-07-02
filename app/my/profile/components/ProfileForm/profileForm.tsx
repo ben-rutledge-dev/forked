@@ -5,7 +5,7 @@ import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { z } from 'zod';
 // Components
 import { Button } from '@/components/Button';
@@ -86,7 +86,6 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
     control,
     handleSubmit,
     setValue,
-    watch,
     setError,
     formState: { errors, isSubmitting },
   } = useForm<ProfileFormValues>({
@@ -106,8 +105,8 @@ export const ProfileForm = ({ user }: { user: UserProfile }) => {
     },
   });
 
-  const avatarUrl = watch('avatarUrl');
-  const coverImageUrl = watch('coverImageUrl');
+  const avatarUrl = useWatch({ control, name: 'avatarUrl' });
+  const coverImageUrl = useWatch({ control, name: 'coverImageUrl' });
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

@@ -6,11 +6,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // Data
 import { useRecipeBooks } from '@/data/recipe-books';
-import { usePostAcceptInvite } from '@/data/recipe-books/[recipeBookId]/invites/accept';
-import { usePostDeclineInvite } from '@/data/recipe-books/[recipeBookId]/invites/decline';
-import type { PendingInvite } from '@/data/recipe-books/types';
 import { useFavouriteRecipes, useMyRecipes, usePoolRecipes } from '@/data/recipes';
 // Components
+import { RecipeBookInvitesSection } from './components/RecipeBookInvitesSection';
 import { Button } from '@/components/Button';
 import { PageHeader } from '@/components/PageHeader';
 import { PageLayout } from '@/components/PageLayout';
@@ -20,7 +18,6 @@ import { RecipeCard } from '@/components/RecipeCard';
 import { ResultCount } from '@/components/ResultCount';
 import { SearchFilterBar } from '@/components/SearchFilterBar';
 import type { TokenOption } from '@/components/TokenInput';
-import { SectionLabel } from '@/components/Typography';
 // Lib
 import { GROUP_LABELS, GROUP_ORDER } from '@/lib/categories';
 
@@ -328,16 +325,7 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
 
       {tab === 'books' && (
         <>
-          {pending.length > 0 && (
-            <section className="mb-8">
-              <SectionLabel className="mb-3">{t('pendingInvites')}</SectionLabel>
-              <div className="space-y-3">
-                {pending.map(invite => (
-                  <InviteRow key={invite.id} invite={invite} />
-                ))}
-              </div>
-            </section>
-          )}
+          <RecipeBookInvitesSection pending={pending} />
           {books.length === 0
             ? (
                 <div className="text-center py-20 text-stone-400">
@@ -415,35 +403,6 @@ export const MyRecipesClient: React.FC<Props> = (props) => {
         </>
       )}
     </PageLayout>
-  );
-};
-
-type InviteRowProps = {
-  invite: PendingInvite
-};
-
-const InviteRow: React.FC<InviteRowProps> = (props) => {
-  const { invite } = props;
-  const { mutate: accept, isPending: accepting } = usePostAcceptInvite({ recipeBookId: invite.recipeBook.id });
-  const { mutate: decline, isPending: declining } = usePostDeclineInvite({ recipeBookId: invite.recipeBook.id });
-  const isPending = accepting || declining;
-  const t = useTranslations('myRecipes');
-
-  return (
-    <div className="flex items-center justify-between rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-5 py-4">
-      <div>
-        <p className="font-medium text-stone-900 dark:text-stone-100">{invite.recipeBook.title}</p>
-        <p className="text-xs text-stone-400 dark:text-stone-500 mt-0.5">
-          {t('invitedAs')}
-          {' '}
-          <span className="font-medium">{invite.role}</span>
-        </p>
-      </div>
-      <div className="flex gap-2">
-        <Button variant="primary" size="sm" disabled={isPending} onClick={() => accept()}>{t('accept')}</Button>
-        <Button variant="secondary" size="sm" disabled={isPending} onClick={() => decline()}>{t('decline')}</Button>
-      </div>
-    </div>
   );
 };
 

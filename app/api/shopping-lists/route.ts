@@ -14,8 +14,12 @@ export const GET = async () => {
     include: {
       shoppingList: {
         include: {
-          members: { where: { acceptedAt: { not: null } } },
-          items: { where: { checked: false } },
+          _count: {
+            select: {
+              members: { where: { acceptedAt: { not: null } } },
+              items: { where: { checked: false } },
+            },
+          },
         },
       },
     },
@@ -30,8 +34,8 @@ export const GET = async () => {
       createdAt: m.shoppingList.createdAt.toISOString(),
       updatedAt: m.shoppingList.updatedAt.toISOString(),
       role: m.role,
-      memberCount: m.shoppingList.members.length,
-      uncheckedCount: m.shoppingList.items.filter(i => !i.checked).length,
+      memberCount: m.shoppingList._count.members,
+      uncheckedCount: m.shoppingList._count.items,
     }));
 
   const pending = members

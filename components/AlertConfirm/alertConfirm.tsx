@@ -25,13 +25,12 @@ export const AlertConfirm = ({
     <div className="p-6 flex flex-col gap-5">
       <p className="text-stone-700 dark:text-stone-300 text-sm leading-relaxed">{text}</p>
       <div className="flex justify-end gap-2">
-        <Button variant="secondary" size="sm" shape="rounded" onClick={() => onConfirm(false)}>
+        <Button variant="secondary" size="sm" onClick={() => onConfirm(false)}>
           {cancelLabel ?? t('cancel')}
         </Button>
         <Button
           variant={variant === 'danger' ? 'danger' : 'primary'}
           size="sm"
-          shape="rounded"
           className={variant === 'danger' ? 'bg-danger-500 text-white hover:bg-danger-600 px-3 py-1' : ''}
           onClick={() => onConfirm(true)}
         >

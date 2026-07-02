@@ -12,26 +12,10 @@ import { PageLayout } from '@/components/PageLayout';
 import { SectionHeading } from '@/components/Typography';
 // Lib
 import { auth } from '@/lib/auth';
+// Utils
+import { addDays, startOfWeek, toDateStr } from '@/utils/dates';
 
 export const metadata: Metadata = { title: 'Dashboard' };
-
-const toDateStr = (d: Date) => {
-  const y = d.getFullYear();
-  const mo = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${mo}-${day}`;
-};
-
-const addDaysStr = (dateStr: string, days: number) => {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().split('T')[0];
-};
-
-const startOfWeek = (dateStr: string) => {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
-  return addDaysStr(dateStr, dow === 0 ? -6 : 1 - dow);
-};
 
 const DashboardPage = async () => {
   const session = await auth();
@@ -41,8 +25,8 @@ const DashboardPage = async () => {
   const userId = session.user.id;
   const todayStr = toDateStr(new Date());
   const mondayStr = startOfWeek(todayStr);
-  const sundayStr = addDaysStr(mondayStr, 6);
-  const endStr = addDaysStr(todayStr, 6);
+  const sundayStr = addDays(mondayStr, 6);
+  const endStr = addDays(todayStr, 6);
 
   return (
     <PageLayout>

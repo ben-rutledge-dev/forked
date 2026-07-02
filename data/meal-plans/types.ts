@@ -12,6 +12,7 @@ export type MealPlanWithStats = {
 
 export type PendingMealPlanInvite = {
   id: string
+  mealPlanId: string
   role: MealPlanRole
   createdAt: string
   mealPlan: {
@@ -23,6 +24,10 @@ export type PendingMealPlanInvite = {
 
 export type MealPlansResponse = {
   plans: MealPlanWithStats[]
+};
+
+export type PendingMealPlanInvitesResponse = {
+  pending: PendingMealPlanInvite[]
 };
 
 export type PostMealPlanPayload = {

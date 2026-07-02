@@ -11,31 +11,10 @@ import { MealPlannerClient } from './components/MealPlannerClient';
 import { auth } from '@/lib/auth';
 import { getQueryClient } from '@/lib/getQueryClient';
 import { prisma } from '@/lib/prisma';
+// Utils
+import { addDays, startOfWeek, toDateStr } from '@/utils/dates';
 
 export const metadata: Metadata = { title: 'Meal Planner' };
-
-// Date helpers operate on YYYY-MM-DD strings and mirror the client exactly so
-// the server-rendered start date matches what the client computes for "today".
-// (Using Date.getDay()/toISOString() together silently shifts the day in
-// timezones ahead of UTC, which made the planner open on a past read-only week.)
-const toDateStr = (d: Date) => {
-  const y = d.getFullYear();
-  const mo = String(d.getMonth() + 1).padStart(2, '0');
-  const day = String(d.getDate()).padStart(2, '0');
-  return `${y}-${mo}-${day}`;
-};
-
-const addDaysStr = (dateStr: string, days: number) => {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().split('T')[0];
-};
-
-const startOfWeekStr = (dateStr: string) => {
-  const [y, m, d] = dateStr.split('-').map(Number);
-  const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
-  const diff = dow === 0 ? -6 : 1 - dow;
-  return addDaysStr(dateStr, diff);
-};
 
 const MealPlannerPage = async () => {
   const session = await auth();
@@ -48,15 +27,14 @@ const MealPlannerPage = async () => {
     select: { isPremium: true },
   });
 
-  const membership = await prisma.mealPlanMember.findFirst({
-    where: { userId, acceptedAt: { not: null } },
+  const allMemberships = await prisma.mealPlanMember.findMany({
+    where: { userId },
     orderBy: { createdAt: 'asc' },
     include: {
       mealPlan: {
         include: {
           slots: { orderBy: { orderIndex: 'asc' } },
           members: {
-            where: { acceptedAt: { not: null } },
             include: {
               user: { select: { id: true, name: true, username: true, avatarUrl: true } },
             },
@@ -66,8 +44,22 @@ const MealPlannerPage = async () => {
     },
   });
 
+  const pending = allMemberships
+    .filter(m => m.acceptedAt === null)
+    .map(m => ({
+      id: m.id,
+      mealPlanId: m.mealPlanId,
+      role: m.role,
+      createdAt: m.createdAt.toISOString(),
+      mealPlan: { id: m.mealPlan.id, title: m.mealPlan.title },
+      invitedByUserId: m.invitedByUserId,
+    }));
+
+  const membership = allMemberships.find(m => m.acceptedAt !== null) ?? null;
+
   if (!membership) {
     const emptyClient = getQueryClient();
+    emptyClient.setQueryData(queryKeys.mealPlans.pending(), { pending });
     return (
       <HydrationBoundary state={dehydrate(emptyClient)}>
         <MealPlannerClient
@@ -84,8 +76,8 @@ const MealPlannerPage = async () => {
   const plan = membership.mealPlan;
 
   const todayStr = toDateStr(new Date());
-  const startDateStr = user?.isPremium ? startOfWeekStr(todayStr) : todayStr;
-  const endDateStr = addDaysStr(startDateStr, 6);
+  const startDateStr = user?.isPremium ? startOfWeek(todayStr) : todayStr;
+  const endDateStr = addDays(startDateStr, 6);
 
   const entries = await prisma.mealPlanEntry.findMany({
     where: {
@@ -135,10 +127,8 @@ const MealPlannerPage = async () => {
   };
 
   const queryClient = getQueryClient();
-  queryClient.setQueryData(
-    queryKeys.mealPlans.week(plan.id, startDateStr),
-    initialData,
-  );
+  queryClient.setQueryData(queryKeys.mealPlans.week(plan.id, startDateStr), initialData);
+  queryClient.setQueryData(queryKeys.mealPlans.pending(), { pending });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

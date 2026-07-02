@@ -3,22 +3,13 @@
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 // Components
+// Data
+import type { Member } from '@/data/shared/types';
+// Components
 import { Button } from '@/components/Button';
 import { UserBadge } from '@/components/UserBadge';
 
-type Member = {
-  id: string
-  userId: string
-  role: string
-  acceptedAt: string | null
-  user: {
-    name: string | null
-    username: string | null
-    avatarUrl: string | null
-  }
-};
-
-type Props = {
+type MembersSectionProps = {
   members: Member[]
   isOwner: boolean
   currentUserId: string
@@ -26,13 +17,8 @@ type Props = {
   onRemoveMember: (userId: string) => void
 };
 
-export const MembersSection = ({
-  members,
-  isOwner,
-  currentUserId,
-  onInvite,
-  onRemoveMember,
-}: Props) => {
+export const MembersSection: React.FC<MembersSectionProps> = (props) => {
+  const { members, isOwner, currentUserId, onInvite, onRemoveMember } = props;
   const t = useTranslations('membersSection');
   const acceptedMembers = members.filter(m => m.acceptedAt !== null);
   const pendingMembers = members.filter(m => m.acceptedAt === null);
@@ -86,7 +72,8 @@ type MemberCardProps = {
   onAction?: () => void
 };
 
-const MemberCard = ({ member: m, pending = false, actionLabel, onAction }: MemberCardProps) => {
+const MemberCard: React.FC<MemberCardProps> = (props) => {
+  const { member: m, pending = false, actionLabel, onAction } = props;
   const t = useTranslations('membersSection');
   return (
     <div className={`flex items-center justify-between rounded-xl squircle shadow-sm px-4 py-3 ${pending ? 'bg-stone-50 dark:bg-stone-900' : 'bg-white dark:bg-stone-800'}`}>

@@ -208,6 +208,7 @@ model ShoppingListMember {
   invitedBy       User             @relation("ShoppingListInvitedBy", fields: [invitedByUserId], references: [id])
 
   @@unique([shoppingListId, userId])
+  @@index([userId])
 }
 
 model ShoppingListSection {

@@ -10,7 +10,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from '@/components/Icons';
 // Components
 import { RecipeTagPill } from '@/components/RecipeTagPill';
 // Utils
-import { formatDateStrLabel } from '@/utils/dates';
+import { addDays, formatDateStrLabel, todayStr } from '@/utils/dates';
 
 export type SpotlightEntry = {
   id: string
@@ -23,17 +23,6 @@ export type SpotlightEntry = {
 
 type Props = {
   data: { entries: SpotlightEntry[] } | null
-};
-
-const todayString = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
-
-const tomorrowString = () => {
-  const d = new Date();
-  d.setDate(d.getDate() + 1);
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
 const getInitialIndex = (entries: SpotlightEntry[], todayStr: string, tomorrowStr: string): number => {
@@ -63,22 +52,22 @@ const getInitialIndex = (entries: SpotlightEntry[], todayStr: string, tomorrowSt
 export const TonightSpotlight = ({ data }: Props) => {
   const t = useTranslations('dashboard.spotlight');
 
-  const todayStr = todayString();
-  const tomorrowStr = tomorrowString();
+  const today = todayStr();
+  const tomorrowStr = addDays(today, 1);
 
   const allSorted = (data?.entries ?? [])
-    .filter(e => e.date >= todayStr && e.recipe)
+    .filter(e => e.date >= today && e.recipe)
     .sort((a, b) => a.date.localeCompare(b.date) || a.orderIndex - b.orderIndex);
 
   // Build a centred window: 1 before + current + 2 after (max 4 dots)
-  const rawTarget = getInitialIndex(allSorted, todayStr, tomorrowStr);
+  const rawTarget = getInitialIndex(allSorted, today, tomorrowStr);
   const windowStart = Math.max(0, rawTarget - 1);
   const upcoming = allSorted.slice(windowStart, windowStart + 4);
 
   const [index, setIndex] = useState(rawTarget - windowStart);
 
   const getDateLabel = (dateStr: string) => {
-    if (dateStr === todayStr) return `${t('today')} · ${formatDateStrLabel(dateStr)}`;
+    if (dateStr === today) return `${t('today')} · ${formatDateStrLabel(dateStr)}`;
     if (dateStr === tomorrowStr) return `${t('tomorrow')} · ${formatDateStrLabel(dateStr)}`;
     return formatDateStrLabel(dateStr);
   };

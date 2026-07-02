@@ -42,30 +42,36 @@ export const POST = async (req: Request) => {
   const body = await req.json().catch(() => ({}));
   const title = body.title?.trim() || 'My Meal Plan';
 
-  const plan = await prisma.mealPlan.create({
-    data: {
-      title,
-      members: {
-        create: {
-          userId: session.user.id,
-          role: 'OWNER',
-          acceptedAt: new Date(),
-          invitedByUserId: session.user.id,
+  try {
+    const plan = await prisma.mealPlan.create({
+      data: {
+        title,
+        members: {
+          create: {
+            userId: session.user.id,
+            role: 'OWNER',
+            acceptedAt: new Date(),
+            invitedByUserId: session.user.id,
+          },
+        },
+        slots: {
+          create: [
+            { label: 'Breakfast', isDefault: true, orderIndex: 0 },
+            { label: 'Lunch', isDefault: true, orderIndex: 1 },
+            { label: 'Dinner', isDefault: true, orderIndex: 2 },
+          ],
         },
       },
-      slots: {
-        create: [
-          { label: 'Breakfast', isDefault: true, orderIndex: 0 },
-          { label: 'Lunch', isDefault: true, orderIndex: 1 },
-          { label: 'Dinner', isDefault: true, orderIndex: 2 },
-        ],
+      include: {
+        slots: { orderBy: { orderIndex: 'asc' } },
+        members: true,
       },
-    },
-    include: {
-      slots: { orderBy: { orderIndex: 'asc' } },
-      members: true,
-    },
-  });
+    });
 
-  return NextResponse.json(plan, { status: 201 });
+    return NextResponse.json(plan, { status: 201 });
+  }
+  catch (err) {
+    console.error('[POST /api/meal-plans]', err);
+    return NextResponse.json({ error: 'Failed to create meal plan' }, { status: 500 });
+  }
 };

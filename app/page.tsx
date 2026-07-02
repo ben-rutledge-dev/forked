@@ -25,7 +25,7 @@ const Home = async () => {
         </p>
       </div>
       <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
-        <Button variant="primary" size="lg" shape="pill" href="/recipes">
+        <Button variant="primary" size="lg" href="/recipes">
           {t('browsePool')}
         </Button>
         <SignInButton />

@@ -24,8 +24,12 @@ const ShoppingListsPage = async () => {
     include: {
       shoppingList: {
         include: {
-          members: { where: { acceptedAt: { not: null } } },
-          items: true,
+          _count: {
+            select: {
+              members: { where: { acceptedAt: { not: null } } },
+              items: { where: { checked: false } },
+            },
+          },
         },
       },
     },
@@ -40,8 +44,8 @@ const ShoppingListsPage = async () => {
       createdAt: m.shoppingList.createdAt.toISOString(),
       updatedAt: m.shoppingList.updatedAt.toISOString(),
       role: m.role as ShoppingListRole,
-      memberCount: m.shoppingList.members.length,
-      uncheckedCount: m.shoppingList.items.filter(i => !i.checked).length,
+      memberCount: m.shoppingList._count.members,
+      uncheckedCount: m.shoppingList._count.items,
     }));
 
   const pending = members

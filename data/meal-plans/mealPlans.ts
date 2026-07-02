@@ -1,12 +1,18 @@
 // Data
 import { queryKeys } from '@/data/queryKeys';
 import { useApiQuery, useApiPost, useQueryClient } from '@/data/shared/hooks';
-import type { MealPlansResponse, PostMealPlanPayload, PostMealPlanResponse } from './types';
+import type { MealPlansResponse, PendingMealPlanInvitesResponse, PostMealPlanPayload, PostMealPlanResponse } from './types';
 
 export const useMealPlans = () =>
   useApiQuery<MealPlansResponse>(
     queryKeys.mealPlans.mine(),
     '/api/meal-plans',
+  );
+
+export const usePendingMealPlanInvites = () =>
+  useApiQuery<PendingMealPlanInvitesResponse>(
+    queryKeys.mealPlans.pending(),
+    '/api/meal-plans/invites',
   );
 
 export const usePostMealPlan = () => {

@@ -36,3 +36,27 @@ export const formatWeekRange = (startDateStr: string, endDateStr: string): strin
   if (startMonth === endMonth) return `${startDay}–${endDay} ${endMonth}`;
   return `${startDay} ${startMonth}–${endDay} ${endMonth}`;
 };
+
+/** Format a Date as a YYYY-MM-DD string using local time fields. */
+export const toDateStr = (d: Date): string => {
+  const y = d.getFullYear();
+  const mo = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${mo}-${day}`;
+};
+
+/** Return today's date as a YYYY-MM-DD string. */
+export const todayStr = (): string => toDateStr(new Date());
+
+/** Add (or subtract) days to a YYYY-MM-DD string using UTC arithmetic. */
+export const addDays = (dateStr: string, days: number): string => {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d + days)).toISOString().split('T')[0];
+};
+
+/** Return the Monday of the week containing the given YYYY-MM-DD string. */
+export const startOfWeek = (dateStr: string): string => {
+  const [y, m, d] = dateStr.split('-').map(Number);
+  const dow = new Date(Date.UTC(y, m - 1, d)).getUTCDay();
+  return addDays(dateStr, dow === 0 ? -6 : 1 - dow);
+};

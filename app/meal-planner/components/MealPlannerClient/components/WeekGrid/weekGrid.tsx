@@ -16,7 +16,9 @@ import { PlusIcon } from '@/components/Icons';
 import { PlannerDayLabel } from '@/components/PlannerDayLabel';
 // App
 import { EntryCard } from '@/app/meal-planner/components/MealPlannerClient/components/EntryCard';
-import { addDays, type SlotDropTarget } from '@/app/meal-planner/components/MealPlannerClient/mealPlannerClient';
+import type { SlotDropTarget } from '@/app/meal-planner/components/MealPlannerClient/hooks/usePlannerDnd';
+// Utils
+import { addDays, todayStr } from '@/utils/dates';
 
 // ─── Slot header (sortable for custom slots) ────────────────────────────────
 
@@ -29,7 +31,8 @@ type SlotHeaderProps = {
   onDelete: () => void
 };
 
-const SlotHeader = ({ slot, canEditSlots, isOver, dropSide, onAddBefore, onDelete }: SlotHeaderProps) => {
+const SlotHeader: React.FC<SlotHeaderProps> = (props) => {
+  const { slot, canEditSlots, isOver, dropSide, onAddBefore, onDelete } = props;
   const t = useTranslations('mealPlanner');
   const draggable = canEditSlots && !slot.isDefault;
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -104,7 +107,8 @@ type SlotCellProps = {
   onRemoveEntry: (entryId: string) => void
 };
 
-const SlotCell = ({ date, slot, entries, canEditEntries, isHighlighted, overEntryId, overEntrySide, onAddRecipe, onRemoveEntry }: SlotCellProps) => {
+const SlotCell: React.FC<SlotCellProps> = (props) => {
+  const { date, slot, entries, canEditEntries, isHighlighted, overEntryId, overEntrySide, onAddRecipe, onRemoveEntry } = props;
   const t = useTranslations('mealPlanner');
   const sorted = [...entries].sort((a, b) => a.orderIndex - b.orderIndex);
   // Register the cell itself as a droppable so entries can be dropped into
@@ -149,7 +153,12 @@ const SlotCell = ({ date, slot, entries, canEditEntries, isHighlighted, overEntr
 
 // ─── Day-label header cell (also the "drop before first slot" zone) ─────────
 
-const StartDropZone = ({ showDropBar }: { showDropBar: boolean }) => {
+type StartDropZoneProps = {
+  showDropBar: boolean
+};
+
+const StartDropZone: React.FC<StartDropZoneProps> = (props) => {
+  const { showDropBar } = props;
   const { setNodeRef } = useDroppable({ id: 'slot-start', data: { type: 'slot-start' } });
   return (
     <div ref={setNodeRef} className="relative p-2 border-b border-r border-stone-100 dark:border-stone-700 bg-stone-50 dark:bg-stone-900">
@@ -165,7 +174,8 @@ type AddSlotColumnProps = {
   onAdd: () => void
 };
 
-const AddSlotColumn = ({ showDropBar, onAdd }: AddSlotColumnProps) => {
+const AddSlotColumn: React.FC<AddSlotColumnProps> = (props) => {
+  const { showDropBar, onAdd } = props;
   const t = useTranslations('mealPlanner');
   const { setNodeRef } = useDroppable({ id: 'slot-end', data: { type: 'slot-end' } });
 
@@ -184,7 +194,7 @@ const AddSlotColumn = ({ showDropBar, onAdd }: AddSlotColumnProps) => {
 
 // ─── Week grid ──────────────────────────────────────────────────────────────
 
-type Props = {
+type WeekGridProps = {
   startDate: string
   slots: MealPlanSlot[]
   entries: MealPlanEntry[]
@@ -200,26 +210,8 @@ type Props = {
   onDeleteSlot: (slotId: string) => void
 };
 
-const todayStr = (): string => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-};
-
-export const WeekGrid = ({
-  startDate,
-  slots,
-  entries,
-  canEditSlots,
-  canEditEntries,
-  dropTarget,
-  overEntryId,
-  overEntrySide,
-  overSlotKey,
-  onAddRecipe,
-  onRemoveEntry,
-  onAddSlotAt,
-  onDeleteSlot,
-}: Props) => {
+export const WeekGrid: React.FC<WeekGridProps> = (props) => {
+  const { startDate, slots, entries, canEditSlots, canEditEntries, dropTarget, overEntryId, overEntrySide, overSlotKey, onAddRecipe, onRemoveEntry, onAddSlotAt, onDeleteSlot } = props;
   const today = todayStr();
   const dates = Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
 

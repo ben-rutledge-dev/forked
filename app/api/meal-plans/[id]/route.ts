@@ -30,7 +30,6 @@ export const GET = async (req: Request, { params }: Params) => {
     include: {
       slots: { orderBy: { orderIndex: 'asc' } },
       members: {
-        where: { acceptedAt: { not: null } },
         include: {
           user: { select: { id: true, name: true, username: true, avatarUrl: true } },
         },

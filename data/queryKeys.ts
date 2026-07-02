@@ -63,6 +63,7 @@ export const queryKeys = {
   mealPlans: {
     all: ['mealPlans'] as const,
     mine: () => [...queryKeys.mealPlans.all, 'mine'] as const,
+    pending: () => [...queryKeys.mealPlans.all, 'pending'] as const,
     detail: (id: string) => [...queryKeys.mealPlans.all, id] as const,
     week: (id: string, startDate: string) =>
       [...queryKeys.mealPlans.detail(id), 'week', startDate] as const,

@@ -6,6 +6,7 @@ import Link from 'next/link';
 // Components
 import { PlannerDayLabel } from '@/components/PlannerDayLabel';
 // Utils
+import { addDays, todayStr } from '@/utils/dates';
 
 export type DashboardEntry = {
   id: string
@@ -22,18 +23,15 @@ type Props = {
 };
 
 const buildDays = (entries: DashboardEntry[], startDateStr: string): Array<{ dateStr: string, entries: DashboardEntry[], isToday: boolean, isPast: boolean }> => {
-  const today = new Date();
-  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-  const [sy, sm, sd] = startDateStr.split('-').map(Number);
+  const today = todayStr();
 
   return Array.from({ length: 7 }, (_, i) => {
-    const date = new Date(Date.UTC(sy, sm - 1, sd + i));
-    const dateStr = date.toISOString().split('T')[0];
+    const dateStr = addDays(startDateStr, i);
     return {
       dateStr,
       entries: entries.filter(e => e.date === dateStr),
-      isToday: dateStr === todayStr,
-      isPast: dateStr < todayStr,
+      isToday: dateStr === today,
+      isPast: dateStr < today,
     };
   });
 };

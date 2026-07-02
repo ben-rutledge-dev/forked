@@ -5,9 +5,10 @@ import { useRef, useState } from 'react';
 import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]/types';
 // App
 import { DayColumn } from '@/app/meal-planner/components/MealPlannerClient/components/DayColumn';
-import { addDays } from '@/app/meal-planner/components/MealPlannerClient/mealPlannerClient';
+// Utils
+import { addDays } from '@/utils/dates';
 
-type Props = {
+type MobileViewProps = {
   startDate: string
   slots: MealPlanSlot[]
   entries: MealPlanEntry[]
@@ -21,7 +22,8 @@ type Props = {
   onAddSlot: () => void
 };
 
-export const MobileView = ({ startDate, slots, entries, canEditSlots, canEditEntries, overEntryId, overEntrySide, overSlotKey, onAddRecipe, onRemoveEntry, onAddSlot }: Props) => {
+export const MobileView: React.FC<MobileViewProps> = (props) => {
+  const { startDate, slots, entries, canEditSlots, canEditEntries, overEntryId, overEntrySide, overSlotKey, onAddRecipe, onRemoveEntry, onAddSlot } = props;
   const [dayIndex, setDayIndex] = useState(0);
   const dates = Array.from({ length: 7 }, (_, i) => addDays(startDate, i));
   const currentDate = dates[dayIndex];
