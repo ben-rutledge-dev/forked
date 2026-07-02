@@ -11,11 +11,14 @@ type CategoryPillProps = {
   children: ReactNode
 };
 
-export const CategoryPill = ({ href, children }: CategoryPillProps) => (
-  <Link href={href} className={CHIP_ACTIVE_CLASS}>
-    {children}
-  </Link>
-);
+export const CategoryPill: React.FC<CategoryPillProps> = (props) => {
+  const { href, children } = props;
+  return (
+    <Link href={href} className={CHIP_ACTIVE_CLASS}>
+      {children}
+    </Link>
+  );
+};
 
 type CategoryPillButtonProps = {
   children: ReactNode
@@ -23,15 +26,18 @@ type CategoryPillButtonProps = {
   onClick?: () => void
 };
 
-export const CategoryPillButton = ({ children, active = false, onClick }: CategoryPillButtonProps) => (
-  <button
-    type="button"
-    onClick={onClick}
-    className={active ? CHIP_ACTIVE_CLASS : CHIP_INACTIVE_CLASS}
-  >
-    {children}
-    {active && (
-      <SmallCheckIcon className="inline ml-1.5 w-2.5 h-2.5" />
-    )}
-  </button>
-);
+export const CategoryPillButton: React.FC<CategoryPillButtonProps> = (props) => {
+  const { children, active = false, onClick } = props;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className={active ? CHIP_ACTIVE_CLASS : CHIP_INACTIVE_CLASS}
+    >
+      {children}
+      {active && (
+        <SmallCheckIcon className="inline ml-1.5 w-2.5 h-2.5" />
+      )}
+    </button>
+  );
+};

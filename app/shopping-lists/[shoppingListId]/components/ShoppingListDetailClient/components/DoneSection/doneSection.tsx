@@ -14,7 +14,13 @@ type DoneSectionProps = {
   onClearDone: () => void
 };
 
-const DoneItem = ({ item, shoppingListId }: { item: ShoppingListItem, shoppingListId: string }) => {
+type DoneItemProps = {
+  item: ShoppingListItem
+  shoppingListId: string
+};
+
+const DoneItem: React.FC<DoneItemProps> = (props) => {
+  const { item, shoppingListId } = props;
   const { mutate: putItem } = usePutItem({ shoppingListId, itemId: item.id });
   return (
     <li className="py-1">
@@ -28,7 +34,8 @@ const DoneItem = ({ item, shoppingListId }: { item: ShoppingListItem, shoppingLi
   );
 };
 
-export const DoneSection = ({ items, shoppingListId, onClearDone }: DoneSectionProps) => {
+export const DoneSection: React.FC<DoneSectionProps> = (props) => {
+  const { items, shoppingListId, onClearDone } = props;
   const [expanded, setExpanded] = useState(false);
   const t = useTranslations('shoppingList');
   if (items.length === 0) return null;

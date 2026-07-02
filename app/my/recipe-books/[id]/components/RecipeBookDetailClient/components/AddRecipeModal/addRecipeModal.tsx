@@ -9,13 +9,19 @@ import { TextInput } from '@/components/TextInput';
 // Types
 import type { Recipe } from '@/types';
 
-type Props = {
+type AddRecipeModalProps = {
   userRecipes: Pick<Recipe, 'id' | 'title' | 'coverImageUrl'>[]
   existingRecipeIds: string[]
   onConfirm: (value: string | null) => void
 };
 
-export const AddRecipeModal = ({ userRecipes, existingRecipeIds, onConfirm }: Props) => {
+export const AddRecipeModal: React.FC<AddRecipeModalProps> = (props) => {
+  const {
+    userRecipes,
+    existingRecipeIds,
+    onConfirm,
+  } = props;
+
   const [recipeSearch, setRecipeSearch] = useState('');
   const t = useTranslations('recipeBooks');
   const existing = new Set(existingRecipeIds);

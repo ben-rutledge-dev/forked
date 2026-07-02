@@ -21,35 +21,12 @@ export type SpotlightEntry = {
   recipe: { id: string, title: string, coverImageUrl: string | null, tags: string[], categories: string[] } | null
 };
 
-type Props = {
+type TonightSpotlightProps = {
   data: { entries: SpotlightEntry[] } | null
 };
 
-const getInitialIndex = (entries: SpotlightEntry[], todayStr: string, tomorrowStr: string): number => {
-  if (entries.length === 0) return 0;
-  const hour = new Date().getHours();
-  const todayEntries = entries.filter(e => e.date === todayStr);
-  const tomorrowEntries = entries.filter(e => e.date === tomorrowStr);
-
-  let target: SpotlightEntry | undefined;
-  if (hour < 10) {
-    target = todayEntries[0];
-  }
-  else if (hour < 14) {
-    target = todayEntries[1] ?? todayEntries[0];
-  }
-  else if (hour < 20) {
-    target = todayEntries[2] ?? todayEntries[todayEntries.length - 1];
-  }
-  else {
-    target = tomorrowEntries[0] ?? todayEntries[todayEntries.length - 1];
-  }
-
-  const idx = target ? entries.indexOf(target) : -1;
-  return idx === -1 ? 0 : idx;
-};
-
-export const TonightSpotlight = ({ data }: Props) => {
+export const TonightSpotlight: React.FC<TonightSpotlightProps> = (props) => {
+  const { data } = props;
   const t = useTranslations('dashboard.spotlight');
 
   const today = todayStr();
@@ -179,4 +156,28 @@ export const TonightSpotlight = ({ data }: Props) => {
       )}
     </div>
   );
+};
+
+const getInitialIndex = (entries: SpotlightEntry[], todayStr: string, tomorrowStr: string): number => {
+  if (entries.length === 0) return 0;
+  const hour = new Date().getHours();
+  const todayEntries = entries.filter(e => e.date === todayStr);
+  const tomorrowEntries = entries.filter(e => e.date === tomorrowStr);
+
+  let target: SpotlightEntry | undefined;
+  if (hour < 10) {
+    target = todayEntries[0];
+  }
+  else if (hour < 14) {
+    target = todayEntries[1] ?? todayEntries[0];
+  }
+  else if (hour < 20) {
+    target = todayEntries[2] ?? todayEntries[todayEntries.length - 1];
+  }
+  else {
+    target = tomorrowEntries[0] ?? todayEntries[todayEntries.length - 1];
+  }
+
+  const idx = target ? entries.indexOf(target) : -1;
+  return idx === -1 ? 0 : idx;
 };

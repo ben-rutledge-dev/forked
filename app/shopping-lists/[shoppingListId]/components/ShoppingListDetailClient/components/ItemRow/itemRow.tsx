@@ -31,7 +31,14 @@ const focusAtEnd = (el: HTMLElement) => {
   sel?.addRange(range);
 };
 
-export const ItemRow = ({ item, shoppingListId, shouldFocus, onEnter, onAddBelow, onDeleteEmpty }: ItemRowProps) => {
+export const ItemRow: React.FC<ItemRowProps> = (props) => {
+  const { item,
+    shoppingListId,
+    shouldFocus,
+    onEnter,
+    onAddBelow,
+    onDeleteEmpty,
+  } = props;
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({
     id: item.id,
     data: { type: 'item', sectionId: item.sectionId },
@@ -196,10 +203,17 @@ export const ItemRow = ({ item, shoppingListId, shouldFocus, onEnter, onAddBelow
   );
 };
 
-export const ItemRowGhost = ({ item }: { item: ShoppingListItem }) => (
-  <div className="flex items-center gap-2 py-1.5 px-2 bg-white dark:bg-stone-800 rounded-lg border border-stone-200 dark:border-stone-700 shadow-lg dark:shadow-stone-950/30 opacity-60 cursor-grabbing">
-    <GripIcon className="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 shrink-0" />
-    <input type="checkbox" checked={item.checked} readOnly className="h-4 w-4 rounded border-stone-300 dark:border-stone-600 shrink-0" />
-    <span className={`text-sm ${item.checked ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-700 dark:text-stone-300'}`}>{item.name}</span>
-  </div>
-);
+type ItemRowGhostProps = {
+  item: ShoppingListItem
+};
+
+export const ItemRowGhost: React.FC<ItemRowGhostProps> = (props) => {
+  const { item } = props;
+  return (
+    <div className="flex items-center gap-2 py-1.5 px-2 bg-white dark:bg-stone-800 rounded-lg border border-stone-200 dark:border-stone-700 shadow-lg dark:shadow-stone-950/30 opacity-60 cursor-grabbing">
+      <GripIcon className="w-3.5 h-3.5 text-stone-300 dark:text-stone-600 shrink-0" />
+      <input type="checkbox" checked={item.checked} readOnly className="h-4 w-4 rounded border-stone-300 dark:border-stone-600 shrink-0" />
+      <span className={`text-sm ${item.checked ? 'line-through text-stone-400 dark:text-stone-500' : 'text-stone-700 dark:text-stone-300'}`}>{item.name}</span>
+    </div>
+  );
+};

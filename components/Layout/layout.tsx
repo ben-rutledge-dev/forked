@@ -6,12 +6,13 @@ import { ReactNode } from 'react';
 // Components
 import { Button } from '@/components/Button';
 
-type Props = {
+type LayoutProps = {
   children: ReactNode
   title?: string
 };
 
-export const Layout = ({ children, title = 'Forked' }: Props) => {
+export const Layout: React.FC<LayoutProps> = (props) => {
+  const { children, title = 'Forked' } = props;
   const { data: session, status } = useSession();
   const t = useTranslations('nav');
 

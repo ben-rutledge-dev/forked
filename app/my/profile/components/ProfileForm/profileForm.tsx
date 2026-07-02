@@ -71,7 +71,13 @@ const uploadImage = async (file: File): Promise<string> => {
   });
 };
 
-export const ProfileForm = ({ user }: { user: UserProfile }) => {
+type ProfileFormProps = {
+  user: UserProfile
+};
+
+export const ProfileForm: React.FC<ProfileFormProps> = (props) => {
+  const { user } = props;
+
   const router = useRouter();
   const t = useTranslations('myProfile');
 

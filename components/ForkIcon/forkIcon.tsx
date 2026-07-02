@@ -7,7 +7,8 @@ type ForkIconProps = {
   size?: number
 };
 
-export const ForkIcon: React.FC<ForkIconProps> = ({ animating, onDone, size = 24 }) => {
+export const ForkIcon: React.FC<ForkIconProps> = (props) => {
+  const { animating, onDone, size = 24 } = props;
   return (
     <span className={`${styles.outer}${animating ? ` ${styles.animating}` : ''}`}>
       <span className={styles.inner} onAnimationEnd={onDone}>

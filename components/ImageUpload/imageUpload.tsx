@@ -31,7 +31,7 @@ const uploadToApi = async (file: File): Promise<string> => {
   });
 };
 
-type Props = {
+type ImageUploadProps = {
   value: string
   onChange: (url: string) => void
   onError?: (msg: string) => void
@@ -39,7 +39,8 @@ type Props = {
   previewSize?: 'sm' | 'md'
 };
 
-export const ImageUpload = ({ value, onChange, onError, label = 'Add photo', previewSize = 'md' }: Props) => {
+export const ImageUpload: React.FC<ImageUploadProps> = (props) => {
+  const { value, onChange, onError, label = 'Add photo', previewSize = 'md' } = props;
   const [uploading, setUploading] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const t = useTranslations('common');

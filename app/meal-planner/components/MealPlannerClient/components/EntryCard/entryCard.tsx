@@ -10,7 +10,7 @@ import type { MealPlanEntry } from '@/data/meal-plans/[mealPlanId]/types';
 // Components
 import { GripIcon } from '@/components/Icons';
 
-type Props = {
+type EntryCardProps = {
   entry: MealPlanEntry
   canEdit: boolean
   showBarBefore?: boolean
@@ -18,7 +18,15 @@ type Props = {
   onRemove: (entryId: string) => void
 };
 
-export const EntryCard = ({ entry, canEdit, showBarBefore = false, showBarAfter = false, onRemove }: Props) => {
+export const EntryCard: React.FC<EntryCardProps> = (props) => {
+  const {
+    entry,
+    canEdit,
+    showBarBefore = false,
+    showBarAfter = false,
+    onRemove,
+  } = props;
+
   const t = useTranslations('mealPlanner');
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: entry.id,
@@ -92,26 +100,14 @@ export const EntryCard = ({ entry, canEdit, showBarBefore = false, showBarAfter 
   );
 };
 
-const RecipeImage = ({ entry }: { entry: MealPlanEntry }) => (
-  entry.recipe?.coverImageUrl
-    ? (
-        <Image
-          src={entry.recipe.coverImageUrl}
-          alt={entry.recipe.title ?? ''}
-          width={32}
-          height={32}
-          className="rounded object-cover h-8 w-8 shrink-0"
-        />
-      )
-    : <div className="h-8 w-8 shrink-0 rounded bg-stone-100 dark:bg-stone-600" />
-);
+type RecipeImageProps = {
+  entry: MealPlanEntry
+};
 
-export const EntryCardGhost = ({ entry }: { entry: MealPlanEntry }) => (
-  <div className="flex items-center gap-1.5 rounded-lg squircle shadow-lg dark:shadow-stone-950/30 bg-white dark:bg-stone-800 px-1.5 py-1.5 opacity-80 cursor-grabbing">
-    <div className="shrink-0 p-0.5">
-      <GripIcon className="w-2.5 h-3.5 text-stone-300 dark:text-stone-600" />
-    </div>
-    {entry.recipe?.coverImageUrl
+const RecipeImage: React.FC<RecipeImageProps> = (props) => {
+  const { entry } = props;
+  return (
+    entry.recipe?.coverImageUrl
       ? (
           <Image
             src={entry.recipe.coverImageUrl}
@@ -121,9 +117,35 @@ export const EntryCardGhost = ({ entry }: { entry: MealPlanEntry }) => (
             className="rounded object-cover h-8 w-8 shrink-0"
           />
         )
-      : (
-          <div className="h-8 w-8 shrink-0 rounded bg-stone-100 dark:bg-stone-600" />
-        )}
-    <span className="text-xs font-medium text-stone-800 dark:text-stone-200 truncate">{entry.recipe?.title ?? '—'}</span>
-  </div>
-);
+      : <div className="h-8 w-8 shrink-0 rounded bg-stone-100 dark:bg-stone-600" />
+  );
+};
+
+type EntryCardGhostProps = {
+  entry: MealPlanEntry
+};
+
+export const EntryCardGhost: React.FC<EntryCardGhostProps> = (props) => {
+  const { entry } = props;
+  return (
+    <div className="flex items-center gap-1.5 rounded-lg squircle shadow-lg dark:shadow-stone-950/30 bg-white dark:bg-stone-800 px-1.5 py-1.5 opacity-80 cursor-grabbing">
+      <div className="shrink-0 p-0.5">
+        <GripIcon className="w-2.5 h-3.5 text-stone-300 dark:text-stone-600" />
+      </div>
+      {entry.recipe?.coverImageUrl
+        ? (
+            <Image
+              src={entry.recipe.coverImageUrl}
+              alt={entry.recipe.title ?? ''}
+              width={32}
+              height={32}
+              className="rounded object-cover h-8 w-8 shrink-0"
+            />
+          )
+        : (
+            <div className="h-8 w-8 shrink-0 rounded bg-stone-100 dark:bg-stone-600" />
+          )}
+      <span className="text-xs font-medium text-stone-800 dark:text-stone-200 truncate">{entry.recipe?.title ?? '—'}</span>
+    </div>
+  );
+};

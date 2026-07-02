@@ -12,7 +12,7 @@ import { PlannerDayLabel } from '@/components/PlannerDayLabel';
 // App
 import { SlotRow } from '@/app/meal-planner/components/MealPlannerClient/components/SlotRow';
 
-type Props = {
+type DayColumnProps = {
   date: string
   slots: MealPlanSlot[]
   entries: MealPlanEntry[]
@@ -31,7 +31,8 @@ const todayStr = (): string => {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 };
 
-export const DayColumn = ({ date, slots, entries, canEditSlots, canEditEntries, overEntryId, overEntrySide, overSlotKey, onAddRecipe, onRemoveEntry, onAddSlot }: Props) => {
+export const DayColumn: React.FC<DayColumnProps> = (props) => {
+  const { date, slots, entries, canEditSlots, canEditEntries, overEntryId, overEntrySide, overSlotKey, onAddRecipe, onRemoveEntry, onAddSlot } = props;
   const t = useTranslations('mealPlanner');
   const isToday = date === todayStr();
 

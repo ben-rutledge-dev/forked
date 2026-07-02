@@ -28,15 +28,21 @@ import type { Recipe } from '@/types';
 // Utils
 import { OWNER } from '@/utils/roles';
 
-type Props = {
+type RecipeBookDetailClientProps = {
   book: RecipeBookDetail
   currentUserId: string
   isPremium: boolean
   userRecipes: Pick<Recipe, 'id' | 'title' | 'coverImageUrl'>[]
 };
 
-export const RecipeBookDetailClient: React.FC<Props> = (props) => {
-  const { book: initialBook, currentUserId, isPremium, userRecipes } = props;
+export const RecipeBookDetailClient: React.FC<RecipeBookDetailClientProps> = (props) => {
+  const {
+    book: initialBook,
+    currentUserId,
+    isPremium,
+    userRecipes,
+  } = props;
+
   const router = useRouter();
   const t = useTranslations('recipeBooks');
   const [book, setBook] = useState<RecipeBookDetail>(initialBook);

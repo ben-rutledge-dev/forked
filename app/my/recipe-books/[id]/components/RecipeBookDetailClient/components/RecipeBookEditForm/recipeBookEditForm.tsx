@@ -23,13 +23,14 @@ const schema = z.object({
 });
 type FormValues = z.infer<typeof schema>;
 
-type Props = {
+type RecipeBookEditFormProps = {
   book: RecipeBookDetail
   onSaved: (updated: Partial<RecipeBookDetail>) => void
   onCancel: () => void
 };
 
-export const RecipeBookEditForm = ({ book, onSaved, onCancel }: Props) => {
+export const RecipeBookEditForm: React.FC<RecipeBookEditFormProps> = (props) => {
+  const { book, onSaved, onCancel } = props;
   const t = useTranslations('recipeBooks');
 
   const {

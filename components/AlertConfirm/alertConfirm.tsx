@@ -12,13 +12,14 @@ export type AlertConfirmProps = {
   onConfirm: (value: boolean) => void
 };
 
-export const AlertConfirm = ({
-  text,
-  confirmLabel,
-  cancelLabel,
-  variant = 'danger',
-  onConfirm,
-}: AlertConfirmProps) => {
+export const AlertConfirm: React.FC<AlertConfirmProps> = (props) => {
+  const {
+    text,
+    confirmLabel,
+    cancelLabel,
+    variant = 'danger',
+    onConfirm,
+  } = props;
   const t = useTranslations('alertConfirm');
 
   return (

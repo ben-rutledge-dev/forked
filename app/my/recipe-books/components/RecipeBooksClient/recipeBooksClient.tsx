@@ -27,12 +27,15 @@ type PendingInvite = {
   invitedByUserId: string
 };
 
-type Props = {
+type RecipeBooksClientProps = {
   initialBooks: Book[]
   initialPending: PendingInvite[]
 };
 
-export const RecipeBooksClient = ({ initialBooks, initialPending }: Props) => {
+export const RecipeBooksClient: React.FC<RecipeBooksClientProps> = (props) => {
+  const {
+    initialBooks,
+    initialPending } = props;
   const [books, setBooks] = useState(initialBooks);
   const [pending, setPending] = useState(initialPending);
   const [acting, setActing] = useState<string | null>(null);

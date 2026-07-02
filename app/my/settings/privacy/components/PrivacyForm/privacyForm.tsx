@@ -9,12 +9,16 @@ import { Checkbox } from '@/components/Checkbox';
 import { FormBanner } from '@/components/FormBanner';
 import { Toast } from '@/components/Toast';
 
-type Props = {
+type PrivacyFormProps = {
   isPublic: boolean
   showName: boolean
 };
 
-export const PrivacyForm = ({ isPublic: initialIsPublic, showName: initialShowName }: Props) => {
+export const PrivacyForm: React.FC<PrivacyFormProps> = (props) => {
+  const {
+    isPublic: initialIsPublic,
+    showName: initialShowName,
+  } = props;
   const t = useTranslations('myProfile');
   const router = useRouter();
   const [isPublic, setIsPublic] = useState(initialIsPublic);

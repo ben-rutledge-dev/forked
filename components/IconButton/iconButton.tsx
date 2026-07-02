@@ -16,14 +16,8 @@ const variantClasses: Record<IconButtonVariant, string> = {
   danger: 'text-stone-300 hover:text-danger-400 leading-none',
 };
 
-export const IconButton: React.FC<IconButtonProps> = ({
-  variant = 'default',
-  disabled,
-  type = 'button',
-  onClick,
-  className,
-  children,
-}) => {
+export const IconButton: React.FC<IconButtonProps> = (props) => {
+  const { variant = 'default', disabled, type = 'button', onClick, className, children } = props;
   const classes = [
     'transition-colors',
     variantClasses[variant],

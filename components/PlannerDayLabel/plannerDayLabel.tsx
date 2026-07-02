@@ -1,9 +1,10 @@
-type Props = {
+type PlannerDayLabelProps = {
   dateStr: string
   isToday?: boolean
 };
 
-export const PlannerDayLabel = ({ dateStr, isToday = false }: Props) => {
+export const PlannerDayLabel: React.FC<PlannerDayLabelProps> = (props) => {
+  const { dateStr, isToday = false } = props;
   const [y, m, d] = dateStr.split('-').map(Number);
   const date = new Date(Date.UTC(y, m - 1, d));
   const weekday = new Intl.DateTimeFormat(undefined, { weekday: 'short', timeZone: 'UTC' }).format(date).toUpperCase();

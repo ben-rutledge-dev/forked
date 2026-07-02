@@ -9,12 +9,13 @@ import { AddToShoppingListModal } from '@/components/AddToShoppingListModal';
 import { Button } from '@/components/Button';
 import { Toast } from '@/components/Toast';
 
-type Props = {
+type AddToShoppingListButtonProps = {
   recipeId: string
   recipeTitle: string
 };
 
-export const AddToShoppingListButton = ({ recipeId, recipeTitle }: Props) => {
+export const AddToShoppingListButton: React.FC<AddToShoppingListButtonProps> = (props) => {
+  const { recipeId, recipeTitle } = props;
   const { modal } = useModal();
   const t = useTranslations('addToShoppingList');
   const [toast, setToast] = useState<string | null>(null);

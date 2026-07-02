@@ -10,7 +10,12 @@ import type { Recipe } from '@/types';
 
 const PAGE_SIZE = 12;
 
-export const ProfileRecipesGrid = ({ recipes }: { recipes: Recipe[] }) => {
+type ProfileRecipesGridProps = {
+  recipes: Recipe[]
+};
+
+export const ProfileRecipesGrid: React.FC<ProfileRecipesGridProps> = (props) => {
+  const { recipes } = props;
   const [page, setPage] = useState(1);
   const t = useTranslations('myProfile');
   const totalPages = Math.ceil(recipes.length / PAGE_SIZE);

@@ -7,7 +7,7 @@ import type { BookEntry } from '@/data/recipe-books/[recipeBookId]/types';
 import { Button } from '@/components/Button';
 import { RecipeCard } from '@/components/RecipeCard';
 
-type Props = {
+type BookRecipesSectionProps = {
   entries: BookEntry[]
   isMember: boolean
   currentUserId: string
@@ -16,7 +16,16 @@ type Props = {
   onMove: (entryId: string, direction: 'up' | 'down') => void
 };
 
-export const BookRecipesSection = ({ entries, isMember, currentUserId, onAddRecipe, onRemoveEntry, onMove }: Props) => {
+export const BookRecipesSection: React.FC<BookRecipesSectionProps> = (props) => {
+  const {
+    entries,
+    isMember,
+    currentUserId,
+    onAddRecipe,
+    onRemoveEntry,
+    onMove,
+  } = props;
+
   const sortedEntries = [...entries].sort((a, b) => a.orderIndex - b.orderIndex);
   const t = useTranslations('recipeBooks');
 

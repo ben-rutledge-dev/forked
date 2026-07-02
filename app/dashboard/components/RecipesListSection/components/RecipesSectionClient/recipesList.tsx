@@ -7,11 +7,12 @@ import type { PostRecipeResponse } from '@/data/recipes/types';
 // Components
 import { CompactRecipeCard } from './components/CompactRecipeCard';
 
-type Props = {
+type RecipesListProps = {
   recipes: PostRecipeResponse[]
 };
 
-export const RecipesList = ({ recipes }: Props) => {
+export const RecipesList: React.FC<RecipesListProps> = (props) => {
+  const { recipes } = props;
   const t = useTranslations('dashboard.recipes');
 
   if (recipes.length === 0) {

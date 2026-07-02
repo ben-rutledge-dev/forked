@@ -19,14 +19,15 @@ type ToastState
     | { type: 'standard', message: string }
     | null;
 
-type Props = {
+type SuggestionsSectionProps = {
   suggestions: Suggestion[]
   userId: string
   selectedListId: string | null
   selectedListName: string | null
 };
 
-export const SuggestionsSection = ({ suggestions: initialSuggestions, userId, selectedListId, selectedListName }: Props) => {
+export const SuggestionsSection: React.FC<SuggestionsSectionProps> = (props) => {
+  const { suggestions: initialSuggestions, userId, selectedListId, selectedListName } = props;
   const t = useTranslations('dashboard.suggestions');
   const [suggestions, setSuggestions] = useState<Suggestion[]>(initialSuggestions);
   const [selected, setSelected] = useState(new Set<string>());

@@ -15,14 +15,17 @@ const pyClasses: Record<Py, string> = {
   spacious: 'py-24',
 };
 
-type Props = {
+type PageLayoutProps = {
   width?: Width
   py?: Py
   children: React.ReactNode
 };
 
-export const PageLayout: React.FC<Props> = ({ width = 'wide', py = 'md', children }) => (
-  <div className={`mx-auto px-4 sm:px-8 lg:px-12 ${widthClasses[width]} ${pyClasses[py]}`}>
-    {children}
-  </div>
-);
+export const PageLayout: React.FC<PageLayoutProps> = (props) => {
+  const { width = 'wide', py = 'md', children } = props;
+  return (
+    <div className={`mx-auto px-4 sm:px-8 lg:px-12 ${widthClasses[width]} ${pyClasses[py]}`}>
+      {children}
+    </div>
+  );
+};

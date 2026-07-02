@@ -37,9 +37,10 @@ const buildSuggestions = (
   return Array.from(seen.values());
 };
 
-type Props = { userId: string, todayStr: string, endStr: string };
+type GrocerySectionProps = { userId: string, todayStr: string, endStr: string };
 
-export const GrocerySection = async ({ userId, todayStr, endStr }: Props) => {
+export const GrocerySection: React.FC<GrocerySectionProps> = async (props) => {
+  const { userId, todayStr, endStr } = props;
   const [isPremium, membership, rawLists] = await Promise.all([
     getIsPremium(userId),
     getMembership(userId),

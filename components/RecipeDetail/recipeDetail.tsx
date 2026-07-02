@@ -11,7 +11,7 @@ import { SectionHeading } from '@/components/Typography';
 // Types
 import { RecipeWithRelations } from '@/types';
 
-type Props = {
+type RecipeDetailProps = {
   recipe: RecipeWithRelations
   cookHref: string
   cookVariant?: 'primary' | 'secondary'
@@ -21,15 +21,8 @@ type Props = {
   backHref?: string
 };
 
-export const RecipeDetail = async ({
-  recipe,
-  cookHref,
-  cookVariant = 'secondary',
-  headerAction,
-  ingredientsAction,
-  metaBadge,
-  backHref,
-}: Props) => {
+export const RecipeDetail = async (props: RecipeDetailProps) => {
+  const { recipe, cookHref, cookVariant = 'secondary', headerAction, ingredientsAction, metaBadge, backHref } = props;
   const t = await getTranslations('recipeDetail');
   return (
     <div>

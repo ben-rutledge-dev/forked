@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 // Components
 import { CircleCheckIcon, CircleXIcon } from '@/components/Icons';
 
-type Props = {
+type ToastProps = {
   message: string
   type?: 'success' | 'error'
   onDismiss?: () => void
@@ -12,7 +12,8 @@ type Props = {
   action?: { label: string, onClick: () => void }
 };
 
-export const Toast = ({ message, type = 'success', onDismiss, duration = 4000, action }: Props) => {
+export const Toast: React.FC<ToastProps> = (props) => {
+  const { message, type = 'success', onDismiss, duration = 4000, action } = props;
   useEffect(() => {
     if (!onDismiss) return;
     const t = setTimeout(onDismiss, duration);

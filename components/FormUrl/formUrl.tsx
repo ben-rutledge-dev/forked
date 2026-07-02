@@ -8,21 +8,24 @@ const normalizeUrl = (value: string): string => {
   return /^https?:\/\//i.test(v) ? v : `https://${v}`;
 };
 
-type Props = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'size'> & {
+type FormUrlProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'type' | 'onChange' | 'size'> & {
   value: string
   onChange: (value: string) => void
 };
 
-export const FormUrl = ({ value, onChange, onBlur, ...props }: Props) => (
-  <TextInput
-    type="url"
-    value={value}
-    onChange={e => onChange(e.target.value)}
-    onBlur={(e) => {
-      const normalized = normalizeUrl(e.target.value);
-      if (normalized !== e.target.value) onChange(normalized);
-      if (typeof onBlur === 'function') onBlur(e);
-    }}
-    {...props}
-  />
-);
+export const FormUrl: React.FC<FormUrlProps> = (props) => {
+  const { value, onChange, onBlur, ...rest } = props;
+  return (
+    <TextInput
+      type="url"
+      value={value}
+      onChange={e => onChange(e.target.value)}
+      onBlur={(e) => {
+        const normalized = normalizeUrl(e.target.value);
+        if (normalized !== e.target.value) onChange(normalized);
+        if (typeof onBlur === 'function') onBlur(e);
+      }}
+      {...rest}
+    />
+  );
+};

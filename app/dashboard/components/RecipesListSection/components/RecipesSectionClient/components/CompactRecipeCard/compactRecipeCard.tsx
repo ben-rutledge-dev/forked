@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { RecipeIcon } from '@/components/Icons';
 import { RecipeTagPill } from '@/components/RecipeTagPill';
 
-type Props = {
+type CompactRecipeCardProps = {
   id: string
   title: string
   coverImageUrl: string | null
@@ -12,7 +12,8 @@ type Props = {
   categories?: string[]
 };
 
-export const CompactRecipeCard = ({ id, title, coverImageUrl, tags, categories }: Props) => {
+export const CompactRecipeCard: React.FC<CompactRecipeCardProps> = (props) => {
+  const { id, title, coverImageUrl, tags, categories } = props;
   const chips = [...(categories ?? []).map(c => ({ label: c, kind: 'category' as const })), ...(tags ?? []).map(t => ({ label: t, kind: 'tag' as const }))];
   return (
     <Link

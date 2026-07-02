@@ -17,7 +17,7 @@ const subscribeListSelection = (cb: () => void) => {
 const readStoredListId = () => localStorage.getItem(LS_KEY);
 const serverStoredListId = () => null;
 
-type Props = {
+type GroceryCardProps = {
   suggestions: Suggestion[] | null
   shoppingLists: ShoppingListWithStats[]
   isPremium: boolean
@@ -25,13 +25,8 @@ type Props = {
   userId: string
 };
 
-export const GroceryCard = ({
-  suggestions,
-  shoppingLists,
-  isPremium,
-  hasMealPlan,
-  userId,
-}: Props) => {
+export const GroceryCard: React.FC<GroceryCardProps> = (props) => {
+  const { suggestions, shoppingLists, isPremium, hasMealPlan, userId } = props;
   const storedListId = useSyncExternalStore(subscribeListSelection, readStoredListId, serverStoredListId);
   const selectedListId = (storedListId && shoppingLists.some(l => l.id === storedListId))
     ? storedListId

@@ -1,6 +1,6 @@
 type Variant = 'success' | 'neutral' | 'primary';
 
-type Props = {
+type BadgeProps = {
   children: React.ReactNode
   variant?: Variant
   className?: string
@@ -12,8 +12,11 @@ const variantClasses: Record<Variant, string> = {
   primary: 'bg-primary-50 dark:bg-primary-700 text-primary-500 dark:text-primary-100',
 };
 
-export const Badge = ({ children, variant = 'neutral', className = '' }: Props) => (
-  <span className={`w-fit rounded squircle px-1.5 py-0.5 ${variantClasses[variant]} ${className}`}>
-    {children}
-  </span>
-);
+export const Badge: React.FC<BadgeProps> = (props) => {
+  const { children, variant = 'neutral', className = '' } = props;
+  return (
+    <span className={`w-fit rounded squircle px-1.5 py-0.5 ${variantClasses[variant]} ${className}`}>
+      {children}
+    </span>
+  );
+};

@@ -1,12 +1,13 @@
 // Components
 import { Badge } from '@/components/Badge';
 
-type Props = {
+type UserBadgeProps = {
   role: string
   className?: string
 };
 
-export const UserBadge = ({ role, className = '' }: Props) => {
+export const UserBadge: React.FC<UserBadgeProps> = (props) => {
+  const { role, className = '' } = props;
   const baseClass = 'text-xs font-medium';
   const combinedClass = className ? `${baseClass} ${className}` : baseClass;
 

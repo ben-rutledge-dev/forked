@@ -8,7 +8,7 @@ import React from 'react';
 import { ChevronLeftIcon } from '@/components/Icons';
 import { PageHeading } from '@/components/Typography';
 
-type Props = {
+type PageHeaderProps = {
   title?: string
   titleContent?: React.ReactNode
   action?: React.ReactNode
@@ -16,7 +16,13 @@ type Props = {
   subtitle?: string
 };
 
-const BackButton = ({ href, label }: { href: string, label: string }) => {
+type BackButtonProps = {
+  href: string
+  label: string
+};
+
+const BackButton: React.FC<BackButtonProps> = (props) => {
+  const { href, label } = props;
   const router = useRouter();
   return (
     <Link
@@ -33,7 +39,7 @@ const BackButton = ({ href, label }: { href: string, label: string }) => {
   );
 };
 
-export const PageHeader: React.FC<Props> = (props) => {
+export const PageHeader: React.FC<PageHeaderProps> = (props) => {
   const { title, titleContent, action, backHref, subtitle } = props;
   const t = useTranslations('common');
   return (

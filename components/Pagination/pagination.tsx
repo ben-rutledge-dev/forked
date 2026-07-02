@@ -4,13 +4,14 @@ import { useTranslations } from 'next-intl';
 // Components
 import { Button } from '@/components/Button';
 
-type Props = {
+type PaginationProps = {
   page: number
   totalPages: number
   onPageChange: (page: number) => void
 };
 
-export const Pagination = ({ page, totalPages, onPageChange }: Props) => {
+export const Pagination: React.FC<PaginationProps> = (props) => {
+  const { page, totalPages, onPageChange } = props;
   const t = useTranslations('pagination');
   if (totalPages <= 1) return null;
 

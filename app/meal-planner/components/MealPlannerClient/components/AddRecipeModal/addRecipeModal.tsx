@@ -9,13 +9,14 @@ import { useSavedRecipes, type SavedRecipe } from '@/data/meal-plans';
 import { Button } from '@/components/Button';
 import { TextInput } from '@/components/TextInput';
 
-type Props = {
+type AddRecipeModalProps = {
   slotLabel: string
   dayLabel: string
   onConfirm: (recipe: SavedRecipe | null) => void
 };
 
-export const AddRecipeModal = ({ slotLabel, dayLabel, onConfirm }: Props) => {
+export const AddRecipeModal: React.FC<AddRecipeModalProps> = (props) => {
+  const { slotLabel, dayLabel, onConfirm } = props;
   const t = useTranslations('mealPlanner');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState<SavedRecipe | null>(null);

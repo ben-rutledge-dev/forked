@@ -31,18 +31,11 @@ import { IngredientFormData, RecipeFormData, StepFormData } from '@/types';
 // Lib
 import { GROUP_LABELS, CATEGORY_GROUP_ORDER } from '@/lib/categories';
 
-type Props = {
+type RecipeFormProps = {
   initialData?: Partial<RecipeFormData & { categoryIds?: string[], tags?: string[] }>
   recipeId?: string
   forkedFrom?: { id: string, title: string, isPublic: boolean } | null
 };
-
-const recipeSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string(),
-  isPublic: z.boolean(),
-  coverImageUrl: z.string(),
-});
 type RecipeFormValues = z.infer<typeof recipeSchema>;
 
 export type IngredientItem = IngredientFormData & { _id: string };
@@ -68,7 +61,8 @@ export const emptyStep = (): StepItem => ({
 const withIds = <T extends object>(items: T[]): (T & { _id: string })[] =>
   items.map(item => ({ ...item, _id: newId() }));
 
-export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
+export const RecipeForm: React.FC<RecipeFormProps> = (props) => {
+  const { initialData, recipeId, forkedFrom } = props;
   const router = useRouter();
   const t = useTranslations('recipeForm');
   const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
@@ -406,3 +400,10 @@ export const RecipeForm = ({ initialData, recipeId, forkedFrom }: Props) => {
     </form>
   );
 };
+
+const recipeSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string(),
+  isPublic: z.boolean(),
+  coverImageUrl: z.string(),
+});

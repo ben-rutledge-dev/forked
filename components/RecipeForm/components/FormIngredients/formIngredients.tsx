@@ -14,7 +14,7 @@ import { IngredientFormData } from '@/types';
 
 type IngredientItem = IngredientFormData & { _id: string };
 
-type Props = {
+type FormIngredientsProps = {
   ingredients: IngredientItem[]
   actions: ReturnType<typeof useListField<IngredientItem>>
   emptyIngredient: () => IngredientItem
@@ -22,7 +22,8 @@ type Props = {
   onClearError?: (id: string) => void
 };
 
-export const FormIngredients = ({ ingredients, actions, emptyIngredient, ingredientErrors, onClearError }: Props) => {
+export const FormIngredients: React.FC<FormIngredientsProps> = (props) => {
+  const { ingredients, actions, emptyIngredient, ingredientErrors, onClearError } = props;
   const t = useTranslations('formIngredients');
 
   return (

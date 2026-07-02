@@ -2,19 +2,15 @@
 
 import { useTranslations } from 'next-intl';
 
-type Props = {
+type ResultCountProps = {
   count: number
   isFetching?: boolean
   hasFilters?: boolean
   onClear?: () => void
 };
 
-export const ResultCount = ({
-  count,
-  isFetching = false,
-  hasFilters = false,
-  onClear,
-}: Props) => {
+export const ResultCount: React.FC<ResultCountProps> = (props) => {
+  const { count, isFetching = false, hasFilters = false, onClear } = props;
   const t = useTranslations('search');
 
   return (

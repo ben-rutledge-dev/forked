@@ -13,7 +13,7 @@ import { VisibilityBadge } from '@/components/VisibilityBadge';
 // Utils
 import { OWNER, type Role } from '@/utils/roles';
 
-type Props = {
+type RecipeBookCardProps = {
   id: string
   title: string
   coverImageUrl?: string | null
@@ -24,16 +24,8 @@ type Props = {
   href?: string
 };
 
-export const RecipeBookCard = ({
-  id,
-  title,
-  coverImageUrl,
-  recipeCount,
-  memberCount,
-  isPublic,
-  role,
-  href,
-}: Props) => {
+export const RecipeBookCard: React.FC<RecipeBookCardProps> = (props) => {
+  const { id, title, coverImageUrl, recipeCount, memberCount, isPublic, role, href } = props;
   const { confirm } = useConfirm();
   const { mutate: deleteBook, isPending: removing } = useDeleteRecipeBook({ recipeBookId: id });
   const t = useTranslations('recipeBookCard');

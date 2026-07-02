@@ -11,12 +11,13 @@ import { IngredientsDisplay } from '@/components/IngredientsDisplay';
 // Types
 import { RecipeWithRelations } from '@/types';
 
-type Props = {
+type CookModeProps = {
   recipe: RecipeWithRelations
   backHref: string
 };
 
-export const CookMode = ({ recipe, backHref }: Props) => {
+export const CookMode: React.FC<CookModeProps> = (props) => {
+  const { recipe, backHref } = props;
   const steps = recipe.steps;
   const t = useTranslations('cookMode');
   const [stepIndex, setStepIndex] = useState(0);

@@ -8,7 +8,12 @@ import { useConfirm } from '@/hooks/useConfirm';
 // Components
 import { Button } from '@/components/Button';
 
-export const DeleteButton = ({ recipeId }: { recipeId: string }) => {
+type DeleteButtonProps = {
+  recipeId: string
+};
+
+export const DeleteButton: React.FC<DeleteButtonProps> = (props) => {
+  const { recipeId } = props;
   const router = useRouter();
   const { confirm } = useConfirm();
   const t = useTranslations('common');

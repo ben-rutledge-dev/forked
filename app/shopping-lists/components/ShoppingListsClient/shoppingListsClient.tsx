@@ -111,7 +111,12 @@ const createListSchema = z.object({
 });
 type CreateListForm = z.infer<typeof createListSchema>;
 
-const NewListAction = ({ onNew }: { onNew: () => void }) => {
+type NewListActionProps = {
+  onNew: () => void
+};
+
+const NewListAction: React.FC<NewListActionProps> = (props) => {
+  const { onNew } = props;
   const t = useTranslations('shoppingLists');
   return (
     <Button variant="primary" size="md" onClick={onNew}>

@@ -17,26 +17,13 @@ export type DashboardEntry = {
   recipe: { id: string, title: string, coverImageUrl: string | null } | null
 };
 
-type Props = {
+type MealPlanStripProps = {
   data: { entries: DashboardEntry[] }
   startDateStr: string
 };
 
-const buildDays = (entries: DashboardEntry[], startDateStr: string): Array<{ dateStr: string, entries: DashboardEntry[], isToday: boolean, isPast: boolean }> => {
-  const today = todayStr();
-
-  return Array.from({ length: 7 }, (_, i) => {
-    const dateStr = addDays(startDateStr, i);
-    return {
-      dateStr,
-      entries: entries.filter(e => e.date === dateStr),
-      isToday: dateStr === today,
-      isPast: dateStr < today,
-    };
-  });
-};
-
-export const MealPlanStrip = ({ data, startDateStr }: Props) => {
+export const MealPlanStrip: React.FC<MealPlanStripProps> = (props) => {
+  const { data, startDateStr } = props;
   const t = useTranslations('dashboard.mealPlanStrip');
   const days = buildDays(data.entries, startDateStr);
 
@@ -123,4 +110,18 @@ export const MealPlanStripEmpty = () => {
       </Link>
     </div>
   );
+};
+
+const buildDays = (entries: DashboardEntry[], startDateStr: string): Array<{ dateStr: string, entries: DashboardEntry[], isToday: boolean, isPast: boolean }> => {
+  const today = todayStr();
+
+  return Array.from({ length: 7 }, (_, i) => {
+    const dateStr = addDays(startDateStr, i);
+    return {
+      dateStr,
+      entries: entries.filter(e => e.date === dateStr),
+      isToday: dateStr === today,
+      isPast: dateStr < today,
+    };
+  });
 };

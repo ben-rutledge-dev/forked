@@ -8,7 +8,12 @@ type Dismissal = {
   createdAt: string
 };
 
-export const DismissalsList = ({ initialDismissals }: { initialDismissals: Dismissal[] }) => {
+type DismissalsListProps = {
+  initialDismissals: Dismissal[]
+};
+
+export const DismissalsList: React.FC<DismissalsListProps> = (props) => {
+  const { initialDismissals } = props;
   const t = useTranslations('settings');
   const [dismissals, setDismissals] = useState(initialDismissals);
   const [restoringSet, setRestoringSet] = useState<Set<string>>(new Set());

@@ -4,13 +4,19 @@ import { useTranslations } from 'next-intl';
 // Components
 import { InviteForm } from '@/components/Invites';
 
-type Props = {
+type InviteModalProps = {
   bookId: string
   isPremium: boolean
   onConfirm: (value: true | null) => void
 };
 
-export const InviteModal = ({ bookId, isPremium, onConfirm }: Props) => {
+export const InviteModal: React.FC<InviteModalProps> = (props) => {
+  const {
+    bookId,
+    isPremium,
+    onConfirm,
+  } = props;
+
   const t = useTranslations('recipeBooks');
 
   return (

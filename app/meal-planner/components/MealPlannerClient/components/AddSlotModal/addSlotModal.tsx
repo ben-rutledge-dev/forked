@@ -13,11 +13,12 @@ const schema = z.object({
 });
 type AddSlotForm = z.infer<typeof schema>;
 
-type Props = {
+type AddSlotModalProps = {
   onConfirm: (label: string | null) => void
 };
 
-export const AddSlotModal = ({ onConfirm }: Props) => {
+export const AddSlotModal: React.FC<AddSlotModalProps> = (props) => {
+  const { onConfirm } = props;
   const t = useTranslations('mealPlanner');
   const { register, handleSubmit, formState: { errors } } = useForm<AddSlotForm>({
     resolver: zodResolver(schema),

@@ -51,7 +51,7 @@ import { Toast } from '@/components/Toast';
 import { PageHeading } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
 
-type Props = {
+type ShoppingListDetailClientProps = {
   shoppingListId: string
   currentUserId: string
   isPremium: boolean
@@ -59,7 +59,7 @@ type Props = {
 
 // ─── Main client ──────────────────────────────────────────────────────────────
 
-export const ShoppingListDetailClient: React.FC<Props> = (props) => {
+export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> = (props) => {
   const { shoppingListId, currentUserId, isPremium } = props;
   const router = useRouter();
   const queryClient = useQueryClient();

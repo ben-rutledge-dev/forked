@@ -24,16 +24,8 @@ type TokenInputProps = {
   disabled?: boolean
 };
 
-export const TokenInput = ({
-  mode,
-  value,
-  onChange,
-  options,
-  placeholder = 'Type to search…',
-  groupLabels,
-  groupOrder,
-  disabled,
-}: TokenInputProps) => {
+export const TokenInput: React.FC<TokenInputProps> = (props) => {
+  const { mode, value, onChange, options, placeholder = 'Type to search…', groupLabels, groupOrder, disabled } = props;
   const [inputValue, setInputValue] = useState('');
   const [open, setOpen] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -282,14 +274,8 @@ type PillSelectProps = {
   disabled?: boolean
 };
 
-const PillSelect = ({
-  value,
-  onChange,
-  options,
-  groupLabels,
-  groupOrder,
-  disabled,
-}: PillSelectProps) => {
+const PillSelect: React.FC<PillSelectProps> = (props) => {
+  const { value, onChange, options, groupLabels, groupOrder, disabled } = props;
   const toggle = (id: string) =>
     onChange(value.includes(id) ? value.filter(v => v !== id) : [...value, id]);
 
@@ -351,22 +337,25 @@ type OptionItemProps = {
   onMouseEnter: () => void
 };
 
-const OptionItem = ({ opt, selected, focused, onSelect, onMouseEnter }: OptionItemProps) => (
-  <li
-    role="option"
-    aria-selected={selected}
-    onMouseDown={(e) => {
-      e.preventDefault();
-      onSelect(opt);
-    }}
-    onMouseEnter={onMouseEnter}
-    className={`flex items-center justify-between px-3 py-2 text-sm cursor-pointer select-none ${
-      focused ? 'bg-stone-100 dark:bg-stone-700' : 'hover:bg-stone-50 dark:hover:bg-stone-700'
-    } ${selected ? 'text-stone-500 dark:text-stone-400' : 'text-stone-700 dark:text-stone-300'}`}
-  >
-    <span>{opt.label}</span>
-    {selected && (
-      <CheckIcon className="w-3.5 h-3.5" />
-    )}
-  </li>
-);
+const OptionItem: React.FC<OptionItemProps> = (props) => {
+  const { opt, selected, focused, onSelect, onMouseEnter } = props;
+  return (
+    <li
+      role="option"
+      aria-selected={selected}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        onSelect(opt);
+      }}
+      onMouseEnter={onMouseEnter}
+      className={`flex items-center justify-between px-3 py-2 text-sm cursor-pointer select-none ${
+        focused ? 'bg-stone-100 dark:bg-stone-700' : 'hover:bg-stone-50 dark:hover:bg-stone-700'
+      } ${selected ? 'text-stone-500 dark:text-stone-400' : 'text-stone-700 dark:text-stone-300'}`}
+    >
+      <span>{opt.label}</span>
+      {selected && (
+        <CheckIcon className="w-3.5 h-3.5" />
+      )}
+    </li>
+  );
+};

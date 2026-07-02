@@ -7,7 +7,7 @@ import { UNIT_META } from '@/utils/units';
 
 type UnitValue = { unitKey: string | null, unit: string | null };
 
-type Props = {
+type UnitSelectProps = {
   unitKey: string | null
   unit: string | null
   onChange: (value: UnitValue) => void
@@ -26,7 +26,8 @@ const weightKeys = ['G', 'KG', 'OZ', 'LB'] as const;
 const selectClass
   = 'rounded-lg border border-stone-300 dark:border-stone-600 text-stone-900 dark:text-stone-100 placeholder-stone-400 dark:placeholder-stone-500 focus:border-stone-500 dark:focus:border-stone-400 focus:outline-none focus:ring-1 focus:ring-stone-500 dark:focus:ring-stone-400 px-2 py-1.5 text-sm w-28 bg-white dark:bg-stone-800';
 
-export const UnitSelect = ({ unitKey, unit, onChange, disabled, customPlaceholder, customLabel, ariaLabel }: Props) => {
+export const UnitSelect: React.FC<UnitSelectProps> = (props) => {
+  const { unitKey, unit, onChange, disabled, customPlaceholder, customLabel, ariaLabel } = props;
   // Derived directly from props — no local state needed
   // unit === '' means custom mode with nothing typed yet; unit === null means no unit selected
   const hasCustomUnit = unit !== null;

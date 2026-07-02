@@ -12,20 +12,20 @@ type DismissibleChipProps = {
   selected: boolean
   onToggle: () => void
   onSkip: () => void
-  onAlwaysSkip: () => void
   disabled?: boolean
 };
 
 const LONGPRESS_MS = 500;
 
-export const DismissibleChip = ({
-  label,
-  recipes,
-  selected,
-  onToggle,
-  onSkip,
-  disabled = false,
-}: DismissibleChipProps) => {
+export const DismissibleChip: React.FC<DismissibleChipProps> = (props) => {
+  const {
+    label,
+    recipes,
+    selected,
+    onToggle,
+    onSkip,
+    disabled = false,
+  } = props;
   const t = useTranslations('common');
   const [showTooltip, setShowTooltip] = useState(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);

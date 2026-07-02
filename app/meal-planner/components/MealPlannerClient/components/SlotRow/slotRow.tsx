@@ -13,7 +13,7 @@ import type { MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]
 // App
 import { EntryCard } from '@/app/meal-planner/components/MealPlannerClient/components/EntryCard';
 
-type Props = {
+type SlotRowProps = {
   slot: MealPlanSlot
   date: string
   entries: MealPlanEntry[]
@@ -26,7 +26,19 @@ type Props = {
   onRemoveEntry: (entryId: string) => void
 };
 
-export const SlotRow = ({ slot, date, entries, canEditSlots, canEditEntries, isHighlighted, overEntryId, overEntrySide, onAddRecipe, onRemoveEntry }: Props) => {
+export const SlotRow: React.FC<SlotRowProps> = (props) => {
+  const {
+    slot,
+    date,
+    entries,
+    canEditSlots,
+    canEditEntries,
+    isHighlighted,
+    overEntryId,
+    overEntrySide,
+    onAddRecipe,
+    onRemoveEntry,
+  } = props;
   const t = useTranslations('mealPlanner');
   const draggable = canEditSlots && !slot.isDefault;
   const { attributes, listeners, setNodeRef: setSortableRef, transform, transition, isDragging } = useSortable({

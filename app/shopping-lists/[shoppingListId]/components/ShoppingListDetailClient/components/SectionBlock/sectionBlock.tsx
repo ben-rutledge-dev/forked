@@ -24,7 +24,8 @@ type SectionBlockProps = {
   shoppingListId: string
 };
 
-export const SectionBlock = ({ section, items, isUnsorted, shoppingListId }: SectionBlockProps) => {
+export const SectionBlock: React.FC<SectionBlockProps> = (props) => {
+  const { section, items, isUnsorted, shoppingListId } = props;
   const { attributes, listeners, setNodeRef, isDragging } = useSortable({
     id: section.id,
     data: { type: 'section' },

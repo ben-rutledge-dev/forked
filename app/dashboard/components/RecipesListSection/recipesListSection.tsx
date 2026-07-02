@@ -6,9 +6,10 @@ import { RecipesList } from './components/RecipesSectionClient';
 // Queries
 import { getUserRecipes } from '@/app/dashboard/queries';
 
-type Props = { userId: string };
+type RecipesListSectionProps = { userId: string };
 
-export const RecipesListSection = async ({ userId }: Props) => {
+export const RecipesListSection: React.FC<RecipesListSectionProps> = async (props) => {
+  const { userId } = props;
   const raw = await getUserRecipes(userId);
   const recipes: PostRecipeResponse[] = raw.map(r => ({
     id: r.id,

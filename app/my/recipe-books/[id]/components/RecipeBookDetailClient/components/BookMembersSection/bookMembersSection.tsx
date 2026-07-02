@@ -10,7 +10,7 @@ import { Button } from '@/components/Button';
 // Utils
 import { OWNER } from '@/utils/roles';
 
-type Props = {
+type BookMembersSectionProps = {
   members: BookMember[]
   isOwner: boolean
   currentUserId: string
@@ -18,7 +18,15 @@ type Props = {
   onRemoveMember: (userId: string) => void
 };
 
-export const BookMembersSection = ({ members, isOwner, currentUserId, onInvite, onRemoveMember }: Props) => {
+export const BookMembersSection: React.FC<BookMembersSectionProps> = (props) => {
+  const {
+    members,
+    isOwner,
+    currentUserId,
+    onInvite,
+    onRemoveMember,
+  } = props;
+
   const acceptedMembers = members.filter(m => m.acceptedAt !== null);
   const pendingMembers = members.filter(m => m.acceptedAt === null);
   const t = useTranslations('recipeBooks');

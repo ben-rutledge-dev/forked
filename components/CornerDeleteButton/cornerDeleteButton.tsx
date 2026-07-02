@@ -1,13 +1,17 @@
 // Components
 import { XIcon } from '@/components/Icons';
 
-type Props = {
+type CornerDeleteButtonProps = {
   onClick: () => void
   label?: string
   positionClassName?: string
 };
 
-export const CornerDeleteButton = ({ onClick, label = 'Remove', positionClassName = '-top-2.5 -right-2.5' }: Props) => {
+export const CornerDeleteButton: React.FC<CornerDeleteButtonProps> = (props) => {
+  const {
+    onClick,
+    label = 'Remove',
+    positionClassName = '-top-2.5 -right-2.5' } = props;
   return (
     <button
       type="button"

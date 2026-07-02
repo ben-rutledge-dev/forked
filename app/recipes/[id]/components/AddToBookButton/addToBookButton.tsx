@@ -9,7 +9,12 @@ import { Button } from '@/components/Button';
 
 type BookOption = { id: string, title: string };
 
-export const AddToBookButton = ({ recipeId }: { recipeId: string }) => {
+type AddToBookButtonProps = {
+  recipeId: string
+};
+
+export const AddToBookButton: React.FC<AddToBookButtonProps> = (props) => {
+  const { recipeId } = props;
   const { data: session } = useSession();
   const t = useTranslations('recipeBooks');
   const [open, setOpen] = useState(false);

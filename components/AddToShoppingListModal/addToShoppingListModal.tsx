@@ -38,7 +38,7 @@ type Stage = 1 | 2;
 
 // ─── Modal root ───────────────────────────────────────────────────────────────
 
-export const AddToShoppingListModal = (props: AddToShoppingListModalProps) => {
+export const AddToShoppingListModal: React.FC<AddToShoppingListModalProps> = (props) => {
   const t = useTranslations('addToShoppingList');
   const { onConfirm } = props;
   const [stage, setStage] = useState<Stage>(isRecipeFlow(props) ? 1 : 2);
@@ -181,16 +181,8 @@ type StageOneProps = {
   onNext: () => void
 };
 
-const StageOne = ({
-  recipeTitle,
-  ingredients,
-  ingredientsLoading,
-  selected,
-  onToggle,
-  onToggleAll,
-  onCancel,
-  onNext,
-}: StageOneProps) => {
+const StageOne: React.FC<StageOneProps> = (props) => {
+  const { recipeTitle, ingredients, ingredientsLoading, selected, onToggle, onToggleAll, onCancel, onNext } = props;
   const t = useTranslations('addToShoppingList');
   return (
     <>
@@ -267,17 +259,8 @@ type StageTwoProps = {
   onSubmit: () => void
 };
 
-const StageTwo = ({
-  lists,
-  chosenListId,
-  onSelectList,
-  onCreateList,
-  error,
-  submitting,
-  selectedCount,
-  onBack,
-  onSubmit,
-}: StageTwoProps) => {
+const StageTwo: React.FC<StageTwoProps> = (props) => {
+  const { lists, chosenListId, onSelectList, onCreateList, error, submitting, selectedCount, onBack, onSubmit } = props;
   const t = useTranslations('addToShoppingList');
   const [creatingList, setCreatingList] = useState(false);
 

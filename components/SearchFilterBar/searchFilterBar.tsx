@@ -8,7 +8,7 @@ import { TokenInput, type TokenOption } from '@/components/TokenInput';
 // Lib
 import { GROUP_LABELS, GROUP_ORDER } from '@/lib/categories';
 
-type Props = {
+type SearchFilterBarProps = {
   query: string
   onQueryChange: (q: string) => void
   selectedCategories: string[]
@@ -19,16 +19,8 @@ type Props = {
   searchPlaceholder?: string
 };
 
-export const SearchFilterBar = ({
-  query,
-  onQueryChange,
-  selectedCategories,
-  onCategoriesChange,
-  categoryOptions,
-  groupLabels = GROUP_LABELS,
-  groupOrder = GROUP_ORDER,
-  searchPlaceholder,
-}: Props) => {
+export const SearchFilterBar: React.FC<SearchFilterBarProps> = (props) => {
+  const { query, onQueryChange, selectedCategories, onCategoriesChange, categoryOptions, groupLabels = GROUP_LABELS, groupOrder = GROUP_ORDER, searchPlaceholder } = props;
   const t = useTranslations('search');
   const [open, setOpen] = useState(selectedCategories.length > 0);
   const activeCount = selectedCategories.length;

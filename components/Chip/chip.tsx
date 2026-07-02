@@ -18,7 +18,8 @@ type ChipProps = {
   className?: string
 };
 
-export const Chip = ({ active = false, size = 'md', children, className = '' }: ChipProps) => {
+export const Chip: React.FC<ChipProps> = (props) => {
+  const { active = false, size = 'md', children, className = '' } = props;
   const colors = active
     ? 'bg-primary-500 border-primary-500 text-white'
     : 'bg-white dark:bg-stone-800 border-stone-300 dark:border-stone-600 text-stone-600 dark:text-stone-400 hover:border-stone-400 dark:hover:border-stone-500';

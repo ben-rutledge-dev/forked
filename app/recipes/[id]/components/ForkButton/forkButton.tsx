@@ -8,7 +8,12 @@ import { useRef, useState } from 'react';
 import { Button } from '@/components/Button';
 import { ForkIcon } from '@/components/ForkIcon';
 
-export const ForkButton = ({ recipeId }: { recipeId: string }) => {
+type ForkButtonProps = {
+  recipeId: string
+};
+
+export const ForkButton: React.FC<ForkButtonProps> = (props) => {
+  const { recipeId } = props;
   const { data: session } = useSession();
   const router = useRouter();
   const t = useTranslations('recipeCard');

@@ -3,7 +3,16 @@ import { MealPlanStrip, MealPlanStripEmpty, type DashboardEntry } from './compon
 // App
 import { getMealPlanEntries, getMembership } from '@/app/dashboard/queries';
 
-type Props = { userId: string, startDateStr: string, endStr: string };
+type MealPlanStripSectionProps = { userId: string, startDateStr: string, endStr: string };
+
+export const MealPlanStripSection: React.FC<MealPlanStripSectionProps> = async (props) => {
+  const { userId, startDateStr, endStr } = props;
+  const membership = await getMembership(userId);
+  if (!membership) return <MealPlanStripEmpty />;
+
+  const rawEntries = await getMealPlanEntries(membership.mealPlanId, startDateStr, endStr);
+  return <MealPlanStrip data={{ entries: rawEntries.map(mapEntry) }} startDateStr={startDateStr} />;
+};
 
 const mapEntry = (e: Awaited<ReturnType<typeof getMealPlanEntries>>[number]): DashboardEntry => ({
   id: e.id,
@@ -13,11 +22,3 @@ const mapEntry = (e: Awaited<ReturnType<typeof getMealPlanEntries>>[number]): Da
   orderIndex: e.orderIndex,
   recipe: e.recipe ? { id: e.recipe.id, title: e.recipe.title, coverImageUrl: e.recipe.coverImageUrl ?? null } : null,
 });
-
-export const MealPlanStripSection = async ({ userId, startDateStr, endStr }: Props) => {
-  const membership = await getMembership(userId);
-  if (!membership) return <MealPlanStripEmpty />;
-
-  const rawEntries = await getMealPlanEntries(membership.mealPlanId, startDateStr, endStr);
-  return <MealPlanStrip data={{ entries: rawEntries.map(mapEntry) }} startDateStr={startDateStr} />;
-};

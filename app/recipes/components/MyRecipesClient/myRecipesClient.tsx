@@ -34,7 +34,7 @@ type PoolCategory = {
   group: string
 };
 
-type Props = {
+type MyRecipesClientProps = {
   allRecipes: RecipeFilterMeta[]
   defaultTab?: 'recipes' | 'books' | 'favourites' | 'browse'
   initialTagFilter?: string[]
@@ -48,7 +48,7 @@ const PAGE_SIZE = 12;
 const POOL_PAGE_SIZE = 24;
 const TAB_KEYS = ['browse', 'recipes', 'favourites', 'books'] as Array<'recipes' | 'favourites' | 'books' | 'browse'>;
 
-export const MyRecipesClient: React.FC<Props> = (props) => {
+export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
   const {
     allRecipes,
     defaultTab = 'recipes',

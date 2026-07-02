@@ -36,18 +36,8 @@ type RecipeCardProps = {
   isFavourited?: boolean
 };
 
-export const RecipeCard: React.FC<RecipeCardProps> = ({
-  id,
-  title,
-  description,
-  coverImageUrl,
-  forkCount,
-  isPublic,
-  isOwned,
-  onRemoveFromBook,
-  showPoolActions,
-  isFavourited: initialIsFavourited,
-}: RecipeCardProps) => {
+export const RecipeCard: React.FC<RecipeCardProps> = (props) => {
+  const { id, title, description, coverImageUrl, forkCount, isPublic, isOwned, onRemoveFromBook, showPoolActions, isFavourited: initialIsFavourited } = props;
   const { data: session } = useSession();
   const router = useRouter();
   const { confirm } = useConfirm();

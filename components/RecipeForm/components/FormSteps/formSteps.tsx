@@ -15,14 +15,15 @@ import { StepFormData } from '@/types';
 
 type StepItem = StepFormData & { _id: string };
 
-type Props = {
+type FormStepsProps = {
   steps: StepItem[]
   actions: ReturnType<typeof useListField<StepItem>>
   emptyStep: () => StepItem
   onError: (msg: string) => void
 };
 
-export const FormSteps = ({ steps, actions, emptyStep, onError }: Props) => {
+export const FormSteps: React.FC<FormStepsProps> = (props) => {
+  const { steps, actions, emptyStep, onError } = props;
   const t = useTranslations('formSteps');
 
   return (

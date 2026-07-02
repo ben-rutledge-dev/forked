@@ -6,14 +6,15 @@ import { useRouter } from 'next/navigation';
 // Data
 import type { ShoppingListWithStats } from '@/data/shopping-lists/types';
 
-type Props = {
+type ShoppingListsSectionProps = {
   lists: ShoppingListWithStats[]
   compact?: boolean
   selectedListId?: string | null
   onSelectList?: (id: string) => void
 };
 
-export const ShoppingListsSection = ({ lists, compact, selectedListId, onSelectList }: Props) => {
+export const ShoppingListsSection: React.FC<ShoppingListsSectionProps> = (props) => {
+  const { lists, compact, selectedListId, onSelectList } = props;
   const t = useTranslations('dashboard.shoppingLists');
   const router = useRouter();
   const isSelectable = !!onSelectList;

@@ -40,16 +40,17 @@ const sizeClasses: Record<ButtonSize, string> = {
   xl: 'px-6 py-4 text-lg',
 };
 
-export const Button: React.FC<ButtonProps> = ({
-  variant = 'secondary',
-  size = 'md',
-  disabled,
-  type = 'button',
-  onClick,
-  href,
-  className,
-  children,
-}) => {
+export const Button: React.FC<ButtonProps> = (props) => {
+  const {
+    variant = 'secondary',
+    size = 'md',
+    disabled,
+    type = 'button',
+    onClick,
+    href,
+    className,
+    children,
+  } = props;
   const classes = [
     'inline-flex items-center justify-center gap-1.5',
     'cursor-pointer disabled:cursor-not-allowed',

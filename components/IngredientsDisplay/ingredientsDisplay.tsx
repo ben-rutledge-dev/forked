@@ -11,13 +11,14 @@ import type { Ingredient } from '@/types';
 // Utils
 import { convertIngredient, formatQuantity, UNIT_META } from '@/utils/units';
 
-type Props = {
+type IngredientsDisplayProps = {
   ingredients: Ingredient[]
   compact?: boolean
   action?: ReactNode
 };
 
-export const IngredientsDisplay = ({ ingredients, compact = false, action }: Props) => {
+export const IngredientsDisplay: React.FC<IngredientsDisplayProps> = (props) => {
+  const { ingredients, compact = false, action } = props;
   const t = useTranslations('recipeDetail');
   const { system, toggle } = useUnitSystem();
 
