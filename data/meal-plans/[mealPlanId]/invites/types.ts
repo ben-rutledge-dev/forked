@@ -1,10 +1,12 @@
+import { z } from 'zod';
 // Data
 import type { MealPlanRole } from '@/data/meal-plans/types';
 
-export type PostMealPlanInvitePayload = {
-  username: string
-  role: 'COLLABORATOR' | 'VIEWER'
-};
+export const postMealPlanInviteSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  role: z.enum(['COLLABORATOR', 'VIEWER']),
+});
+export type PostMealPlanInvitePayload = z.infer<typeof postMealPlanInviteSchema>;
 
 export type PostMealPlanInviteResponse = {
   id: string

@@ -3,6 +3,7 @@
 import { useTranslations } from 'next-intl';
 // Data
 import { usePostMealPlanInvite } from '@/data/meal-plans/[mealPlanId]/invites';
+import { postMealPlanInviteSchema } from '@/data/meal-plans/[mealPlanId]/invites/types';
 import { useDeleteMealPlanMember } from '@/data/meal-plans/[mealPlanId]/members/[memberId]';
 import type { MealPlanMember } from '@/data/meal-plans/[mealPlanId]/types';
 // Hooks
@@ -35,6 +36,7 @@ export const PlanMembersPanel: React.FC<PlanMembersPanelProps> = (props) => {
       Component: InviteModal,
       props: {
         heading: t('inviteCollaborator'),
+        schema: postMealPlanInviteSchema,
         roles: [
           { value: 'COLLABORATOR' as const, label: 'Collaborator' },
           { value: 'VIEWER' as const, label: 'Viewer' },

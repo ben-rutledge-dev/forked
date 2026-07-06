@@ -1,9 +1,12 @@
 import { NextResponse } from 'next/server';
+// Data
+import { postInviteSchema } from '@/data/recipe-books/[recipeBookId]/invites/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 // Utils
-import { COLLABORATOR, OWNER, type Role } from '@/utils/roles';
+import { COLLABORATOR, OWNER } from '@/utils/roles';
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -20,7 +23,9 @@ export const POST = async (req: Request, { params }: Params) => {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { username, role } = await req.json() as { username: string, role: Role };
+  const parsed = await parseBody(req, postInviteSchema);
+  if (!parsed.success) return parsed.response;
+  const { username, role } = parsed.data;
 
   if (role === OWNER && !inviter.user.isPremium) {
     return NextResponse.json({ error: 'Premium required to invite owners' }, { status: 403 });

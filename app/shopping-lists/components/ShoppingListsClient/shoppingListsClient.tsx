@@ -5,9 +5,9 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 // Data
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
+import { postShoppingListSchema, type PostShoppingListPayload } from '@/data/shopping-lists/types';
 // Components
 import { ShoppingListInvitesSection } from './components/ShoppingListInvitesSection';
 import { Button } from '@/components/Button';
@@ -28,11 +28,11 @@ export const ShoppingListsClient = () => {
 
   const { mutateAsync: createList, isPending: isCreating } = usePostShoppingList();
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<CreateListForm>({
-    resolver: zodResolver(createListSchema),
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<PostShoppingListPayload>({
+    resolver: zodResolver(postShoppingListSchema),
   });
 
-  const onSubmit = async (data: CreateListForm) => {
+  const onSubmit = async (data: PostShoppingListPayload) => {
     const list = await createList({ title: data.title.trim() });
     reset();
     setCreating(false);
@@ -105,11 +105,6 @@ export const ShoppingListsClient = () => {
     </PageLayout>
   );
 };
-
-const createListSchema = z.object({
-  title: z.string().min(1, 'List name is required').max(100),
-});
-type CreateListForm = z.infer<typeof createListSchema>;
 
 type NewListActionProps = {
   onNew: () => void

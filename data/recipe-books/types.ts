@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type RecipeBook = {
   id: string
   title: string
@@ -31,11 +33,12 @@ export type RecipeBooksResponse = {
   pending: PendingInvite[]
 };
 
-export type PostRecipeBookPayload = {
-  title: string
-  description?: string
-  isPublic?: boolean
-  coverImageUrl?: string
-};
+export const postRecipeBookSchema = z.object({
+  title: z.string().min(1, 'Title is required'),
+  description: z.string(),
+  isPublic: z.boolean(),
+  coverImageUrl: z.string(),
+});
+export type PostRecipeBookPayload = z.infer<typeof postRecipeBookSchema>;
 
 export type PostRecipeBookResponse = RecipeBook;

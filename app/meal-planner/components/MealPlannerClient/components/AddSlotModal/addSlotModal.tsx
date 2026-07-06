@@ -3,15 +3,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
+// Data
+import { postSlotSchema, type PostSlotPayload } from '@/data/meal-plans/[mealPlanId]/slots/types';
 // Components
 import { Button } from '@/components/Button';
 import { TextInput } from '@/components/TextInput';
 
-const schema = z.object({
-  label: z.string().min(1, 'Slot name is required'),
-});
-type AddSlotForm = z.infer<typeof schema>;
+type AddSlotForm = PostSlotPayload;
 
 type AddSlotModalProps = {
   onConfirm: (label: string | null) => void
@@ -21,7 +19,7 @@ export const AddSlotModal: React.FC<AddSlotModalProps> = (props) => {
   const { onConfirm } = props;
   const t = useTranslations('mealPlanner');
   const { register, handleSubmit, formState: { errors } } = useForm<AddSlotForm>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(postSlotSchema),
   });
 
   const onSubmit = (data: AddSlotForm) => onConfirm(data.label.trim());

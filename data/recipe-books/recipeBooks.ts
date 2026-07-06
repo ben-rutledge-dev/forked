@@ -3,10 +3,11 @@ import { queryKeys } from '@/data/queryKeys';
 import { useApiQuery, useApiPost, useQueryClient } from '@/data/shared/hooks';
 import type { RecipeBooksResponse, PostRecipeBookPayload, PostRecipeBookResponse } from './types';
 
-export const useRecipeBooks = () =>
+export const useRecipeBooks = (options?: { enabled?: boolean }) =>
   useApiQuery<RecipeBooksResponse>(
     queryKeys.recipeBooks.mine(),
     '/api/recipe-books',
+    options,
   );
 
 export const usePostRecipeBook = () => {

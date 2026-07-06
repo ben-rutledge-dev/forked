@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // Data
+import type { Category } from '@/data/categories/types';
 import { useRecipeBooks } from '@/data/recipe-books';
 import { useFavouriteRecipes, useMyRecipes, usePoolRecipes } from '@/data/recipes';
 // Components
@@ -27,19 +28,12 @@ type RecipeFilterMeta = {
   categories: Array<{ slug: string, label: string, group: string }>
 };
 
-type PoolCategory = {
-  id: string
-  slug: string
-  label: string
-  group: string
-};
-
 type MyRecipesClientProps = {
   allRecipes: RecipeFilterMeta[]
   defaultTab?: 'recipes' | 'books' | 'favourites' | 'browse'
   initialTagFilter?: string[]
   initialCategories?: string[]
-  allPoolCategories?: PoolCategory[]
+  allPoolCategories?: Category[]
   initialFavourites?: string[]
   isAuthenticated?: boolean
 };

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+// Data
+import { postSlotSchema } from '@/data/meal-plans/[mealPlanId]/slots/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 
 type Params = { params: Promise<{ id: string }> };
@@ -17,8 +20,9 @@ export const POST = async (req: Request, { params }: Params) => {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { label } = await req.json();
-  if (!label?.trim()) return NextResponse.json({ error: 'Label required' }, { status: 400 });
+  const parsed = await parseBody(req, postSlotSchema);
+  if (!parsed.success) return parsed.response;
+  const { label } = parsed.data;
 
   const maxSlot = await prisma.mealPlanSlot.aggregate({
     where: { mealPlanId: id },

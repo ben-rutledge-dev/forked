@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+// Data
+import { postShoppingListSchema } from '@/data/shopping-lists/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 
 export const GET = async () => {
@@ -58,8 +61,9 @@ export const POST = async (req: Request) => {
   const session = await auth();
   if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
 
-  const { title } = await req.json();
-  if (!title?.trim()) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+  const parsed = await parseBody(req, postShoppingListSchema);
+  if (!parsed.success) return parsed.response;
+  const { title } = parsed.data;
 
   const list = await prisma.shoppingList.create({
     data: {

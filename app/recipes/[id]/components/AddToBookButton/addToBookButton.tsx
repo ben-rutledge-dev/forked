@@ -4,10 +4,10 @@ import { signIn, useSession } from 'next-auth/react';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+// Data
+import { useRecipeBooks } from '@/data/recipe-books';
 // Components
 import { Button } from '@/components/Button';
-
-type BookOption = { id: string, title: string };
 
 type AddToBookButtonProps = {
   recipeId: string
@@ -18,10 +18,13 @@ export const AddToBookButton: React.FC<AddToBookButtonProps> = (props) => {
   const { data: session } = useSession();
   const t = useTranslations('recipeBooks');
   const [open, setOpen] = useState(false);
-  const [books, setBooks] = useState<BookOption[] | null>(null);
+  const [booksRequested, setBooksRequested] = useState(false);
   const [adding, setAdding] = useState<string | null>(null);
   const [done, setDone] = useState<string | null>(null);
   const ref = useRef<HTMLDivElement>(null);
+
+  const { data: booksData } = useRecipeBooks({ enabled: booksRequested });
+  const books = booksRequested ? (booksData?.books ?? null) : null;
 
   useEffect(() => {
     if (!open) return;
@@ -32,22 +35,13 @@ export const AddToBookButton: React.FC<AddToBookButtonProps> = (props) => {
     return () => document.removeEventListener('mousedown', handleClick);
   }, [open]);
 
-  const handleOpen = async () => {
+  const handleOpen = () => {
     if (!session) {
       signIn();
       return;
     }
     setOpen(v => !v);
-    if (!books) {
-      const res = await fetch('/api/recipe-books');
-      if (res.ok) {
-        const data = await res.json();
-        setBooks((data.books as BookOption[]) ?? []);
-      }
-      else {
-        setBooks([]);
-      }
-    }
+    setBooksRequested(true);
   };
 
   const handleAdd = async (bookId: string) => {

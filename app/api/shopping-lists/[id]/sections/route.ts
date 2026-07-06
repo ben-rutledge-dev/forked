@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+// Data
+import { postSectionSchema } from '@/data/shopping-lists/[shoppingListId]/sections/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 
 type Params = { params: Promise<{ id: string }> };
@@ -20,8 +23,9 @@ export const POST = async (req: Request, { params }: Params) => {
   const member = await getAcceptedMember(id, session.user.id);
   if (!member) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const { title } = await req.json();
-  if (!title?.trim()) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+  const parsed = await parseBody(req, postSectionSchema);
+  if (!parsed.success) return parsed.response;
+  const { title } = parsed.data;
 
   const maxSection = await prisma.shoppingListSection.findFirst({
     where: { shoppingListId: id },

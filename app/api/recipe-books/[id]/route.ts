@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+// Data
+import { postRecipeBookSchema } from '@/data/recipe-books/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 // Utils
 import { OWNER } from '@/utils/roles';
@@ -69,8 +72,9 @@ export const PUT = async (req: Request, { params }: Params) => {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
-  const { title, description, isPublic, coverImageUrl } = await req.json();
-  if (!title?.trim()) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+  const parsed = await parseBody(req, postRecipeBookSchema);
+  if (!parsed.success) return parsed.response;
+  const { title, description, isPublic, coverImageUrl } = parsed.data;
 
   const updated = await prisma.recipeBook.update({
     where: { id },

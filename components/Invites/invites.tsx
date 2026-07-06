@@ -15,23 +15,23 @@ export type RoleOption<TRole extends string> = {
   label: string
 };
 
+type InviteFormValues = {
+  username: string
+  role: string
+};
+
 type Props<TRole extends string> = {
+  schema: z.ZodType<{ username: string, role: TRole }, { username: string, role: TRole }>
   roles: RoleOption<TRole>[]
   defaultRole: TRole
   onSubmit: (username: string, role: TRole) => Promise<void>
   onCancel?: () => void
 };
 
-const inviteSchema = z.object({
-  username: z.string().min(1, 'Username is required'),
-  role: z.string(),
-});
-type InviteFormValues = z.infer<typeof inviteSchema>;
-
-export const InviteForm = <TRole extends string>({ roles, defaultRole, onSubmit, onCancel }: Props<TRole>) => {
+export const InviteForm = <TRole extends string>({ schema, roles, defaultRole, onSubmit, onCancel }: Props<TRole>) => {
   const t = useTranslations('inviteForm');
   const { register, handleSubmit, reset, setError, formState: { errors, isSubmitting } } = useForm<InviteFormValues>({
-    resolver: zodResolver(inviteSchema),
+    resolver: zodResolver(schema as z.ZodType<InviteFormValues, InviteFormValues>),
     defaultValues: { username: '', role: defaultRole },
   });
 

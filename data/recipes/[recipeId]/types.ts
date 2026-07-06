@@ -1,6 +1,7 @@
+import { z } from 'zod';
 // Data
 import type { Category } from '@/data/categories/types';
-import type { PostRecipeResponse, RecipeIngredientPayload, RecipeStepPayload, PostRecipePayload } from '@/data/recipes/types';
+import { postRecipeSchema, type PostRecipeResponse, type RecipeIngredientPayload, type RecipeStepPayload } from '@/data/recipes/types';
 
 export type RecipeAuthor = {
   id: string
@@ -55,10 +56,10 @@ export type Recipe = PostRecipeResponse & {
   tags: string[]
 };
 
-export type PutRecipePayload = PostRecipePayload & {
-  categoryIds?: string[]
-  tags?: string[]
-};
+export const putRecipeSchema = postRecipeSchema.extend({
+  categoryIds: z.array(z.string()).optional(),
+});
+export type PutRecipePayload = z.infer<typeof putRecipeSchema>;
 
 export type PutRecipeIngredientPayload = RecipeIngredientPayload;
 

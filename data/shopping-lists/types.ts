@@ -1,3 +1,5 @@
+import { z } from 'zod';
+
 export type ShoppingListRole = 'OWNER' | 'COLLABORATOR';
 
 export type ShoppingListWithStats = {
@@ -26,9 +28,10 @@ export type ShoppingListsResponse = {
   pending: PendingShoppingListInvite[]
 };
 
-export type PostShoppingListPayload = {
-  title: string
-};
+export const postShoppingListSchema = z.object({
+  title: z.string().min(1, 'List name is required').max(100),
+});
+export type PostShoppingListPayload = z.infer<typeof postShoppingListSchema>;
 
 export type PostShoppingListResponse = {
   id: string

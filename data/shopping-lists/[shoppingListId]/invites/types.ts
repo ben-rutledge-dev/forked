@@ -1,10 +1,12 @@
+import { z } from 'zod';
 // Data
 import type { ShoppingListRole } from '@/data/shopping-lists/types';
 
-export type PostShoppingListInvitePayload = {
-  username: string
-  role: ShoppingListRole
-};
+export const postShoppingListInviteSchema = z.object({
+  username: z.string().min(1, 'Username is required'),
+  role: z.enum(['OWNER', 'COLLABORATOR']),
+});
+export type PostShoppingListInvitePayload = z.infer<typeof postShoppingListInviteSchema>;
 
 export type PostShoppingListInviteResponse = {
   id: string

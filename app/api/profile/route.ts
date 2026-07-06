@@ -1,6 +1,9 @@
 import { NextRequest } from 'next/server';
+// Data
+import { patchProfileSchema } from '@/data/profile/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 
 const ALLOWED_STRING_FIELDS = [
@@ -22,7 +25,9 @@ export const PATCH = async (req: NextRequest) => {
     return Response.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const body = await req.json();
+  const parsed = await parseBody(req, patchProfileSchema);
+  if (!parsed.success) return parsed.response;
+  const body = parsed.data;
   const stringData: Partial<Record<StringField, string | null>> = {};
   let isPublic: boolean | undefined;
 

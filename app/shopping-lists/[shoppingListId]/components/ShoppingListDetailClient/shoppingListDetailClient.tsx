@@ -23,15 +23,15 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState, useCallback } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 // Data
 import { queryKeys } from '@/data/queryKeys';
 import { useQueryClient } from '@/data/shared/hooks';
 import { useShoppingList, usePutShoppingList, useDeleteShoppingList } from '@/data/shopping-lists/[shoppingListId]';
 import { usePostShoppingListInvite } from '@/data/shopping-lists/[shoppingListId]/invites';
+import { postShoppingListInviteSchema } from '@/data/shopping-lists/[shoppingListId]/invites/types';
 import { useDeleteCheckedItems, usePutItemSection, usePutItemsReorder } from '@/data/shopping-lists/[shoppingListId]/items';
 import { useDeleteShoppingListMember } from '@/data/shopping-lists/[shoppingListId]/members/[memberId]';
-import { usePostSection, usePutSectionReorder } from '@/data/shopping-lists/[shoppingListId]/sections';
+import { usePostSection, usePutSectionReorder, postSectionSchema, type PostSectionPayload } from '@/data/shopping-lists/[shoppingListId]/sections';
 import type { ShoppingListItem } from '@/data/shopping-lists/[shoppingListId]/types';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
@@ -73,10 +73,8 @@ export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> =
   const [titleDraft, setTitleDraft] = useState(() => list?.title ?? '');
   const [addingSection, setAddingSection] = useState(false);
 
-  const addSectionSchema = z.object({ title: z.string().min(1, 'Section name is required') });
-  type AddSectionForm = z.infer<typeof addSectionSchema>;
-  const { register: registerSection, handleSubmit: handleSectionSubmit, reset: resetSection } = useForm<AddSectionForm>({
-    resolver: zodResolver(addSectionSchema),
+  const { register: registerSection, handleSubmit: handleSectionSubmit, reset: resetSection } = useForm<PostSectionPayload>({
+    resolver: zodResolver(postSectionSchema),
   });
 
   useShoppingListRealtime(shoppingListId);
@@ -127,6 +125,7 @@ export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> =
       Component: InviteModal,
       props: {
         heading: t('invite'),
+        schema: postShoppingListInviteSchema,
         roles: isPremium
           ? [{ value: 'COLLABORATOR' as const, label: 'Collaborator' }, { value: 'OWNER' as const, label: 'Owner' }]
           : [{ value: 'COLLABORATOR' as const, label: 'Collaborator' }],
@@ -294,7 +293,7 @@ export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> =
 
   // ── Section / list handlers ────────────────────────────────────────────────
 
-  const onAddSection = (data: AddSectionForm) => {
+  const onAddSection = (data: PostSectionPayload) => {
     postSection({ title: data.title.trim() }, {
       onSuccess: () => {
         resetSection();

@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 // Data
 import { queryKeys } from '@/data/queryKeys';
+import { postInviteSchema } from '@/data/recipe-books/[recipeBookId]/invites/types';
 import type { RecipeBookDetail } from '@/data/recipe-books/[recipeBookId]/types';
 import { useQueryClient } from '@/data/shared/hooks';
 // Hooks
@@ -129,6 +130,7 @@ export const RecipeBookDetailClient: React.FC<RecipeBookDetailClientProps> = (pr
       Component: InviteModal,
       props: {
         heading: t('inviteHeading'),
+        schema: postInviteSchema,
         roles: isPremium
           ? [{ value: 'Collaborator' as const, label: 'Collaborator' }, { value: 'Owner' as const, label: 'Owner' }]
           : [{ value: 'Collaborator' as const, label: 'Collaborator' }],

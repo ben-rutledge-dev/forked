@@ -5,6 +5,7 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useRef, useState } from 'react';
 // Data
+import { useRecipeBooks } from '@/data/recipe-books';
 import { useDeleteRecipe } from '@/data/recipes/[recipeId]';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
@@ -17,8 +18,6 @@ import { ForkIcon } from '@/components/ForkIcon';
 import { DotsHorizontalIcon, EditIcon, HeartIcon, RecipeIcon } from '@/components/Icons';
 import { Toast } from '@/components/Toast';
 import { VisibilityBadge } from '@/components/VisibilityBadge';
-
-type BookOption = { id: string, title: string };
 
 type RecipeCardProps = {
   id: string
@@ -50,10 +49,13 @@ export const RecipeCard: React.FC<RecipeCardProps> = (props) => {
   const [favourited, setFavourited] = useState(initialIsFavourited ?? false);
   const [togglingFavourite, setTogglingFavourite] = useState(false);
 
-  const [books, setBooks] = useState<BookOption[] | null>(null);
+  const [booksRequested, setBooksRequested] = useState(false);
   const [shoppingToast, setShoppingToast] = useState<string | null>(null);
   const { mutate: deleteRecipe, isPending: deleting } = useDeleteRecipe({ recipeId: id });
   const { modal } = useModal();
+
+  const { data: booksData } = useRecipeBooks({ enabled: booksRequested });
+  const books = booksRequested ? (booksData?.books ?? null) : null;
 
   const handleFork = async () => {
     if (!session) {
@@ -104,16 +106,8 @@ export const RecipeCard: React.FC<RecipeCardProps> = (props) => {
     }
   };
 
-  const handleOpenAddToBook = async () => {
-    if (books) return;
-    const res = await fetch('/api/recipe-books');
-    if (res.ok) {
-      const data = await res.json();
-      setBooks((data.books as BookOption[]) ?? []);
-    }
-    else {
-      setBooks([]);
-    }
+  const handleOpenAddToBook = () => {
+    setBooksRequested(true);
   };
 
   const handleAddToBook = async (bookId: string) => {

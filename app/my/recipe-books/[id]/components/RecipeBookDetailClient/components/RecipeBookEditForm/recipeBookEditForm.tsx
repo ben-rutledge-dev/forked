@@ -3,9 +3,9 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
 // Data
 import type { RecipeBookDetail } from '@/data/recipe-books/[recipeBookId]/types';
+import { postRecipeBookSchema, type PostRecipeBookPayload } from '@/data/recipe-books/types';
 // Components
 import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
@@ -15,13 +15,7 @@ import { ImageUpload } from '@/components/ImageUpload';
 import { Textarea } from '@/components/Textarea';
 import { TextInput } from '@/components/TextInput';
 
-const schema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string(),
-  isPublic: z.boolean(),
-  coverImageUrl: z.string(),
-});
-type FormValues = z.infer<typeof schema>;
+type FormValues = PostRecipeBookPayload;
 
 type RecipeBookEditFormProps = {
   book: RecipeBookDetail
@@ -40,7 +34,7 @@ export const RecipeBookEditForm: React.FC<RecipeBookEditFormProps> = (props) => 
     setError,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(postRecipeBookSchema),
     defaultValues: {
       title: book.title,
       description: book.description ?? '',

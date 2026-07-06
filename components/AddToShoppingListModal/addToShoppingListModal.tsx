@@ -4,10 +4,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { z } from 'zod';
 // Data
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
 import { usePostItems } from '@/data/shopping-lists/[shoppingListId]/items';
+import { postShoppingListSchema, type PostShoppingListPayload, type ShoppingListWithStats } from '@/data/shopping-lists/types';
 // Components
 import { Button } from '@/components/Button';
 import { Checkbox } from '@/components/Checkbox';
@@ -240,15 +240,8 @@ const StageOne: React.FC<StageOneProps> = (props) => {
 
 // ─── Stage 2: Select list ─────────────────────────────────────────────────────
 
-const newListSchema = z.object({
-  title: z.string().min(1, 'List name is required').max(100),
-});
-type NewListForm = z.infer<typeof newListSchema>;
-
-type ListItem = { id: string, title: string, uncheckedCount: number };
-
 type StageTwoProps = {
-  lists: ListItem[]
+  lists: ShoppingListWithStats[]
   chosenListId: string | null
   onSelectList: (id: string) => void
   onCreateList: (title: string) => Promise<void>
@@ -264,13 +257,13 @@ const StageTwo: React.FC<StageTwoProps> = (props) => {
   const t = useTranslations('addToShoppingList');
   const [creatingList, setCreatingList] = useState(false);
 
-  const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm<NewListForm>({
-    resolver: zodResolver(newListSchema),
+  const { register, handleSubmit, reset, formState: { isSubmitting } } = useForm<PostShoppingListPayload>({
+    resolver: zodResolver(postShoppingListSchema),
   });
 
   const registerTitle = register('title');
 
-  const onNewList = async (data: NewListForm) => {
+  const onNewList = async (data: PostShoppingListPayload) => {
     await onCreateList(data.title);
     reset();
     setCreatingList(false);

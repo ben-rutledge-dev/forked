@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+// Data
+import { postShoppingListInviteSchema } from '@/data/shopping-lists/[shoppingListId]/invites/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 
 type Params = { params: Promise<{ id: string }> };
@@ -22,7 +25,9 @@ export const POST = async (req: Request, { params }: Params) => {
     return NextResponse.json({ error: 'Premium required to invite collaborators' }, { status: 403 });
   }
 
-  const { username, role } = await req.json() as { username: string, role: 'OWNER' | 'COLLABORATOR' };
+  const parsed = await parseBody(req, postShoppingListInviteSchema);
+  if (!parsed.success) return parsed.response;
+  const { username, role } = parsed.data;
 
   if (role === 'OWNER') {
     const invitee = await prisma.user.findUnique({ where: { username }, select: { id: true, isPremium: true } });

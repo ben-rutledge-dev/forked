@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
+// Data
+import { putRecipeSchema } from '@/data/recipes/[recipeId]/types';
 // Lib
 import { auth } from '@/lib/auth';
+import { parseBody } from '@/lib/parseBody';
 import { prisma } from '@/lib/prisma';
 // Utils
 import { parseQuantity } from '@/utils/units';
@@ -57,8 +60,9 @@ export const PUT = async (req: Request, { params }: Params) => {
   if (!recipe) return NextResponse.json({ error: 'Not found' }, { status: 404 });
   if (recipe.authorId !== session.user.id) return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
 
-  const { title, description, isPublic, coverImageUrl, ingredients, steps, categoryIds, tags } = await req.json();
-  if (!title?.trim()) return NextResponse.json({ error: 'Title is required' }, { status: 400 });
+  const parsed = await parseBody(req, putRecipeSchema);
+  if (!parsed.success) return parsed.response;
+  const { title, description, isPublic, coverImageUrl, ingredients, steps, categoryIds, tags } = parsed.data;
 
   if (isPublic && (!categoryIds || categoryIds.length === 0)) {
     return NextResponse.json({ error: 'Select at least one category to make this recipe public' }, { status: 400 });
@@ -78,7 +82,7 @@ export const PUT = async (req: Request, { params }: Params) => {
       await tx.recipeCategory.deleteMany({ where: { recipeId: id } });
       if (categoryIds.length > 0) {
         await tx.recipeCategory.createMany({
-          data: categoryIds.map((categoryId: string) => ({ recipeId: id, categoryId })),
+          data: categoryIds.map(categoryId => ({ recipeId: id, categoryId })),
         });
       }
     }
@@ -90,30 +94,26 @@ export const PUT = async (req: Request, { params }: Params) => {
         description: description?.trim() || null,
         coverImageUrl: coverImageUrl || null,
         isPublic: Boolean(isPublic),
-        ...(tags !== undefined && { tags: tags.map((t: string) => t.trim().toLowerCase()).filter(Boolean) }),
+        ...(tags !== undefined && { tags: tags.map(t => t.trim().toLowerCase()).filter(Boolean) }),
         ingredients: {
-          create: (ingredients ?? []).map(
-            (ing: { name: string, quantity: string, unit: string, unitKey?: string | null }, i: number) => {
-              const hasUnitKey = !!ing.unitKey;
-              return {
-                name: ing.name,
-                quantity: parseQuantity(ing.quantity ?? ''),
-                unit: hasUnitKey ? null : (ing.unit || null),
-                unitKey: hasUnitKey ? (ing.unitKey as UnitType) : null,
-                orderIndex: i,
-              };
-            },
-          ),
+          create: (ingredients ?? []).map((ing, i) => {
+            const hasUnitKey = !!ing.unitKey;
+            return {
+              name: ing.name,
+              quantity: parseQuantity(ing.quantity ?? ''),
+              unit: hasUnitKey ? null : (ing.unit || null),
+              unitKey: hasUnitKey ? (ing.unitKey as UnitType) : null,
+              orderIndex: i,
+            };
+          }),
         },
         steps: {
-          create: (steps ?? []).map(
-            (step: { instruction: string, timerSeconds: number | string, imageUrl?: string }, i: number) => ({
-              instruction: step.instruction,
-              timerSeconds: step.timerSeconds ? Number(step.timerSeconds) : null,
-              imageUrl: step.imageUrl || null,
-              orderIndex: i,
-            }),
-          ),
+          create: (steps ?? []).map((step, i) => ({
+            instruction: step.instruction,
+            timerSeconds: step.timerSeconds ? Number(step.timerSeconds) : null,
+            imageUrl: step.imageUrl || null,
+            orderIndex: i,
+          })),
         },
       },
     });

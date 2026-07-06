@@ -1,6 +1,8 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
+// Data
+import { postInviteSchema } from '@/data/recipe-books/[recipeBookId]/invites/types';
 // Components
 import { InviteForm } from '@/components/Invites';
 
@@ -23,6 +25,7 @@ export const InviteModal: React.FC<InviteModalProps> = (props) => {
     <div className="p-6 space-y-4">
       <h2 className="text-lg font-semibold text-stone-900 dark:text-stone-100">{t('inviteHeading')}</h2>
       <InviteForm
+        schema={postInviteSchema}
         roles={
           isPremium
             ? [{ value: 'Collaborator' as const, label: 'Collaborator' }, { value: 'Owner' as const, label: 'Owner' }]

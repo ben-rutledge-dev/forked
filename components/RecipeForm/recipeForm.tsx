@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { z } from 'zod';
 // Data
 import { useCategories } from '@/data/categories';
 import type { Category } from '@/data/categories/types';
+import { postRecipeSchema, type PostRecipePayload } from '@/data/recipes/types';
 import { useMyTags } from '@/data/tags';
 // Hooks
 import { useListField } from '@/hooks/useListField';
@@ -36,7 +36,7 @@ type RecipeFormProps = {
   recipeId?: string
   forkedFrom?: { id: string, title: string, isPublic: boolean } | null
 };
-type RecipeFormValues = z.infer<typeof recipeSchema>;
+type RecipeFormValues = PostRecipePayload;
 
 export type IngredientItem = IngredientFormData & { _id: string };
 export type StepItem = StepFormData & { _id: string };
@@ -74,7 +74,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = (props) => {
     setError,
     formState: { errors, isSubmitting },
   } = useForm<RecipeFormValues>({
-    resolver: zodResolver(recipeSchema),
+    resolver: zodResolver(postRecipeSchema),
     defaultValues: {
       title: initialData?.title ?? '',
       description: initialData?.description ?? '',
@@ -333,7 +333,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = (props) => {
             control={control}
             render={({ field: { value, onChange } }) => (
               <ImageUpload
-                value={value}
+                value={value ?? ''}
                 onChange={onChange}
                 onError={msg => setError('root', { message: msg })}
                 label={t('coverPhotoLabel')}
@@ -348,7 +348,7 @@ export const RecipeForm: React.FC<RecipeFormProps> = (props) => {
           render={({ field: { value, onChange } }) => (
             <div>
               <Checkbox
-                checked={value}
+                checked={value ?? false}
                 onChange={e => onChange(e.target.checked)}
                 label={t('makePublicLabel')}
                 disabled={noCategoriesSelected && !value}
@@ -400,10 +400,3 @@ export const RecipeForm: React.FC<RecipeFormProps> = (props) => {
     </form>
   );
 };
-
-const recipeSchema = z.object({
-  title: z.string().min(1, 'Title is required'),
-  description: z.string(),
-  isPublic: z.boolean(),
-  coverImageUrl: z.string(),
-});
