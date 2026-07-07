@@ -33,7 +33,7 @@ const ShoppingListsPage = async () => {
         },
       },
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { orderIndex: 'asc' },
   });
 
   const lists = members
@@ -44,6 +44,7 @@ const ShoppingListsPage = async () => {
       createdAt: m.shoppingList.createdAt.toISOString(),
       updatedAt: m.shoppingList.updatedAt.toISOString(),
       role: m.role as ShoppingListRole,
+      orderIndex: m.orderIndex,
       memberCount: m.shoppingList._count.members,
       uncheckedCount: m.shoppingList._count.items,
     }));

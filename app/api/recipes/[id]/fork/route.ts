@@ -21,6 +21,11 @@ export const POST = async (_req: Request, { params }: Params) => {
   if (!original) return NextResponse.json({ error: 'Recipe not found' }, { status: 404 });
   if (!original.isPublic) return NextResponse.json({ error: 'Recipe is not public' }, { status: 403 });
 
+  const lastRecipe = await prisma.recipe.findFirst({
+    where: { authorId: session.user.id },
+    orderBy: { orderIndex: 'desc' },
+  });
+
   const [fork] = await prisma.$transaction([
     prisma.recipe.create({
       data: {
@@ -29,6 +34,7 @@ export const POST = async (_req: Request, { params }: Params) => {
         authorId: session.user.id,
         isPublic: false,
         forkedFromId: original.id,
+        orderIndex: (lastRecipe?.orderIndex ?? -1) + 1,
         ingredients: {
           create: original.ingredients.map(ing => ({
             name: ing.name,

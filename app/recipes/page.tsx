@@ -76,14 +76,14 @@ const RecipesPage = async ({
       },
       select: {
         id: true, title: true, description: true, coverImageUrl: true, forkCount: true,
-        isPublic: true, forkedFromId: true, authorId: true, tags: true,
+        isPublic: true, forkedFromId: true, authorId: true, tags: true, orderIndex: true,
         categories: {
           select: {
             category: { select: { id: true, slug: true, label: true, group: true } },
           },
         },
       },
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { orderIndex: 'asc' },
     }),
     prisma.recipeBookMember.findMany({
       where: { userId },
@@ -95,7 +95,7 @@ const RecipesPage = async ({
           },
         },
       },
-      orderBy: { createdAt: 'asc' },
+      orderBy: { orderIndex: 'asc' },
     }),
     prisma.recipeFavourite.findMany({
       where: { userId },
@@ -119,7 +119,7 @@ const RecipesPage = async ({
           },
         },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { orderIndex: 'asc' },
     }),
   ]);
 
@@ -134,6 +134,7 @@ const RecipesPage = async ({
       createdAt: m.recipeBook.createdAt.toISOString(),
       updatedAt: m.recipeBook.updatedAt.toISOString(),
       role: m.role as Role,
+      orderIndex: m.orderIndex,
       memberCount: m.recipeBook.members.length,
       recipeCount: m.recipeBook.entries.length,
     }));
@@ -165,8 +166,9 @@ const RecipesPage = async ({
 
   queryClient.setQueryData(
     queryKeys.recipes.favourites(),
-    favouriteRecords.map(({ recipe: { categories, ...r } }) => ({
+    favouriteRecords.map(({ recipe: { categories, ...r }, orderIndex }) => ({
       ...r,
+      orderIndex,
       description: r.description ?? null,
       coverImageUrl: r.coverImageUrl ?? null,
       forkedFromId: r.forkedFromId ?? null,

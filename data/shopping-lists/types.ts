@@ -8,6 +8,7 @@ export type ShoppingListWithStats = {
   createdAt: string
   updatedAt: string
   role: ShoppingListRole
+  orderIndex: number
   memberCount: number
   uncheckedCount: number
 };

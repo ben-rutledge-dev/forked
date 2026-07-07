@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 // Data
 import { queryKeys } from '@/data/queryKeys';
+import { usePutReorder } from '@/data/recipe-books/[recipeBookId]/entries/reorder';
 import { postInviteSchema } from '@/data/recipe-books/[recipeBookId]/invites/types';
 import type { RecipeBookDetail } from '@/data/recipe-books/[recipeBookId]/types';
 import { useQueryClient } from '@/data/shared/hooks';
@@ -56,6 +57,7 @@ export const RecipeBookDetailClient: React.FC<RecipeBookDetailClientProps> = (pr
   const { confirm } = useConfirm();
   const { modal } = useModal();
   const queryClient = useQueryClient();
+  const { mutate: reorderEntries } = usePutReorder({ recipeBookId: book.id });
 
   const handleRemoveEntry = async (entryId: string) => {
     const res = await fetch(`/api/recipe-books/${book.id}/entries/${entryId}`, { method: 'DELETE' });
@@ -64,26 +66,9 @@ export const RecipeBookDetailClient: React.FC<RecipeBookDetailClientProps> = (pr
     }
   };
 
-  const handleMove = async (entryId: string, direction: 'up' | 'down') => {
-    const sorted = [...book.entries].sort((a, b) => a.orderIndex - b.orderIndex);
-    const idx = sorted.findIndex(e => e.id === entryId);
-    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
-    if (swapIdx < 0 || swapIdx >= sorted.length) return;
-
-    const updated = sorted.map((e, i) => {
-      if (i === idx) return { ...e, orderIndex: sorted[swapIdx].orderIndex };
-      if (i === swapIdx) return { ...e, orderIndex: sorted[idx].orderIndex };
-      return e;
-    });
-
-    const res = await fetch(`/api/recipe-books/${book.id}/entries/reorder`, {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ entries: updated.map(e => ({ id: e.id, orderIndex: e.orderIndex })) }),
-    });
-    if (res.ok) {
-      setBook(b => ({ ...b, entries: updated }));
-    }
+  const handleReorder = (reordered: RecipeBookDetail['entries']) => {
+    setBook(b => ({ ...b, entries: reordered }));
+    reorderEntries({ entries: reordered.map((e, i) => ({ id: e.id, orderIndex: i })) });
   };
 
   const handleAddRecipe = async () => {
@@ -209,7 +194,7 @@ export const RecipeBookDetailClient: React.FC<RecipeBookDetailClientProps> = (pr
         currentUserId={currentUserId}
         onAddRecipe={handleAddRecipe}
         onRemoveEntry={handleRemoveEntry}
-        onMove={handleMove}
+        onReorder={handleReorder}
       />
 
       <MembersSection

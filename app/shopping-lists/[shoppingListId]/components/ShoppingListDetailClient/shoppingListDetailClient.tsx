@@ -1,23 +1,7 @@
 'use client';
 
-import {
-  DndContext,
-  DragOverlay,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-  type DragOverEvent,
-  type DragStartEvent,
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  sortableKeyboardCoordinates,
-  verticalListSortingStrategy,
-  arrayMove,
-} from '@dnd-kit/sortable';
+import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
+import { SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
@@ -32,7 +16,6 @@ import { postShoppingListInviteSchema } from '@/data/shopping-lists/[shoppingLis
 import { useDeleteCheckedItems, usePutItemSection, usePutItemsReorder } from '@/data/shopping-lists/[shoppingListId]/items';
 import { useDeleteShoppingListMember } from '@/data/shopping-lists/[shoppingListId]/members/[memberId]';
 import { usePostSection, usePutSectionReorder, postSectionSchema, type PostSectionPayload } from '@/data/shopping-lists/[shoppingListId]/sections';
-import type { ShoppingListItem } from '@/data/shopping-lists/[shoppingListId]/types';
 // Hooks
 import { useConfirm } from '@/hooks/useConfirm';
 import { useModal } from '@/hooks/useModal';
@@ -50,6 +33,7 @@ import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
 import { PageHeading } from '@/components/Typography';
 import { UserBadge } from '@/components/UserBadge';
+import { useShoppingListDnd } from './hooks/useShoppingListDnd';
 
 type ShoppingListDetailClientProps = {
   shoppingListId: string
@@ -79,22 +63,6 @@ export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> =
 
   useShoppingListRealtime(shoppingListId);
 
-  // ── Unified drag state ─────────────────────────────────────────────────────
-  const [activeId, setActiveId] = useState<string | null>(null);
-  const [activeType, setActiveType] = useState<'section' | 'item' | null>(null);
-  const [overId, setOverId] = useState<string | null>(null);
-  const [dropSide, setDropSide] = useState<'top' | 'bottom' | null>(null);
-
-  // dragSections carries optimistic item order during an active drag
-  const [dragSections, setDragSections] = useState(() =>
-    list?.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) })) ?? [],
-  );
-
-  const sensors = useSensors(
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
-
   const { mutate: putList } = usePutShoppingList({ shoppingListId });
   const { mutateAsync: deleteList } = useDeleteShoppingList({ shoppingListId });
   const { mutate: postSection } = usePostSection({ shoppingListId });
@@ -111,14 +79,31 @@ export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> =
   const invalidateDetail = useCallback(() =>
     queryClient.invalidateQueries({ queryKey: detailKey }), [queryClient, detailKey]);
 
+  const filteredSections = list?.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) })) ?? [];
+
+  const {
+    sensors,
+    localSections,
+    activeType,
+    activeItem,
+    activeSection,
+    overId,
+    dropSide,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+    resetDragState,
+  } = useShoppingListDnd({
+    sections: filteredSections,
+    reorderSections,
+    reorderItems,
+    moveItemSection,
+    onMoveItemSectionError: invalidateDetail,
+  });
+
   if (!list) return null;
 
   const isOwner = list.currentUserRole === 'OWNER';
-
-  // When not dragging, always derive from server data; during drag use optimistic state
-  const localSections = activeId
-    ? dragSections
-    : list.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) }));
 
   const handleInvite = async () => {
     const result = await modal<true | null, InviteModalProps<'OWNER' | 'COLLABORATOR'>>({
@@ -144,151 +129,6 @@ export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> =
   const handleRemoveMember = async (userId: string) => {
     if (!await confirm('Remove this member?', { confirmLabel: 'Remove' })) return;
     await deleteMember({ userId });
-  };
-
-  // ── Drag handlers ──────────────────────────────────────────────────────────
-
-  const resetDragState = () => {
-    setActiveId(null);
-    setActiveType(null);
-    setOverId(null);
-    setDropSide(null);
-  };
-
-  const handleDragStart = (event: DragStartEvent) => {
-    const id = String(event.active.id);
-    // Snapshot current server-derived state as the drag baseline
-    setDragSections(list.sections.map(s => ({ ...s, items: s.items.filter(i => !i.checked) })));
-    setActiveId(id);
-    setActiveType((event.active.data.current?.type as 'section' | 'item') ?? null);
-    setOverId(null);
-    setDropSide(null);
-  };
-
-  const handleDragOver = (event: DragOverEvent) => {
-    const { active, over } = event;
-    if (!over) {
-      setOverId(null);
-      setDropSide(null);
-      return;
-    }
-    setOverId(String(over.id));
-
-    const activeData = active.data.current;
-    const overData = over.data.current;
-
-    if (activeData?.type === 'item' && overData?.type === 'item') {
-      const activeSectionId = activeData.sectionId as string;
-      const overSectionId = overData.sectionId as string;
-      if (activeSectionId === overSectionId) {
-        // Same section: arrayMove places item AT the over index, so dragging down → bar at bottom
-        const section = localSections.find(s => s.id === activeSectionId);
-        if (section) {
-          const srcIdx = section.items.findIndex(i => i.id === String(active.id));
-          const ovIdx = section.items.findIndex(i => i.id === String(over.id));
-          setDropSide(srcIdx < ovIdx ? 'bottom' : 'top');
-        }
-      }
-      else {
-        // Cross-section: splice inserts before the over item → always top
-        setDropSide('top');
-      }
-    }
-    else if (activeData?.type === 'section' && overData?.type === 'section') {
-      const srcIdx = localSections.findIndex(s => s.id === String(active.id));
-      const ovIdx = localSections.findIndex(s => s.id === String(over.id));
-      setDropSide(srcIdx < ovIdx ? 'bottom' : 'top');
-    }
-    else {
-      setDropSide(null);
-    }
-  };
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    resetDragState();
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const activeData = active.data.current;
-    const overData = over.data.current;
-
-    if (activeData?.type === 'section') {
-      // Section reorder — only between named (non-unsorted) sections
-      if (overData?.type !== 'section') return;
-      const namedSections = localSections.slice(1);
-      const unsortedSection = localSections[0];
-      const oldIdx = namedSections.findIndex(s => s.id === String(active.id));
-      const newIdx = namedSections.findIndex(s => s.id === String(over.id));
-      if (oldIdx === -1 || newIdx === -1) return;
-      const reordered = arrayMove(namedSections, oldIdx, newIdx);
-      setDragSections([unsortedSection, ...reordered]);
-      reorderSections({
-        sections: [unsortedSection, ...reordered].map((s, i) => ({ id: s.id, orderIndex: i })),
-      });
-      return;
-    }
-
-    if (activeData?.type === 'item') {
-      const sourceSectionId = activeData.sectionId as string;
-
-      // Determine target section and insertion point
-      let targetSectionId: string;
-      let overItemId: string | null = null;
-
-      if (overData?.type === 'section') {
-        targetSectionId = String(over.id);
-      }
-      else if (overData?.type === 'item') {
-        targetSectionId = overData.sectionId as string;
-        overItemId = String(over.id);
-      }
-      else {
-        return;
-      }
-
-      const sourceSectionIdx = localSections.findIndex(s => s.id === sourceSectionId);
-      const targetSectionIdx = localSections.findIndex(s => s.id === targetSectionId);
-      if (sourceSectionIdx === -1 || targetSectionIdx === -1) return;
-
-      const sourceSection = localSections[sourceSectionIdx];
-      const targetSection = localSections[targetSectionIdx];
-      const draggedItem = sourceSection.items.find(i => i.id === active.id);
-      if (!draggedItem) return;
-
-      if (sourceSectionIdx === targetSectionIdx) {
-        // Same section — reorder
-        if (!overItemId) return;
-        const oldItemIdx = sourceSection.items.findIndex(i => i.id === active.id);
-        const newItemIdx = targetSection.items.findIndex(i => i.id === overItemId);
-        if (oldItemIdx === -1 || newItemIdx === -1) return;
-        const reorderedItems = arrayMove(sourceSection.items, oldItemIdx, newItemIdx);
-        setDragSections(prev => prev.map((s, idx) =>
-          idx === sourceSectionIdx ? { ...s, items: reorderedItems } : s,
-        ));
-        reorderItems({ items: reorderedItems.map((item, i) => ({ id: item.id, orderIndex: i })) });
-      }
-      else {
-        // Cross-section move
-        const updatedItem = { ...draggedItem, sectionId: targetSectionId };
-        const newSourceItems = sourceSection.items.filter(i => i.id !== active.id);
-        let newTargetItems: ShoppingListItem[];
-        if (overItemId) {
-          const overIdx = targetSection.items.findIndex(i => i.id === overItemId);
-          newTargetItems = [...targetSection.items];
-          newTargetItems.splice(overIdx >= 0 ? overIdx : newTargetItems.length, 0, updatedItem);
-        }
-        else {
-          newTargetItems = [...targetSection.items, updatedItem];
-        }
-        setDragSections(prev => prev.map((s, idx) => {
-          if (idx === sourceSectionIdx) return { ...s, items: newSourceItems };
-          if (idx === targetSectionIdx) return { ...s, items: newTargetItems };
-          return s;
-        }));
-        moveItemSection({ itemId: String(active.id), sectionId: targetSectionId }).catch(invalidateDetail);
-        reorderItems({ items: newTargetItems.map((item, i) => ({ id: item.id, orderIndex: i })) });
-      }
-    }
   };
 
   // ── Section / list handlers ────────────────────────────────────────────────
@@ -330,14 +170,6 @@ export const ShoppingListDetailClient: React.FC<ShoppingListDetailClientProps> =
 
   const allItems = list.sections.flatMap(s => s.items);
   const checkedItems = allItems.filter(i => i.checked);
-
-  // Overlay content
-  const activeItem = activeType === 'item'
-    ? localSections.flatMap(s => s.items).find(i => i.id === activeId) ?? null
-    : null;
-  const activeSection = activeType === 'section'
-    ? localSections.find(s => s.id === activeId) ?? null
-    : null;
 
   // First section is always Unsorted; the rest are named and sortable
   const [unsortedSection, ...namedSections] = localSections;

@@ -24,7 +24,7 @@ export const GET = async () => {
         },
       },
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { orderIndex: 'asc' },
   });
 
   const accepted = members
@@ -32,6 +32,7 @@ export const GET = async () => {
     .map(m => ({
       ...m.recipeBook,
       role: m.role,
+      orderIndex: m.orderIndex,
       memberCount: m.recipeBook.members.length,
       recipeCount: m.recipeBook.entries.length,
     }));
@@ -61,6 +62,11 @@ export const POST = async (req: Request) => {
   if (!parsed.success) return parsed.response;
   const { title, description, isPublic, coverImageUrl } = parsed.data;
 
+  const lastMember = await prisma.recipeBookMember.findFirst({
+    where: { userId: session.user.id },
+    orderBy: { orderIndex: 'desc' },
+  });
+
   const book = await prisma.recipeBook.create({
     data: {
       title: title.trim(),
@@ -73,6 +79,7 @@ export const POST = async (req: Request) => {
           role: OWNER,
           acceptedAt: new Date(),
           invitedByUserId: session.user.id,
+          orderIndex: (lastMember?.orderIndex ?? -1) + 1,
         },
       },
     },

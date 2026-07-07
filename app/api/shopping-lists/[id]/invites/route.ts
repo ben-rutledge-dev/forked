@@ -41,8 +41,20 @@ export const POST = async (req: Request, { params }: Params) => {
     });
     if (existing) return NextResponse.json({ error: 'Already a member or invited' }, { status: 409 });
 
+    const lastMember = await prisma.shoppingListMember.findFirst({
+      where: { userId: invitee.id },
+      orderBy: { orderIndex: 'desc' },
+    });
+
     const member = await prisma.shoppingListMember.create({
-      data: { shoppingListId: id, userId: invitee.id, role: 'OWNER', acceptedAt: null, invitedByUserId: session.user.id },
+      data: {
+        shoppingListId: id,
+        userId: invitee.id,
+        role: 'OWNER',
+        acceptedAt: null,
+        invitedByUserId: session.user.id,
+        orderIndex: (lastMember?.orderIndex ?? -1) + 1,
+      },
     });
     return NextResponse.json(member, { status: 201 });
   }
@@ -55,8 +67,20 @@ export const POST = async (req: Request, { params }: Params) => {
   });
   if (existing) return NextResponse.json({ error: 'Already a member or invited' }, { status: 409 });
 
+  const lastMember = await prisma.shoppingListMember.findFirst({
+    where: { userId: invitee.id },
+    orderBy: { orderIndex: 'desc' },
+  });
+
   const member = await prisma.shoppingListMember.create({
-    data: { shoppingListId: id, userId: invitee.id, role: 'COLLABORATOR', acceptedAt: null, invitedByUserId: session.user.id },
+    data: {
+      shoppingListId: id,
+      userId: invitee.id,
+      role: 'COLLABORATOR',
+      acceptedAt: null,
+      invitedByUserId: session.user.id,
+      orderIndex: (lastMember?.orderIndex ?? -1) + 1,
+    },
   });
   return NextResponse.json(member, { status: 201 });
 };

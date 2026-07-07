@@ -53,6 +53,7 @@ export const GrocerySection: React.FC<GrocerySectionProps> = async (props) => {
     createdAt: m.shoppingList.createdAt.toISOString(),
     updatedAt: m.shoppingList.updatedAt.toISOString(),
     role: m.role,
+    orderIndex: m.orderIndex,
     memberCount: m.shoppingList.members.length,
     uncheckedCount: m.shoppingList.items.filter(i => !i.checked).length,
   }));

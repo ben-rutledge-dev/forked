@@ -26,7 +26,7 @@ export const GET = async () => {
         },
       },
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { orderIndex: 'asc' },
   });
 
   const accepted = members
@@ -37,6 +37,7 @@ export const GET = async () => {
       createdAt: m.shoppingList.createdAt.toISOString(),
       updatedAt: m.shoppingList.updatedAt.toISOString(),
       role: m.role,
+      orderIndex: m.orderIndex,
       memberCount: m.shoppingList._count.members,
       uncheckedCount: m.shoppingList._count.items,
     }));
@@ -65,6 +66,11 @@ export const POST = async (req: Request) => {
   if (!parsed.success) return parsed.response;
   const { title } = parsed.data;
 
+  const lastMember = await prisma.shoppingListMember.findFirst({
+    where: { userId: session.user.id },
+    orderBy: { orderIndex: 'desc' },
+  });
+
   const list = await prisma.shoppingList.create({
     data: {
       title: title.trim(),
@@ -74,6 +80,7 @@ export const POST = async (req: Request) => {
           role: 'OWNER',
           acceptedAt: new Date(),
           invitedByUserId: session.user.id,
+          orderIndex: (lastMember?.orderIndex ?? -1) + 1,
         },
       },
       sections: {

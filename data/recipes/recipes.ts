@@ -1,23 +1,21 @@
 // Data
 import { queryKeys } from '@/data/queryKeys';
 import { useApiQuery, useApiPost, useQueryClient } from '@/data/shared/hooks';
-// Types
-import type { Recipe } from '@/types';
-import type { MyRecipesParams, PostRecipePayload, PostRecipeResponse, PoolParams, PoolRecipesResponse } from './types';
+import type { MyRecipesParams, PostRecipePayload, PostRecipeResponse, PoolParams, PoolRecipesResponse, FavouriteRecipe, MyRecipe } from './types';
 
 export const useMyRecipes = (params?: MyRecipesParams) => {
   const searchParams = new URLSearchParams();
   if (params?.tags?.length) searchParams.set('tags', params.tags.join(','));
   if (params?.categories?.length) searchParams.set('categories', params.categories.join(','));
 
-  return useApiQuery<Recipe[]>(
+  return useApiQuery<MyRecipe[]>(
     queryKeys.recipes.mine(params?.tags, params?.categories),
     `/api/recipes?${searchParams.toString()}`,
   );
 };
 
 export const useFavouriteRecipes = () =>
-  useApiQuery<Recipe[]>(
+  useApiQuery<FavouriteRecipe[]>(
     queryKeys.recipes.favourites(),
     '/api/recipes/favourites',
   );

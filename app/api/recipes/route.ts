@@ -30,10 +30,10 @@ export const GET = async (req: Request) => {
     },
     select: {
       id: true, title: true, description: true, coverImageUrl: true, forkCount: true,
-      isPublic: true, forkedFromId: true, authorId: true, tags: true,
+      isPublic: true, forkedFromId: true, authorId: true, tags: true, orderIndex: true,
       categories: { select: { category: { select: { id: true, slug: true, label: true, group: true } } } },
     },
-    orderBy: { updatedAt: 'desc' },
+    orderBy: { orderIndex: 'asc' },
   });
 
   return NextResponse.json(recipes.map(({ categories, ...r }) => ({
@@ -52,6 +52,11 @@ export const POST = async (req: Request) => {
   if (!parsed.success) return parsed.response;
   const { title, description, isPublic, coverImageUrl, ingredients, steps, tags } = parsed.data;
 
+  const lastRecipe = await prisma.recipe.findFirst({
+    where: { authorId: session.user.id },
+    orderBy: { orderIndex: 'desc' },
+  });
+
   try {
     const recipe = await prisma.recipe.create({
       data: {
@@ -61,6 +66,7 @@ export const POST = async (req: Request) => {
         authorId: session.user.id,
         isPublic: Boolean(isPublic),
         tags: (tags ?? []).map(t => t.trim().toLowerCase()).filter(Boolean),
+        orderIndex: (lastRecipe?.orderIndex ?? -1) + 1,
         ingredients: {
           create: (ingredients ?? []).map((ing, i) => {
             if (ing.unitKey && !VALID_UNIT_KEYS.has(ing.unitKey)) {

@@ -47,7 +47,7 @@ export const getUserShoppingLists = cache(async (userId: string) =>
         },
       },
     },
-    orderBy: { createdAt: 'asc' },
+    orderBy: { orderIndex: 'asc' },
   }),
 );
 

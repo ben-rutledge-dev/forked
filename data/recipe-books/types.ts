@@ -12,6 +12,7 @@ export type RecipeBook = {
 
 export type BookWithStats = RecipeBook & {
   role: 'Owner' | 'Collaborator'
+  orderIndex: number
   memberCount: number
   recipeCount: number
 };

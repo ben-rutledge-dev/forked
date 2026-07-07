@@ -1,15 +1,27 @@
 'use client';
 
+import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { useTranslations } from 'next-intl';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 // Data
 import type { Category } from '@/data/categories/types';
+import { queryKeys } from '@/data/queryKeys';
 import { useRecipeBooks } from '@/data/recipe-books';
+import { usePutRecipeBooksReorder } from '@/data/recipe-books/reorder';
+import type { BookWithStats } from '@/data/recipe-books/types';
 import { useFavouriteRecipes, useMyRecipes, usePoolRecipes } from '@/data/recipes';
+import { usePutFavouriteRecipesReorder } from '@/data/recipes/favourites/reorder';
+import { usePutRecipesReorder } from '@/data/recipes/reorder';
+import type { FavouriteRecipe, MyRecipe } from '@/data/recipes/types';
+import { useQueryClient } from '@/data/shared/hooks';
+// Hooks
+import { useSortableListDnd } from '@/hooks/useSortableListDnd';
 // Components
 import { RecipeBookInvitesSection } from './components/RecipeBookInvitesSection';
+import { SortableCard } from './components/SortableCard';
 import { Button } from '@/components/Button';
 import { PageHeader } from '@/components/PageHeader';
 import { PageLayout } from '@/components/PageLayout';
@@ -41,6 +53,12 @@ type MyRecipesClientProps = {
 const PAGE_SIZE = 12;
 const POOL_PAGE_SIZE = 24;
 const TAB_KEYS = ['browse', 'recipes', 'favourites', 'books'] as Array<'recipes' | 'favourites' | 'books' | 'browse'>;
+const TAB_LABEL_KEYS = {
+  recipes: 'tabRecipes',
+  favourites: 'tabFavourites',
+  books: 'tabBooks',
+  browse: 'tabBrowse',
+} as const;
 
 export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
   const {
@@ -121,6 +139,52 @@ export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
   const { data: booksData = { books: [], pending: [] } } = useRecipeBooks();
   const { books, pending } = booksData;
 
+  const queryClient = useQueryClient();
+  const { mutate: reorderFavourites } = usePutFavouriteRecipesReorder();
+
+  const handleFavouritesReorder = (reordered: FavouriteRecipe[]) => {
+    queryClient.setQueryData(queryKeys.recipes.favourites(), reordered);
+    reorderFavourites({ favourites: reordered.map((r, i) => ({ recipeId: r.id, orderIndex: i })) });
+  };
+
+  const {
+    sensors: favouritesSensors,
+    activeItem: activeFavourite,
+    overId: overFavouriteId,
+    dropSide: favouritesDropSide,
+    handleDragStart: handleFavouritesDragStart,
+    handleDragOver: handleFavouritesDragOver,
+    handleDragEnd: handleFavouritesDragEnd,
+    resetDrag: resetFavouritesDrag,
+  } = useSortableListDnd({
+    items: favouriteRecipes,
+    getId: r => r.id,
+    onReorder: handleFavouritesReorder,
+  });
+
+  const { mutate: reorderBooks } = usePutRecipeBooksReorder();
+
+  const handleBooksReorder = (reordered: BookWithStats[]) => {
+    queryClient.setQueryData(queryKeys.recipeBooks.mine(), (old: typeof booksData) =>
+      (old ? { ...old, books: reordered } : old));
+    reorderBooks({ books: reordered.map((b, i) => ({ id: b.id, orderIndex: i })) });
+  };
+
+  const {
+    sensors: booksSensors,
+    activeItem: activeBook,
+    overId: overBookId,
+    dropSide: booksDropSide,
+    handleDragStart: handleBooksDragStart,
+    handleDragOver: handleBooksDragOver,
+    handleDragEnd: handleBooksDragEnd,
+    resetDrag: resetBooksDrag,
+  } = useSortableListDnd({
+    items: books,
+    getId: b => b.id,
+    onReorder: handleBooksReorder,
+  });
+
   const { data: poolData, isFetching: poolFetching } = usePoolRecipes({
     categories: browseCategories,
     q: browseDebouncedQuery,
@@ -198,6 +262,133 @@ export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
   const totalPages = Math.ceil(recipes.length / PAGE_SIZE);
   const visible = recipes.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
+  const { mutate: reorderRecipes } = usePutRecipesReorder();
+
+  const handleRecipesReorder = (reorderedVisible: MyRecipe[]) => {
+    // Permute only this page's own orderIndex values — leaves every other page untouched
+    // and is robust to gaps left by past deletions.
+    const bandOrderIndexes = visible.map(r => r.orderIndex);
+    const byId = new Map(reorderedVisible.map((r, i) => [r.id, bandOrderIndexes[i]]));
+
+    queryClient.setQueryData<MyRecipe[]>(queryKeys.recipes.mine(), (old) => {
+      if (!old) return old;
+      return old
+        .map(r => (byId.has(r.id) ? { ...r, orderIndex: byId.get(r.id)! } : r))
+        .sort((a, b) => a.orderIndex - b.orderIndex);
+    });
+    reorderRecipes({ recipes: reorderedVisible.map(r => ({ id: r.id, orderIndex: byId.get(r.id)! })) });
+  };
+
+  const {
+    sensors: recipesSensors,
+    activeItem: activeRecipe,
+    overId: overRecipeId,
+    dropSide: recipesDropSide,
+    handleDragStart: handleRecipesDragStart,
+    handleDragOver: handleRecipesDragOver,
+    handleDragEnd: handleRecipesDragEnd,
+    resetDrag: resetRecipesDrag,
+  } = useSortableListDnd({
+    items: visible,
+    getId: r => r.id,
+    onReorder: handleRecipesReorder,
+  });
+
+  let recipesGridContent: React.ReactNode;
+  if (recipes.length === 0) {
+    recipesGridContent = (
+      <div className="text-center py-20 text-stone-400 dark:text-stone-500">
+        {hasFilters
+          ? t('noResults')
+          : (
+              <>
+                <p>{t('noRecipesYet')}</p>
+                <div className="mt-4 flex items-center justify-center gap-4">
+                  <Link href="/recipes/new" className="text-stone-700 dark:text-stone-300 underline hover:text-stone-900 dark:hover:text-stone-100">{t('createOne')}</Link>
+                  <span className="text-stone-300 dark:text-stone-600">{t('or')}</span>
+                  <Link href="/recipes?tab=browse" className="text-stone-700 dark:text-stone-300 underline hover:text-stone-900 dark:hover:text-stone-100">{t('forkFromPool')}</Link>
+                </div>
+              </>
+            )}
+      </div>
+    );
+  }
+  else if (hasFilters) {
+    recipesGridContent = (
+      <>
+        <p className="text-xs text-stone-400 dark:text-stone-500 mb-3">{t('clearFiltersToReorder')}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {visible.map(r => (
+            <RecipeCard
+              key={r.id}
+              id={r.id}
+              title={r.title}
+              description={r.description}
+              coverImageUrl={r.coverImageUrl}
+              forkCount={r.forkCount}
+              isPublic={r.isPublic}
+              isOwned
+              forkedFromId={r.forkedFromId}
+            />
+          ))}
+        </div>
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      </>
+    );
+  }
+  else {
+    recipesGridContent = (
+      <>
+        <DndContext
+          id="my-recipes-dnd"
+          sensors={recipesSensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleRecipesDragStart}
+          onDragOver={handleRecipesDragOver}
+          onDragEnd={handleRecipesDragEnd}
+          onDragCancel={resetRecipesDrag}
+        >
+          <SortableContext items={visible.map(r => r.id)} strategy={rectSortingStrategy}>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {visible.map(r => (
+                <SortableCard key={r.id} id={r.id} dropSide={overRecipeId === r.id ? recipesDropSide : null}>
+                  <RecipeCard
+                    id={r.id}
+                    title={r.title}
+                    description={r.description}
+                    coverImageUrl={r.coverImageUrl}
+                    forkCount={r.forkCount}
+                    isPublic={r.isPublic}
+                    isOwned
+                    forkedFromId={r.forkedFromId}
+                  />
+                </SortableCard>
+              ))}
+            </div>
+          </SortableContext>
+
+          <DragOverlay dropAnimation={null}>
+            {activeRecipe && (
+              <div className="opacity-60 cursor-grabbing">
+                <RecipeCard
+                  id={activeRecipe.id}
+                  title={activeRecipe.title}
+                  description={activeRecipe.description}
+                  coverImageUrl={activeRecipe.coverImageUrl}
+                  forkCount={activeRecipe.forkCount}
+                  isPublic={activeRecipe.isPublic}
+                  isOwned
+                  forkedFromId={activeRecipe.forkedFromId}
+                />
+              </div>
+            )}
+          </DragOverlay>
+        </DndContext>
+        <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
+      </>
+    );
+  }
+
   return (
     <PageLayout>
       <PageHeader title={t('heading')} action={isAuthenticated ? <HeaderAction tab={tab} /> : undefined} />
@@ -215,7 +406,7 @@ export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
                   : 'border-transparent text-stone-500 dark:text-stone-400 hover:text-stone-700 dark:hover:text-stone-200'
               }`}
             >
-              {tabKey === 'recipes' ? t('tabRecipes') : tabKey === 'favourites' ? t('tabFavourites') : tabKey === 'books' ? t('tabBooks') : t('tabBrowse')}
+              {t(TAB_LABEL_KEYS[tabKey])}
               {tabKey === 'books' && pending.length > 0 && (
                 <span className="ml-1.5 rounded-full bg-primary-500 px-1.5 py-0.5 text-xs text-white">
                   {pending.length}
@@ -248,43 +439,7 @@ export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
           </div>
 
           <div className={isFetching ? 'opacity-60 transition-opacity' : ''}>
-            {recipes.length === 0
-              ? (
-                  <div className="text-center py-20 text-stone-400 dark:text-stone-500">
-                    {hasFilters
-                      ? t('noResults')
-                      : (
-                          <>
-                            <p>{t('noRecipesYet')}</p>
-                            <div className="mt-4 flex items-center justify-center gap-4">
-                              <Link href="/recipes/new" className="text-stone-700 dark:text-stone-300 underline hover:text-stone-900 dark:hover:text-stone-100">{t('createOne')}</Link>
-                              <span className="text-stone-300 dark:text-stone-600">{t('or')}</span>
-                              <Link href="/recipes?tab=browse" className="text-stone-700 dark:text-stone-300 underline hover:text-stone-900 dark:hover:text-stone-100">{t('forkFromPool')}</Link>
-                            </div>
-                          </>
-                        )}
-                  </div>
-                )
-              : (
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                      {visible.map(r => (
-                        <RecipeCard
-                          key={r.id}
-                          id={r.id}
-                          title={r.title}
-                          description={r.description}
-                          coverImageUrl={r.coverImageUrl}
-                          forkCount={r.forkCount}
-                          isPublic={r.isPublic}
-                          isOwned
-                          forkedFromId={r.forkedFromId}
-                        />
-                      ))}
-                    </div>
-                    <Pagination page={page} totalPages={totalPages} onPageChange={setPage} />
-                  </>
-                )}
+            {recipesGridContent}
           </div>
         </>
       )}
@@ -299,20 +454,49 @@ export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
                 </div>
               )
             : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {favouriteRecipes.map(r => (
-                    <RecipeCard
-                      key={r.id}
-                      id={r.id}
-                      title={r.title}
-                      description={r.description}
-                      coverImageUrl={r.coverImageUrl}
-                      forkCount={r.forkCount}
-                      showPoolActions
-                      isFavourited
-                    />
-                  ))}
-                </div>
+                <DndContext
+                  id="favourites-dnd"
+                  sensors={favouritesSensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleFavouritesDragStart}
+                  onDragOver={handleFavouritesDragOver}
+                  onDragEnd={handleFavouritesDragEnd}
+                  onDragCancel={resetFavouritesDrag}
+                >
+                  <SortableContext items={favouriteRecipes.map(r => r.id)} strategy={rectSortingStrategy}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {favouriteRecipes.map(r => (
+                        <SortableCard key={r.id} id={r.id} dropSide={overFavouriteId === r.id ? favouritesDropSide : null}>
+                          <RecipeCard
+                            id={r.id}
+                            title={r.title}
+                            description={r.description}
+                            coverImageUrl={r.coverImageUrl}
+                            forkCount={r.forkCount}
+                            showPoolActions
+                            isFavourited
+                          />
+                        </SortableCard>
+                      ))}
+                    </div>
+                  </SortableContext>
+
+                  <DragOverlay dropAnimation={null}>
+                    {activeFavourite && (
+                      <div className="opacity-60 cursor-grabbing">
+                        <RecipeCard
+                          id={activeFavourite.id}
+                          title={activeFavourite.title}
+                          description={activeFavourite.description}
+                          coverImageUrl={activeFavourite.coverImageUrl}
+                          forkCount={activeFavourite.forkCount}
+                          showPoolActions
+                          isFavourited
+                        />
+                      </div>
+                    )}
+                  </DragOverlay>
+                </DndContext>
               )}
         </div>
       )}
@@ -328,20 +512,49 @@ export const MyRecipesClient: React.FC<MyRecipesClientProps> = (props) => {
                 </div>
               )
             : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {books.map(b => (
-                    <RecipeBookCard
-                      key={b.id}
-                      id={b.id}
-                      title={b.title}
-                      coverImageUrl={b.coverImageUrl}
-                      isPublic={b.isPublic}
-                      role={b.role}
-                      memberCount={b.memberCount}
-                      recipeCount={b.recipeCount}
-                    />
-                  ))}
-                </div>
+                <DndContext
+                  id="recipe-books-dnd"
+                  sensors={booksSensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleBooksDragStart}
+                  onDragOver={handleBooksDragOver}
+                  onDragEnd={handleBooksDragEnd}
+                  onDragCancel={resetBooksDrag}
+                >
+                  <SortableContext items={books.map(b => b.id)} strategy={rectSortingStrategy}>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {books.map(b => (
+                        <SortableCard key={b.id} id={b.id} dropSide={overBookId === b.id ? booksDropSide : null}>
+                          <RecipeBookCard
+                            id={b.id}
+                            title={b.title}
+                            coverImageUrl={b.coverImageUrl}
+                            isPublic={b.isPublic}
+                            role={b.role}
+                            memberCount={b.memberCount}
+                            recipeCount={b.recipeCount}
+                          />
+                        </SortableCard>
+                      ))}
+                    </div>
+                  </SortableContext>
+
+                  <DragOverlay dropAnimation={null}>
+                    {activeBook && (
+                      <div className="opacity-60 cursor-grabbing">
+                        <RecipeBookCard
+                          id={activeBook.id}
+                          title={activeBook.title}
+                          coverImageUrl={activeBook.coverImageUrl}
+                          isPublic={activeBook.isPublic}
+                          role={activeBook.role}
+                          memberCount={activeBook.memberCount}
+                          recipeCount={activeBook.recipeCount}
+                        />
+                      </div>
+                    )}
+                  </DragOverlay>
+                </DndContext>
               )}
         </>
       )}

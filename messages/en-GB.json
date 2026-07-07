@@ -231,7 +231,9 @@
     "cookModeLabel": "Cook mode",
     "publicBadge": "public",
     "privateBadge": "private",
-    "editLabel": "Edit"
+    "editLabel": "Edit",
+    "dragToReorder": "Drag to reorder",
+    "clearFiltersToReorder": "Clear filters to drag and reorder your recipes"
   },
   "myProfile": {
     "heading": "Edit profile",
@@ -301,8 +303,7 @@
     "recipesSection": "Recipes",
     "addRecipe": "+ Add recipe",
     "noRecipes": "No recipes in this book yet.",
-    "moveUp": "Move up",
-    "moveDown": "Move down",
+    "dragToReorder": "Drag to reorder",
     "membersSection": "Members",
     "inviteCollaborator": "Invite collaborator",
     "remove": "Remove",
@@ -419,6 +420,7 @@
     "decline": "Decline",
     "noListsYet": "No shopping lists yet. Create one to get started.",
     "stats": "{items, plural, one {# item} other {# items}} remaining · {members, plural, one {# member} other {# members}}",
+    "dragToReorder": "Drag to reorder",
     "ownerBadge": "owner",
     "inviteAccepted": "Invite accepted",
     "inviteDeclined": "Invite declined"

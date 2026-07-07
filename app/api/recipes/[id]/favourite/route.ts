@@ -17,8 +17,13 @@ export const POST = async (_req: Request, { params }: Params) => {
   if (!recipeExists) return NextResponse.json({ error: 'Recipe not found' }, { status: 404 });
 
   try {
+    const lastFavourite = await prisma.recipeFavourite.findFirst({
+      where: { userId: session.user.id },
+      orderBy: { orderIndex: 'desc' },
+    });
+
     await prisma.recipeFavourite.create({
-      data: { userId: session.user.id, recipeId },
+      data: { userId: session.user.id, recipeId, orderIndex: (lastFavourite?.orderIndex ?? -1) + 1 },
     });
   }
   catch (err) {

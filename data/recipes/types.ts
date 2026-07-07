@@ -1,9 +1,14 @@
 import { z } from 'zod';
+// Types
+import type { Recipe } from '@/types';
 
 export type MyRecipesParams = {
   tags?: string[]
   categories?: string[]
 };
+
+export type FavouriteRecipe = Recipe & { orderIndex: number };
+export type MyRecipe = Recipe & { orderIndex: number };
 
 export const recipeIngredientSchema = z.object({
   name: z.string().min(1, 'Ingredient name is required'),

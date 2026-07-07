@@ -1,23 +1,31 @@
 'use client';
 
+import { DndContext, DragOverlay, closestCenter } from '@dnd-kit/core';
+import { SortableContext, rectSortingStrategy } from '@dnd-kit/sortable';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 // Data
+import { queryKeys } from '@/data/queryKeys';
+import { useQueryClient } from '@/data/shared/hooks';
 import { useShoppingLists, usePostShoppingList } from '@/data/shopping-lists';
+import { usePutShoppingListsReorder } from '@/data/shopping-lists/reorder';
 import { postShoppingListSchema, type PostShoppingListPayload } from '@/data/shopping-lists/types';
+// Hooks
+import { useSortableListDnd } from '@/hooks/useSortableListDnd';
 // Components
+import { ShoppingListCard } from './components/ShoppingListCard';
 import { ShoppingListInvitesSection } from './components/ShoppingListInvitesSection';
 import { Button } from '@/components/Button';
 import { PageHeader } from '@/components/PageHeader';
 import { PageLayout } from '@/components/PageLayout';
 import { Toast } from '@/components/Toast';
-import { UserBadge } from '@/components/UserBadge';
 
 export const ShoppingListsClient = () => {
   const router = useRouter();
+  const queryClient = useQueryClient();
   const [creating, setCreating] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const t = useTranslations('shoppingLists');
@@ -27,6 +35,28 @@ export const ShoppingListsClient = () => {
   const pending = data?.pending ?? [];
 
   const { mutateAsync: createList, isPending: isCreating } = usePostShoppingList();
+  const { mutate: reorderLists } = usePutShoppingListsReorder();
+
+  const handleReorder = (reordered: typeof lists) => {
+    queryClient.setQueryData(queryKeys.shoppingLists.mine(), (old: typeof data) =>
+      old ? { ...old, lists: reordered } : old);
+    reorderLists({ lists: reordered.map((l, i) => ({ id: l.id, orderIndex: i })) });
+  };
+
+  const {
+    sensors,
+    activeItem,
+    overId,
+    dropSide,
+    handleDragStart,
+    handleDragOver,
+    handleDragEnd,
+    resetDrag,
+  } = useSortableListDnd({
+    items: lists,
+    getId: list => list.id,
+    onReorder: handleReorder,
+  });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm<PostShoppingListPayload>({
     resolver: zodResolver(postShoppingListSchema),
@@ -83,24 +113,37 @@ export const ShoppingListsClient = () => {
             <p className="text-stone-400 dark:text-stone-500 text-sm">{t('noListsYet')}</p>
           )
         : (
-            <ul className="grid gap-4 sm:grid-cols-2">
-              {lists.map(list => (
-                <li key={list.id}>
-                  <button
-                    className="w-full text-left rounded-xl squircle shadow-sm bg-white dark:bg-stone-800 px-5 py-4 hover:shadow-md transition-shadow cursor-pointer"
-                    onClick={() => router.push(`/shopping-lists/${list.id}`)}
-                  >
-                    <p className="font-medium text-stone-800 dark:text-stone-200">{list.title}</p>
-                    <p className="mt-1 text-xs text-stone-400 dark:text-stone-500">
-                      {t('stats', { items: list.uncheckedCount, members: list.memberCount })}
-                    </p>
-                    {list.role === 'OWNER' && (
-                      <UserBadge role={list.role} className="mt-2" />
-                    )}
-                  </button>
-                </li>
-              ))}
-            </ul>
+            <DndContext
+              id="shopping-lists-dnd"
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragStart={handleDragStart}
+              onDragOver={handleDragOver}
+              onDragEnd={handleDragEnd}
+              onDragCancel={resetDrag}
+            >
+              <SortableContext items={lists.map(l => l.id)} strategy={rectSortingStrategy}>
+                <ul className="grid gap-4 sm:grid-cols-2">
+                  {lists.map(list => (
+                    <li key={list.id}>
+                      <ShoppingListCard
+                        list={list}
+                        dropSide={overId === list.id ? dropSide : null}
+                        onOpen={() => router.push(`/shopping-lists/${list.id}`)}
+                      />
+                    </li>
+                  ))}
+                </ul>
+              </SortableContext>
+
+              <DragOverlay dropAnimation={null}>
+                {activeItem && (
+                  <div className="rounded-xl squircle shadow-xl bg-white dark:bg-stone-800 px-5 py-4 opacity-60 cursor-grabbing">
+                    <p className="font-medium text-stone-800 dark:text-stone-200">{activeItem.title}</p>
+                  </div>
+                )}
+              </DragOverlay>
+            </DndContext>
           )}
     </PageLayout>
   );

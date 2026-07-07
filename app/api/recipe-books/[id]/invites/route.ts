@@ -39,6 +39,11 @@ export const POST = async (req: Request, { params }: Params) => {
   });
   if (existing) return NextResponse.json({ error: 'Already a member or invited' }, { status: 409 });
 
+  const lastMember = await prisma.recipeBookMember.findFirst({
+    where: { userId: invitee.id },
+    orderBy: { orderIndex: 'desc' },
+  });
+
   const member = await prisma.recipeBookMember.create({
     data: {
       recipeBookId: id,
@@ -46,6 +51,7 @@ export const POST = async (req: Request, { params }: Params) => {
       role: role === OWNER ? OWNER : COLLABORATOR,
       acceptedAt: null,
       invitedByUserId: session.user.id,
+      orderIndex: (lastMember?.orderIndex ?? -1) + 1,
     },
   });
 

@@ -84,6 +84,7 @@ model Recipe {
   forkedFromId  String?
   forkCount     Int              @default(0)
   tags          String[]         @default([])
+  orderIndex    Int?
   createdAt     DateTime         @default(now())
   updatedAt     DateTime         @updatedAt
   author        User?            @relation(fields: [authorId], references: [id])
@@ -147,6 +148,7 @@ model RecipeBookMember {
   role           RecipeBookRole
   acceptedAt     DateTime?
   invitedByUserId String
+  orderIndex     Int
   createdAt      DateTime        @default(now())
   recipeBook     RecipeBook      @relation(fields: [recipeBookId], references: [id], onDelete: Cascade)
   user           User            @relation("BookMember", fields: [userId], references: [id], onDelete: Cascade)
@@ -170,10 +172,11 @@ model RecipeBookEntry {
 }
 
 model RecipeFavourite {
-  id        String   @id @default(cuid())
-  userId    String
-  recipeId  String
-  createdAt DateTime @default(now())
+  id         String   @id @default(cuid())
+  userId     String
+  recipeId   String
+  orderIndex Int
+  createdAt  DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   recipe    Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
 
@@ -202,6 +205,7 @@ model ShoppingListMember {
   role            ShoppingListRole
   acceptedAt      DateTime?
   invitedByUserId String
+  orderIndex      Int
   createdAt       DateTime         @default(now())
   shoppingList    ShoppingList     @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
   user            User             @relation("ShoppingListMember", fields: [userId], references: [id], onDelete: Cascade)

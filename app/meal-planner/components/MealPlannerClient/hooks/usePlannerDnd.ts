@@ -1,19 +1,17 @@
 import {
-  KeyboardSensor,
-  PointerSensor,
   closestCenter,
   pointerWithin,
-  useSensor,
-  useSensors,
   type CollisionDetection,
   type DragEndEvent,
   type DragOverEvent,
   type DragStartEvent,
 } from '@dnd-kit/core';
-import { arrayMove, sortableKeyboardCoordinates } from '@dnd-kit/sortable';
+import { arrayMove } from '@dnd-kit/sortable';
 import { useCallback, useState } from 'react';
 // Data
 import type { MealPlanDetail, MealPlanEntry, MealPlanSlot } from '@/data/meal-plans/[mealPlanId]/types';
+// Hooks
+import { useDndSensors } from '@/hooks/useDndSensors';
 
 export type SlotDropTarget
   = | { type: 'slot', slotId: string, side: 'left' | 'right' }
@@ -45,10 +43,7 @@ export const usePlannerDnd = ({
   const [overSlotKey, setOverSlotKey] = useState<string | null>(null);
   const [dropTarget, setDropTarget] = useState<SlotDropTarget>(null);
 
-  const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
+  const sensors = useDndSensors({ activationConstraint: { distance: 5 } });
 
   // pointerWithin checks which droppable physically contains the cursor.
   // closestCenter uses overlay-center distances — but verticalListSortingStrategy

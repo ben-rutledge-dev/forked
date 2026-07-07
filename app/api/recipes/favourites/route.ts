@@ -29,12 +29,13 @@ export const GET = async () => {
         },
       },
     },
-    orderBy: { createdAt: 'desc' },
+    orderBy: { orderIndex: 'asc' },
   });
 
   return NextResponse.json(
-    favourites.map(({ recipe: { categories, ...r } }) => ({
+    favourites.map(({ recipe: { categories, ...r }, orderIndex }) => ({
       ...r,
+      orderIndex,
       categories: categories.map(rc => rc.category),
     })),
   );
